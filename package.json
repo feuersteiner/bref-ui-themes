@@ -1,0 +1,91 @@
+{
+	"name": "bref-ui-themes",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "bun run build:site && bun run package",
+		"preview": "vite preview",
+		"prepare": "bun run svelte-kit sync",
+		"prepack": "bun run package",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write .",
+		"build:site": "vite build",
+		"package": "svelte-kit sync && svelte-package && publint",
+		"test": "playwright test",
+		"previews": "bun scripts/capture-previews.ts"
+	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"sideEffects": [
+		"**/*.css",
+		"**/*.svelte"
+	],
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		},
+		"./relay": {
+			"types": "./dist/relay/index.d.ts",
+			"svelte": "./dist/relay/index.js"
+		},
+		"./forma": {
+			"types": "./dist/forma/index.d.ts",
+			"svelte": "./dist/forma/index.js"
+		},
+		"./elsewhere": {
+			"types": "./dist/elsewhere/index.d.ts",
+			"svelte": "./dist/elsewhere/index.js"
+		}
+	},
+	"peerDependencies": {
+		"svelte": "^5.57.1",
+		"bref-ui": "^2.1.3"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@playwright/test": "^1.64.0",
+		"@sveltejs/adapter-static": "^4.0.0",
+		"@sveltejs/kit": "^3.0.0",
+		"@sveltejs/package": "^3.0.0",
+		"@sveltejs/vite-plugin-svelte": "^7.2.0",
+		"@types/node": "^24",
+		"bref-ui": "^2.1.3",
+		"eslint": "^10.4.1",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-svelte": "^3.19.0",
+		"globals": "^17.6.0",
+		"prettier": "^3.8.3",
+		"prettier-plugin-svelte": "^4.1.0",
+		"publint": "^0.3.21",
+		"svelte": "^5.57.1",
+		"svelte-check": "^4.6.0",
+		"typescript": "^6.0.3",
+		"typescript-eslint": "^8.60.1",
+		"vite": "^8.3.0"
+	},
+	"keywords": [
+		"svelte"
+	],
+	"imports": {
+		"#lib": "./src/lib/index.js",
+		"#lib/*": "./src/lib/*"
+	},
+	"description": "Publishable Bref themes, theme demonstrations and complete Svelte demo sites.",
+	"license": "MIT",
+	"packageManager": "bun@1.3.4",
+	"dependencies": {
+		"@fontsource-variable/bricolage-grotesque": "^5.3.0",
+		"@fontsource-variable/inter": "^5.3.0",
+		"@fontsource-variable/syne": "^5.3.0",
+		"@fontsource-variable/material-symbols-outlined": "^5.3.5"
+	}
+}
