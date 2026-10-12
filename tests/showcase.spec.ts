@@ -7,7 +7,8 @@ const routes = [
 	'/elsewhere',
 	'/themes/relay',
 	'/themes/forma',
-	'/themes/elsewhere'
+	'/themes/elsewhere',
+	'/themes/vscode'
 ];
 
 async function ready(page: Page) {
@@ -47,11 +48,11 @@ test('catalog links, WIP availability and keyboard skip link', async ({ page }) 
 	await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused();
 	await page.keyboard.press('Enter');
 	await expect(page.locator('main')).toBeFocused();
-	await expect(page.locator('[data-wip-themes] article')).toHaveCount(3);
+	await expect(page.locator('[data-wip-themes] article')).toHaveCount(2);
 	await expect(page.locator('[data-wip-themes] a')).toHaveCount(0);
 	for (const route of routes.slice(1)) {
 		const link = page.locator(`a[href="${route}"]`);
-		await expect(link).toHaveCount(1);
+		await expect(link).toHaveCount(route === '/themes/vscode' ? 2 : 1);
 		expect((await page.request.get(route)).status()).toBe(200);
 	}
 });

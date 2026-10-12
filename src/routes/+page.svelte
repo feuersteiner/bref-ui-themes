@@ -73,10 +73,30 @@
 							trailingIcon={{ name: 'arrow_outward' }}
 							size="small"
 						/>
+						<Button
+							href={resolve('/(themes)/themes/[theme]', { theme: 'vscode' })}
+							label="VS Code theme"
+							trailingIcon={{ name: 'arrow_outward' }}
+							size="small"
+						/>
 					</nav>
 				</div>
+				<a
+					data-vscode-preview
+					href={resolve('/(themes)/themes/[theme]', { theme: 'vscode' })}
+					data-sveltekit-reload
+				>
+					<img
+						src={asset('previews/vscode.jpg')}
+						alt="VS Code component theme rendered in a browser"
+						width="1440"
+						height="960"
+						loading="lazy"
+					/>
+					<span>VS Code · Explore the component reference ↗</span>
+				</a>
 				<div data-wip-themes>
-					{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
+					{#each [{ name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
 						<article>
 							<Surface variant="soft" radius="medium" spacing="large" height="fill">
 								<div data-theme-heading>
@@ -213,6 +233,21 @@
 		font-size: 13px;
 		color: var(--color-primary);
 		font-weight: 600;
+	}
+	[data-vscode-preview] {
+		display: block;
+		margin-bottom: 24px;
+		max-width: 720px;
+	}
+	[data-vscode-preview] img {
+		width: 100%;
+		height: auto;
+		border-radius: 8px;
+	}
+	[data-vscode-preview] span {
+		display: block;
+		padding-block: 10px;
+		font-size: 13px;
 	}
 	[data-wip-themes] {
 		display: grid;

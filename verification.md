@@ -33,9 +33,16 @@ Bref 2.1.3's registry loader, dependency planner and installation pipeline copie
 
 ## Limits
 
-- VS Code, Liquid Glass and Minimalist Blocky remain WIP; no exports or demonstration routes exist.
-- Implemented themes are light-only and use global Bref tokens/reset styles. One theme per document is supported; consumers must reload when switching themes.
+- Liquid Glass and Minimalist Blocky remain WIP; no exports or demonstration routes exist.
+- Relay, Forma and Elsewhere use light mode; VS Code uses dark mode. Themes use global Bref tokens/reset styles. One theme per document is supported; consumers must reload when switching themes.
 - Demo state is temporary. Forma makes no purchase or payment; Elsewhere uses sample findings and fetches no website.
 - Browser automation used Chromium, including mobile emulation; Safari, Firefox, real devices and screen-reader testing remain unverified.
 - Rendered inspection is agent verification; human visual approval remains pending. No independent reviewer approval is claimed.
 - The migration is delivered to the themes repository under user authorization. No npm publication or deployment was performed. Local tarballs, logs and review screenshots stay ignored under `verification-artifacts`; only catalog preview assets belong to site source.
+
+## VS Code addition
+
+- `bref-ui-themes/vscode` and the root `VSCode` namespace expose the same 14 components. `/themes/vscode` uses these library sources.
+- Check, lint, library packaging/publint, default site build and the `/bref-ui-themes` Pages build pass. The expanded suite passes 38 desktop/mobile Chromium tests, including native selection, validation, tag removal, seeking, overlay focus/return, reduced motion, high contrast and theme reloads.
+- The tarball contains VS Code JS/declarations and reusable source; site assets stay excluded. A fresh Vite/Svelte consumer passes type checks, production build, namespace/export identity checks and rendered dialog/popover/input interactions.
+- Desktop, mobile and dialog previews are actual production browser captures. Latest main showcase/deployment changes are incorporated.

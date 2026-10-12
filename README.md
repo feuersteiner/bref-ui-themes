@@ -49,7 +49,26 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 ![Forma rendered demo](static/previews/forma.jpg)
 ![Elsewhere rendered demo](static/previews/elsewhere.jpg)
 
-**WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
+**WIP:** Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
+
+## VS Code theme
+
+[/themes/vscode](http://localhost:5173/themes/vscode) is a component reference covering every export, sizes, variants, semantic colors, validation, disabled states, loading, native selection, removable tags, seeking and overlays. It uses the public library sources; there is no separate application demo.
+
+![VS Code rendered components](static/previews/vscode.jpg)
+
+```svelte
+<script lang="ts">
+	import { Theme, Button, TextInput } from 'bref-ui-themes/vscode';
+</script>
+
+<Theme>
+	<TextInput aria-label="Setting name" placeholder="editor.fontSize" />
+	<Button label="Apply" variant="filled" color="primary" />
+</Theme>
+```
+
+The fixed dark palette uses editor/workbench grays, blue focus and primary actions, crisp borders and system UI type. No font installation is needed. Wrap components in `Theme`; use one theme per document. Native props and bindings follow the other theme entries. Root namespace: `import { VSCode } from 'bref-ui-themes'`.
 
 ## Library imports
 
@@ -75,7 +94,7 @@ import { Theme, Button } from 'bref-ui-themes/forma';
 
 Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+These initial themes provide the demo palettes, fonts, common CSS and component styling. Relay, Forma and Elsewhere use light mode; VS Code uses dark mode. They use document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
 
 ## Source layout
 
