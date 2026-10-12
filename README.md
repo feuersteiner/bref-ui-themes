@@ -1,6 +1,8 @@
 # bref-ui-themes
 
-Publishable Bref themes, theme demonstrations, and complete demo sites built with Svelte and native CSS. This repository is a new SvelteKit 3 library scaffold; the package is an unpublished review candidate.
+Reusable Svelte 5 themes for [bref-ui](https://github.com/feuersteiner/bref-ui), with interactive demos and native CSS. The package is an unpublished review candidate built on SvelteKit 3.
+
+[Explore the showcase](https://feuersteiner.github.io/bref-ui-themes/) · [Bref documentation](https://feuersteiner.github.io/bref-ui/) · [Join Discord](https://discord.gg/JpgQRTUsVS)
 
 ## Local development
 
@@ -24,6 +26,13 @@ After changes to a demo, refresh the catalog and README screenshots with the dev
 
 ```sh
 bun run previews http://127.0.0.1:5173
+```
+
+The restored GitHub Pages workflow builds `build:site` on pushes to `main`, using the Pages base path and uploading `build`. To reproduce the project-path build locally:
+
+```sh
+BASE_PATH=/bref-ui-themes bun run build:site
+BASE_PATH=/bref-ui-themes bun run preview # http://localhost:4173/bref-ui-themes/
 ```
 
 ## Showcase and demo sites

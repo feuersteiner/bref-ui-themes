@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Bref themes & demos</title>
+	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
 		content="Explore complete Bref demo sites and reusable Svelte themes. Relay, Forma and Elsewhere are ready to try; more themes are on the way."
@@ -19,9 +19,9 @@
 	<div data-showcase>
 		<a data-skip href="#showcase-content">Skip to content</a>
 		<header>
-			<a data-brand href={resolve('/')} aria-label="Bref showcase home">
+			<a data-brand href={resolve('/')} aria-label="bref-ui/themes home">
 				<img src={asset('favicon.svg')} alt="" width="40" height="40" />
-				<strong>bref<span data-slash>/</span>themes</strong>
+				<strong>bref-ui<span data-slash>/</span>themes</strong>
 			</a>
 			<nav aria-label="Showcase">
 				<Button href="#demos" label="Demos" size="small" /><Button
@@ -91,28 +91,39 @@
 				</div>
 			</section>
 		</main>
-		<footer><span>Bref themes & demos</span><span>Svelte components. Native CSS.</span></footer>
+		<footer>
+			<span>Svelte components. Native CSS.</span>
+			<nav aria-label="Bref resources">
+				<a href="https://feuersteiner.github.io/bref-ui/">Bref documentation</a>
+				<a href="https://github.com/feuersteiner/bref-ui-themes">GitHub</a>
+				<a href="https://discord.gg/JpgQRTUsVS">Discord</a>
+			</nav>
+		</footer>
 	</div>
 </Theme>
 
 <style>
 	:global(:root) {
-		--font-text: 'Inter Variable', sans-serif;
-		--font-display: 'Syne Variable', sans-serif;
+		--font-text: 'Inter Variable', 'Inter', sans-serif;
+		--font-display: 'Syne Variable', 'Syne', sans-serif;
+	}
+	:global(body) {
+		font: 400 16px / 24px var(--font-text);
+		font-synthesis: none;
 	}
 	[data-showcase] {
 		--showcase-rule: color-mix(in srgb, var(--color-foreground) 10%, transparent);
-		max-width: 1280px;
+		width: min(1128px, calc(100% - 48px));
 		margin: auto;
-		padding-inline: 40px;
 	}
 	header {
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: space-between;
 		align-items: center;
-		gap: 20px;
-		padding-block: 24px;
+		gap: 12px;
+		min-height: 72px;
+		padding-block: 12px;
 		border-bottom: 1px solid var(--showcase-rule);
 	}
 	a {
@@ -130,6 +141,7 @@
 	}
 	strong {
 		font: 700 24px / 1.2 var(--font-display);
+		white-space: nowrap;
 	}
 	[data-slash] {
 		color: var(--color-primary);
@@ -140,13 +152,11 @@
 		gap: 8px;
 	}
 	[data-intro] {
-		padding-block: 76px 68px;
+		padding-block: 48px;
 	}
 	[data-eyebrow] {
 		color: var(--color-muted);
-		font-size: 11px;
-		text-transform: uppercase;
-		letter-spacing: 0.13em;
+		font-size: 14px;
 	}
 	h1,
 	h2,
@@ -154,20 +164,22 @@
 		font-family: var(--font-display);
 	}
 	h1 {
-		font-size: clamp(44px, 6vw, 76px);
+		font-size: clamp(36px, 5vw, 64px);
 		font-weight: 700;
 		line-height: 1.05;
-		letter-spacing: -0.04em;
-		margin-block: 20px 24px;
+		letter-spacing: -0.045em;
+		margin-block: 20px;
 	}
 	[data-intro] > p:last-child {
-		max-width: 470px;
+		max-width: 60ch;
 		color: var(--color-muted);
-		font-size: 16px;
-		line-height: 1.65;
+		font-size: 18px;
+		line-height: 1.5;
 	}
 	section {
-		margin-bottom: 64px;
+		margin-bottom: 48px;
+		padding-top: 24px;
+		border-top: 1px solid color-mix(in srgb, var(--color-foreground) 6%, transparent);
 		scroll-margin-top: 24px;
 	}
 	[data-section-heading] {
@@ -178,8 +190,10 @@
 		margin-bottom: 24px;
 	}
 	h2 {
-		font-size: 28px;
-		font-weight: 500;
+		font-size: clamp(28px, 3vw, 36px);
+		font-weight: 400;
+		line-height: 1.2;
+		letter-spacing: -0.025em;
 	}
 	[data-section-heading] p {
 		font-size: 13px;
@@ -212,8 +226,10 @@
 		gap: 12px;
 	}
 	h3 {
-		font-size: 18px;
-		font-weight: 500;
+		flex: 1;
+		min-width: 0;
+		font-size: 24px;
+		font-weight: 400;
 	}
 	article p {
 		font-size: 13px;
@@ -226,12 +242,20 @@
 	}
 	footer {
 		display: flex;
+		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: 16px;
 		border-top: 1px solid var(--showcase-rule);
 		padding-block: 24px;
 		font-size: 12px;
 		color: var(--color-muted);
+	}
+	footer nav {
+		gap: 24px;
+	}
+	footer a:hover {
+		color: var(--color-primary);
+		text-decoration: underline;
 	}
 	[data-skip] {
 		position: fixed;
@@ -246,11 +270,8 @@
 		transform: none;
 	}
 	@media (max-width: 780px) {
-		[data-showcase] {
-			padding-inline: 20px;
-		}
 		[data-intro] {
-			padding-block: 48px;
+			padding-block: 24px;
 		}
 		[data-section-heading] {
 			align-items: flex-start;
@@ -262,6 +283,13 @@
 		}
 	}
 	@media (max-width: 400px) {
+		[data-brand] img {
+			width: 32px;
+			height: 32px;
+		}
+		strong {
+			font-size: 20px;
+		}
 		footer {
 			flex-direction: column;
 		}

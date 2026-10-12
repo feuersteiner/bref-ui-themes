@@ -79,7 +79,7 @@
 		"#lib": "./src/lib/index.js",
 		"#lib/*": "./src/lib/*"
 	},
-	"description": "Publishable Bref themes, theme demonstrations and complete Svelte demo sites.",
+	"description": "Reusable Svelte 5 themes for bref-ui, with interactive demos and native CSS.",
 	"license": "MIT",
 	"packageManager": "bun@1.3.4",
 	"dependencies": {

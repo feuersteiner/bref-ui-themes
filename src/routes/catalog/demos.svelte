@@ -72,7 +72,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		font: 500 23px / 1.2 var(--font-display);
+		font: 400 24px / 1.2 var(--font-display);
 	}
 	p {
 		color: var(--color-muted);
