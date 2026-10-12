@@ -15,6 +15,10 @@ try {
 		await page.evaluate(() => document.fonts.ready);
 		await page.screenshot({ path: `static/previews/${demo}.jpg`, type: 'jpeg', quality: 85 });
 	}
+	await page.goto(`${origin}/themes/new-paris`);
+	await page.waitForLoadState('networkidle');
+	await page.evaluate(() => document.fonts.ready);
+	await page.screenshot({ path: 'static/previews/new-paris.jpg', type: 'jpeg', quality: 85 });
 } finally {
 	await browser.close();
 }
