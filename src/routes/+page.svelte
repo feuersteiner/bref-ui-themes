@@ -10,7 +10,7 @@
 	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
-		content="Explore complete Bref demo sites and reusable Svelte themes. Relay, Forma and Elsewhere are ready to try; more themes are on the way."
+		content="Explore complete Bref demo sites and reusable Svelte themes. Relay, Forma, Elsewhere and New Paris are ready to try; more themes are on the way."
 	/>
 </svelte:head>
 
@@ -73,10 +73,37 @@
 							trailingIcon={{ name: 'arrow_outward' }}
 							size="small"
 						/>
+						<Button
+							href={resolve('/(themes)/themes/[theme]', { theme: 'new-paris' })}
+							label="New Paris theme"
+							trailingIcon={{ name: 'arrow_outward' }}
+							size="small"
+						/>
 					</nav>
 				</div>
+				<a
+					data-theme-preview
+					href={resolve('/(themes)/themes/[theme]', { theme: 'new-paris' })}
+					data-sveltekit-reload
+				>
+					<img
+						src={asset('previews/new-paris.jpg')}
+						alt="New Paris components as rendered in a browser"
+						width="1440"
+						height="960"
+						loading="lazy"
+					/>
+					<div>
+						<h3>New Paris</h3>
+						<p>
+							Warm paper, sharp edges and editorial typography. Explore the complete component
+							collection.
+						</p>
+						<span>Explore theme →</span>
+					</div>
+				</a>
 				<div data-wip-themes>
-					{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
+					{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }] as theme (theme.name)}
 						<article>
 							<Surface variant="soft" radius="medium" spacing="large" height="fill">
 								<div data-theme-heading>
@@ -214,6 +241,32 @@
 		color: var(--color-primary);
 		font-weight: 600;
 	}
+	[data-theme-preview] {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 24px;
+		align-items: center;
+		padding: 20px;
+		border: 1px solid var(--showcase-rule);
+		margin-bottom: 24px;
+	}
+	[data-theme-preview] img {
+		display: block;
+		width: 100%;
+		height: auto;
+		border: 1px solid var(--showcase-rule);
+	}
+	[data-theme-preview] p {
+		font-size: 13px;
+		line-height: 1.6;
+		color: var(--color-muted);
+		margin-block: 12px;
+	}
+	[data-theme-preview] span {
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--color-primary);
+	}
 	[data-wip-themes] {
 		display: grid;
 		grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -277,6 +330,9 @@
 			align-items: flex-start;
 			flex-direction: column;
 			gap: 8px;
+		}
+		[data-theme-preview] {
+			grid-template-columns: 1fr;
 		}
 		[data-wip-themes] {
 			grid-template-columns: 1fr;

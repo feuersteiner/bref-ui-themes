@@ -49,7 +49,25 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 ![Forma rendered demo](static/previews/forma.jpg)
 ![Elsewhere rendered demo](static/previews/elsewhere.jpg)
 
-**WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
+**WIP:** VS Code and Liquid Glass are planned. They have no exports, demonstration routes or availability links.
+
+## New Paris
+
+New Paris implements the planned Minimalist Blocky theme: warm paper, vermilion and olive, square geometry, Syne headings and Inter controls. The [component demonstration](http://localhost:5173/themes/new-paris) covers all 14 public exports, variants, sizes, keyboard interactions, disabled/loading/error states, native dialogs/popovers and responsive layouts. It is a component showcase; no separate application demo is provided.
+
+![New Paris rendered components](static/previews/new-paris.jpg)
+
+```svelte
+<script lang="ts">
+	import { Theme, Button } from 'bref-ui-themes/new-paris';
+</script>
+
+<Theme>
+	<Button label="Bonjour" variant="filled" color="primary" />
+</Theme>
+```
+
+The theme intentionally gives rounded controls square edges and glass surfaces an opaque paper treatment. Bref bindings, props and native semantics are retained. Theme styles live in `src/lib/new-paris/theme.svelte`; the demonstration imports that same public entry. Light mode, reduced motion and forced colors are supported. Mount one theme per document and reload when changing themes.
 
 ## Library imports
 
@@ -70,12 +88,13 @@ The same API is available from each implemented theme:
 ```ts
 import { Theme, Button } from 'bref-ui-themes/forma';
 // Or: import { Theme, Button } from 'bref-ui-themes/elsewhere';
-// Namespace exports: import { Relay, Forma, Elsewhere } from 'bref-ui-themes';
+// Or: import { Theme, Button } from 'bref-ui-themes/new-paris';
+// Namespace exports: import { Relay, Forma, Elsewhere, NewParis } from 'bref-ui-themes';
 ```
 
 Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+These themes provide palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
 
 ## Source layout
 

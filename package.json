@@ -41,6 +41,10 @@
 			"types": "./dist/forma/index.d.ts",
 			"svelte": "./dist/forma/index.js"
 		},
+		"./new-paris": {
+			"types": "./dist/new-paris/index.d.ts",
+			"svelte": "./dist/new-paris/index.js"
+		},
 		"./elsewhere": {
 			"types": "./dist/elsewhere/index.d.ts",
 			"svelte": "./dist/elsewhere/index.js"

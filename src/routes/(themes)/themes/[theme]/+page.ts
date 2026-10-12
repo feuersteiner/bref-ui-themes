@@ -1,7 +1,7 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types.js';
 
-const themes = ['relay', 'forma', 'elsewhere'] as const;
+const themes = ['relay', 'forma', 'elsewhere', 'new-paris'] as const;
 export const entries = () => themes.map((theme) => ({ theme }));
 export const load: PageLoad = ({ params }) => {
 	const theme = themes.find((theme) => theme === params.theme);
