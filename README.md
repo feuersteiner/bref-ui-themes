@@ -49,7 +49,11 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 ![Forma rendered demo](static/previews/forma.jpg)
 ![Elsewhere rendered demo](static/previews/elsewhere.jpg)
 
-**WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
+**WIP:** VS Code and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
+
+Glassy (the Liquid Glass theme) is a component collection at [/themes/glassy](http://localhost:5173/themes/glassy), with all 14 exports, variants, native keyboard interactions, validation, loading, disabled states and responsive layouts. Its translucent layers use native backdrop blur with opaque fallbacks and honor reduced motion, reduced transparency, increased contrast and forced colors.
+
+![Glassy rendered component collection](static/previews/glassy.jpg)
 
 ## Library imports
 
@@ -70,7 +74,8 @@ The same API is available from each implemented theme:
 ```ts
 import { Theme, Button } from 'bref-ui-themes/forma';
 // Or: import { Theme, Button } from 'bref-ui-themes/elsewhere';
-// Namespace exports: import { Relay, Forma, Elsewhere } from 'bref-ui-themes';
+// Or: import { Theme, Button } from 'bref-ui-themes/glassy';
+// Namespace exports: import { Relay, Forma, Elsewhere, Glassy } from 'bref-ui-themes';
 ```
 
 Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.

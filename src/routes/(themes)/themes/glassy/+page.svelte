@@ -1,0 +1,849 @@
+<script lang="ts">
+	import { resolve } from '$app/paths';
+	import {
+		Theme,
+		Button,
+		Checkbox,
+		Dialog,
+		Icon,
+		Pill,
+		PillChoiceGroup,
+		PillGroup,
+		Popover,
+		Progress,
+		Select,
+		Spinner,
+		Surface,
+		TextInput
+	} from '#lib/glassy/index.js';
+	let name = $state('');
+	let email = $state('');
+	let invalid = $state(false);
+	let checked = $state(true);
+	let selected = $state<string | string[]>('mist');
+	let multiple = $state<string | string[]>(['mist']);
+	let choice = $state<string | string[]>('clear');
+	let extras = $state<string | string[]>(['blur']);
+	let tags = $state([
+		{ id: 'layers', label: 'Layers' },
+		{ id: 'light', label: 'Light' },
+		{ id: 'depth', label: 'Depth' }
+	]);
+	let removable = $state(true);
+	let pressed = $state(false);
+	let clicks = $state(0);
+	let progress = $state(0.42);
+	let popover = $state(false);
+	let dialog = $state(false);
+	let busy = $state(false);
+	let feedback = $state('Ready to try.');
+	const options = [
+		{ id: 'mist', label: 'Morning mist', icon: { name: 'water_drop' as const } },
+		{ id: 'tide', label: 'Blue tide' },
+		{ id: 'dusk', label: 'Dusk', disabled: true }
+	];
+	const choices = [
+		{ id: 'clear', label: 'Clear' },
+		{ id: 'frosted', label: 'Frosted' },
+		{ id: 'tinted', label: 'Tinted' }
+	];
+	const save = () => {
+		invalid = !email.includes('@');
+		if (invalid) {
+			feedback = 'Enter an email address containing @.';
+			return;
+		}
+		busy = true;
+		feedback = 'Previewing loading state…';
+	};
+</script>
+
+<svelte:head>
+	<title>Glassy · Liquid Glass theme | Bref</title>
+	<meta
+		name="description"
+		content="The Glassy component collection: translucent surfaces, crisp controls and native interactions. Try every public export."
+	/>
+</svelte:head>
+
+<Theme>
+	<div data-glassy-gallery>
+		<a data-skip href="#collection">Skip to components</a>
+		<nav aria-label="Theme demonstrations" data-sveltekit-reload>
+			<a class="brand" href={resolve('/')}
+				><Icon name="blur_on" size="large" /><strong>bref<span>/</span>glassy</strong></a
+			>
+			<div class="nav-links">
+				<a href={resolve('/')}>Showcase <Icon name="north_east" /></a>
+				<a href={resolve('/(themes)/themes/[theme]', { theme: 'relay' })}>Relay</a>
+				<a href={resolve('/(themes)/themes/[theme]', { theme: 'forma' })}>Forma</a>
+				<a href={resolve('/(themes)/themes/[theme]', { theme: 'elsewhere' })}>Elsewhere</a>
+				<a href={resolve('/(themes)/themes/glassy')} aria-current="page">Glassy</a>
+			</div>
+		</nav>
+		<main id="collection" tabindex="-1">
+			<header class="intro">
+				<div>
+					<p class="eyebrow">THE COMPONENT COLLECTION / 04</p>
+					<h1>Clarity,<br />in layers.</h1>
+					<p class="lede">
+						Liquid Glass, made practical. Translucent surfaces, delicate highlights and a clear view
+						of what matters.
+					</p>
+					<div data-actions>
+						<Pill
+							label="Glassy theme"
+							icon={{ name: 'blur_on' }}
+							color="primary"
+							variant="soft"
+						/><span class="version">14 exports · Svelte 5</span>
+					</div>
+					<code>import &#123; Theme, Button &#125; from 'bref-ui-themes/glassy';</code>
+				</div>
+				<div class="material" aria-label="Layered glass material example">
+					<div class="orb orb-blue"></div>
+					<div class="orb orb-peach"></div>
+					<Surface class="specimen" radius="large" spacing="large" shadow="large" glass>
+						<div class="specimen-top">
+							<span class="eyebrow">MATERIAL / 001</span><Icon
+								name="water_drop"
+								size="large"
+								color="primary"
+							/>
+						</div>
+						<h2>A little depth.<br />A lot of clarity.</h2>
+						<p>Light passes through.<br />The essentials stay sharp.</p>
+						<Surface variant="soft" spacing="medium" radius="medium" orientation="horizontal" glass
+							><Icon name="layers" size="large" color="primary" />
+							<div>
+								<strong>Layered by design</strong>
+								<p>Blur · tint · highlight</p>
+							</div>
+							<Icon name="check_circle" color="success" size="medium" /></Surface
+						>
+						<div data-actions>
+							<Button
+								label="Explore components"
+								href="#buttons"
+								color="primary"
+								variant="filled"
+								trailingIcon={{ name: 'arrow_downward' }}
+							/><Pill label="Native CSS" size="small" />
+						</div>
+					</Surface>
+					<span class="material-caption">TRANSLUCENCY WITH PURPOSE</span>
+				</div>
+			</header>
+			<div class="collection-heading">
+				<h2>The building blocks</h2>
+				<p>Real exports. Live controls. Try Tab, Space and Escape.</p>
+			</div>
+			<div class="grid">
+				<section id="buttons" aria-labelledby="buttons-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="buttons-title">Buttons</h2>
+							<span>01 / ACTION</span>
+						</div>
+						<p data-muted>Three finishes, five sizes. Clear focus at every step.</p>
+						{#each ['neutral', 'soft', 'filled'] as const as variant (variant)}
+							<div data-actions>
+								<span class="row-label">{variant}</span><Button
+									label="Primary"
+									{variant}
+									color="primary"
+									onClick={() => clicks++}
+								/><Button
+									label="Secondary"
+									{variant}
+									color="secondary"
+									onClick={() => clicks++}
+								/><Button
+									icon={{ name: 'add', label: `Add, ${variant}` }}
+									{variant}
+									color="primary"
+									onClick={() => clicks++}
+								/>
+							</div>
+						{/each}
+						<div data-actions>
+							{#each ['x-small', 'small', 'medium', 'large', 'x-large'] as const as size (size)}<Button
+									label={size}
+									{size}
+									onClick={() => clicks++}
+								/>{/each}
+						</div>
+						<div data-actions>
+							<Button label="Disabled" disabled /><Button
+								label={pressed ? 'Pinned' : 'Pin'}
+								icon={{ name: 'bookmark' }}
+								aria-pressed={pressed}
+								onClick={() => (pressed = !pressed)}
+							/><Button
+								icon={{ name: 'favorite', label: 'Favorite' }}
+								rounded
+								onClick={() => clicks++}
+							/><Button
+								href="#controls"
+								label="Link button"
+								trailingIcon={{ name: 'arrow_downward' }}
+							/>
+						</div>
+						<p role="status" class="note">
+							{clicks} button activations · {pressed ? 'Pinned' : 'Unpinned'}
+						</p>
+					</Surface>
+				</section>
+				<section id="controls" aria-labelledby="controls-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="controls-title">Text & choice</h2>
+							<span>02 / INPUT</span>
+						</div>
+						<div class="form-grid">
+							<label
+								><span>Display name</span><TextInput
+									bind:value={name}
+									placeholder="A little clarity"
+									icon={{ name: 'person' }}
+									wide
+								/></label
+							>
+							<div>
+								<label for="finish">Finish</label><Select
+									id="finish"
+									items={options}
+									bind:value={selected}
+								/>
+							</div>
+							<label
+								><span>Small / neutral</span><TextInput
+									size="small"
+									variant="neutral"
+									placeholder="Compact input"
+									wide
+								/></label
+							>
+							<label
+								><span>Large / soft</span><TextInput
+									size="large"
+									variant="soft"
+									value="A brighter layer"
+									wide
+								/></label
+							>
+							<label
+								><span>Disabled input</span><TextInput
+									value="Read only preview"
+									disabled
+									wide
+								/></label
+							>
+							<div>
+								<label for="disabled-finish">Disabled select</label><Select
+									id="disabled-finish"
+									items={options}
+									value="mist"
+									disabled
+								/>
+							</div>
+							<div>
+								<label for="multiple-finish">Multiple finishes</label><Select
+									id="multiple-finish"
+									items={options}
+									bind:value={multiple}
+									size="large"
+								/>
+							</div>
+							<div>
+								<label for="empty-finish">Empty options</label><Select
+									id="empty-finish"
+									items={[]}
+									size="small"
+									emptyMessage={{ message: 'No finishes available' }}
+								/>
+							</div>
+						</div>
+						<form
+							onsubmit={(event) => {
+								event.preventDefault();
+								save();
+							}}
+							novalidate
+						>
+							<label
+								><span>Email / validation</span><TextInput
+									type="email"
+									bind:value={email}
+									placeholder="you@example.com"
+									aria-invalid={invalid}
+									aria-describedby="email-feedback"
+									wide
+								/></label
+							>
+							<p id="email-feedback" role={invalid ? 'alert' : 'status'} class:error={invalid}>
+								{feedback}
+							</p>
+							<div data-actions>
+								<Button
+									type="submit"
+									label={busy ? 'Loading…' : 'Validate email'}
+									disabled={busy}
+									aria-busy={busy}
+									color="primary"
+									variant="filled"
+								/>{#if busy}<Spinner label="Preview loading" /><Button
+										label="Finish preview"
+										onClick={() => {
+											busy = false;
+											feedback = 'Preview complete. No data sent.';
+										}}
+									/>{/if}
+							</div>
+						</form>
+					</Surface>
+				</section>
+				<section aria-labelledby="selection-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="selection-title">Selection</h2>
+							<span>03 / NATIVE</span>
+						</div>
+						<div data-actions>
+							<label class="check"><Checkbox bind:checked /><span>Keep it clear</span></label><label
+								class="check"><Checkbox disabled checked /><span>Disabled</span></label
+							><label class="check"
+								><Checkbox aria-invalid="true" /><span>Required choice</span></label
+							>
+						</div>
+						<div data-actions>
+							{#each ['x-small', 'small', 'medium', 'large', 'x-large'] as const as size (size)}<label
+									class="check"><Checkbox {size} /><span>{size}</span></label
+								>{/each}
+						</div>
+						<div>
+							<p class="field-title">Single choice / arrow keys</p>
+							<PillChoiceGroup
+								items={choices}
+								bind:selection={choice}
+								color="primary"
+								variant="soft"
+								animateSelected
+								aria-label="Glass finish"
+							/>
+						</div>
+						<div>
+							<p class="field-title">Multiple choice / Space</p>
+							<PillChoiceGroup
+								items={[
+									{ id: 'blur', label: 'Blur' },
+									{ id: 'highlight', label: 'Highlight' },
+									{ id: 'tint', label: 'Tint' }
+								]}
+								bind:selection={extras}
+								color="secondary"
+								aria-label="Material effects"
+							/>
+						</div>
+						<PillChoiceGroup
+							items={choices}
+							selection="clear"
+							disabled
+							aria-label="Disabled finishes"
+						/>
+						<p class="note">
+							{checked ? 'Clear enabled' : 'Clear disabled'} · Finish: {choice} · Effects: {Array.isArray(
+								extras
+							)
+								? extras.join(', ') || 'none'
+								: extras}
+						</p>
+					</Surface>
+				</section>
+				<section aria-labelledby="pills-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="pills-title">Pills & icons</h2>
+							<span>04 / DETAIL</span>
+						</div>
+						<div data-actions>
+							<Pill label="Neutral" color="primary" /><Pill
+								label="Soft"
+								color="secondary"
+								variant="soft"
+							/><Pill label="Filled" color="primary" variant="filled" />
+						</div>
+						<div data-actions>
+							{#each ['info', 'success', 'warning', 'error', 'muted'] as const as color (color)}<Pill
+									label={color}
+									{color}
+									variant="soft"
+								/>{/each}
+						</div>
+						<div data-actions>
+							{#each ['x-small', 'small', 'medium', 'large', 'x-large'] as const as size (size)}<Pill
+									label={size}
+									{size}
+								/>{/each}
+						</div>
+						<div data-actions>
+							<Pill
+								label="Activate pill"
+								onClick={() => clicks++}
+								icon={{ name: 'touch_app' }}
+							/>{#if removable}<Pill
+									label="Removable"
+									onDelete={() => (removable = false)}
+								/>{:else}<Button
+									label="Restore pill"
+									size="small"
+									onClick={() => (removable = true)}
+								/>{/if}
+						</div>
+						<PillGroup
+							items={tags}
+							onDelete={(id) => (tags = tags.filter((tag) => tag.id !== id))}
+							variant="soft"
+							color="primary"
+							aria-label="Removable layers"
+						/>
+						<Button
+							label="Restore layers"
+							size="small"
+							onClick={() =>
+								(tags = [
+									{ id: 'layers', label: 'Layers' },
+									{ id: 'light', label: 'Light' },
+									{ id: 'depth', label: 'Depth' }
+								])}
+						/>
+						<div data-actions>
+							{#each ['x-small', 'small', 'medium', 'large', 'x-large'] as const as size (size)}<Icon
+									name="water_drop"
+									label={`Water drop ${size}`}
+									{size}
+									color="primary"
+								/>{/each}<Icon
+								name="favorite"
+								filled
+								label="Filled heart"
+								size="large"
+								color="secondary"
+							/>
+						</div>
+					</Surface>
+				</section>
+				<section aria-labelledby="feedback-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="feedback-title">Progress & loading</h2>
+							<span>05 / FEEDBACK</span>
+						</div>
+						<p class="field-title">Determinate / 68%</p>
+						<Progress value={0.68} label="Determinate progress" size="large" />
+						<p class="field-title">Indeterminate</p>
+						<Progress label="Indeterminate progress" size="small" />
+						<label for="seek">Seekable / {Math.round(progress * 100)}%</label><Progress
+							id="seek"
+							value={progress}
+							onSeek={(value) => (progress = value)}
+						/>
+						<Progress value={0.35} onSeek={() => {}} disabled label="Disabled progress" />
+						<div data-actions>
+							{#each ['x-small', 'small', 'medium', 'large', 'x-large'] as const as size (size)}<Spinner
+									{size}
+									label={`Loading ${size}`}
+								/>{/each}
+						</div>
+						<p class="note">Loading stays visible with reduced motion enabled.</p>
+					</Surface>
+				</section>
+				<section aria-labelledby="overlays-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="overlays-title">Surfaces & overlays</h2>
+							<span>06 / DEPTH</span>
+						</div>
+						<div class="surface-samples">
+							{#each ['neutral', 'soft', 'filled'] as const as variant (variant)}<Surface
+									{variant}
+									color="primary"
+									radius="medium"
+									spacing="medium"
+									shadow="small"
+									><Icon name="layers" size="large" /><strong>{variant}</strong></Surface
+								>{/each}
+						</div>
+						<Surface
+							variant="soft"
+							radius="medium"
+							spacing="medium"
+							orientation="horizontal"
+							shadow="medium"
+							><Icon name="filter_drama" size="large" />
+							<div>
+								<strong>Nested glass</strong>
+								<p>Readable surfaces at every depth.</p>
+							</div></Surface
+						>
+						<div data-actions>
+							<Popover bind:open={popover} radius="medium" spacing="large" shadow="large">
+								{#snippet trigger()}<Button
+										label="Open popover"
+										color="primary"
+										variant="soft"
+										aria-expanded={popover}
+										onClick={() => (popover = !popover)}
+									/>{/snippet}
+								<strong>A floating layer</strong>
+								<p>Native popover. Escape or click outside to close.</p>
+								<Button label="Close popover" size="small" onClick={() => (popover = false)} />
+							</Popover>
+							<Button
+								label="Open dialog"
+								color="primary"
+								variant="filled"
+								onClick={() => (dialog = true)}
+							/>
+						</div>
+						<p class="note">The native dialog traps focus and restores it on close.</p>
+					</Surface>
+				</section>
+			</div>
+			<footer>
+				<span>Glassy / Liquid Glass</span><span
+					>Native controls · Reduced motion · Responsive by design</span
+				>
+			</footer>
+		</main>
+		<Dialog
+			bind:open={dialog}
+			header={{
+				title: 'A clearer layer',
+				icon: { name: 'layers' },
+				description: 'Native dialog, glass styling. Try Tab, Shift+Tab and Escape.'
+			}}
+			footer={{
+				primary: { label: 'Done', onClick: () => (dialog = false) },
+				secondary: { label: 'Cancel', onClick: () => (dialog = false) }
+			}}
+		>
+			<div class="dialog-content">
+				<Pill label="Focus stays here" color="primary" variant="soft" /><label
+					><span>Layer name</span><TextInput placeholder="Untitled layer" wide /></label
+				><Surface variant="soft" spacing="medium" radius="medium"
+					><p>The stronger overlay tint keeps text readable above every surface.</p></Surface
+				>
+			</div>
+		</Dialog>
+	</div>
+</Theme>
+
+<style>
+	[data-glassy-gallery] {
+		max-width: 1280px;
+		padding: 0 40px;
+		margin: auto;
+	}
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		padding: 28px 0;
+		border-bottom: 1px solid #162c4624;
+	}
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.brand,
+	.nav-links,
+	.nav-links a {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+	.brand strong {
+		font-size: 22px;
+		font-weight: 650;
+		letter-spacing: -0.06em;
+	}
+	.brand span {
+		padding: 0 4px;
+		font-weight: 300;
+	}
+	.nav-links {
+		gap: 22px;
+		font-size: 12px;
+	}
+	[aria-current] {
+		font-weight: 700;
+	}
+	.intro {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: center;
+		gap: 64px;
+		padding: 64px 0 56px;
+	}
+	.eyebrow {
+		font-size: 10px;
+		letter-spacing: 0.15em;
+		font-weight: 650;
+	}
+	h1 {
+		font-size: clamp(56px, 6vw, 84px);
+		letter-spacing: -0.075em;
+		margin: 20px 0;
+		line-height: 1.02;
+		font-weight: 500;
+	}
+	.lede {
+		max-width: 360px;
+		color: var(--color-muted);
+		font-size: 16px;
+		margin-bottom: 24px;
+	}
+	.version,
+	.material-caption {
+		font-size: 11px;
+		color: var(--color-muted);
+	}
+	code {
+		display: block;
+		font-size: 11px;
+		overflow-wrap: anywhere;
+		margin-top: 24px;
+		color: var(--color-muted);
+	}
+	.material {
+		position: relative;
+		padding: 28px 24px;
+		isolation: isolate;
+	}
+	.orb {
+		position: absolute;
+		border-radius: 50%;
+		z-index: -1;
+	}
+	.orb-blue {
+		width: 240px;
+		height: 240px;
+		right: -10px;
+		top: -10px;
+		background: radial-gradient(circle at 30% 20%, #c1e5ff, #709ccbcc 75%);
+		box-shadow: 0 20px 60px #7ca7cf66;
+	}
+	.orb-peach {
+		width: 165px;
+		height: 165px;
+		left: -20px;
+		bottom: 0;
+		background: radial-gradient(circle at 35% 25%, #fff1da, #e5b9b4);
+	}
+	.specimen-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	.material :global(.specimen) {
+		padding: 28px;
+	}
+	.material h2 {
+		font-size: 34px;
+		letter-spacing: -0.05em;
+	}
+	.material p {
+		font-size: 13px;
+		color: var(--color-muted);
+	}
+	.material :global([data-orientation='horizontal']) {
+		gap: 12px;
+	}
+	.material-caption {
+		display: block;
+		text-align: center;
+		letter-spacing: 0.12em;
+		margin-top: 24px;
+	}
+	.collection-heading {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 20px;
+		border-top: 1px solid #162c4624;
+		padding: 30px 0 24px;
+	}
+	.collection-heading h2 {
+		font-size: 24px;
+		letter-spacing: -0.04em;
+	}
+	.collection-heading p {
+		font-size: 12px;
+		color: var(--color-muted);
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		align-items: start;
+		gap: 24px;
+	}
+	section {
+		min-width: 0;
+		scroll-margin-top: 20px;
+	}
+	.section-heading {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 12px;
+	}
+	.section-heading h2 {
+		font-size: 21px;
+		letter-spacing: -0.045em;
+	}
+	.section-heading > span {
+		font-size: 9px;
+		color: var(--color-muted);
+		letter-spacing: 0.1em;
+	}
+	section p {
+		font-size: 12px;
+	}
+	section :global([data-actions]) {
+		gap: 10px;
+	}
+	.row-label {
+		width: 54px;
+		color: var(--color-muted);
+		font-size: 11px;
+	}
+	.form-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 20px 16px;
+	}
+	label,
+	.field-title {
+		font-size: 12px;
+		font-weight: 500;
+	}
+	.form-grid > div > label {
+		margin-bottom: 8px;
+	}
+	form {
+		display: grid;
+		gap: 12px;
+		border-top: 1px solid #162c4624;
+		padding-top: 20px;
+	}
+	.error {
+		color: var(--color-error);
+	}
+	.check {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+	}
+	.field-title {
+		margin-bottom: 12px;
+	}
+	.note {
+		color: var(--color-muted);
+	}
+	.surface-samples {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 12px;
+		font-size: 12px;
+	}
+	.dialog-content {
+		display: grid;
+		gap: 24px;
+	}
+	footer {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 16px;
+		font-size: 11px;
+		color: var(--color-muted);
+		border-top: 1px solid #162c4624;
+		margin-top: 48px;
+		padding: 24px 0;
+	}
+	[data-skip] {
+		position: fixed;
+		top: 8px;
+		left: 8px;
+		padding: 12px;
+		background: var(--color-background);
+		z-index: 10;
+		transform: translateY(-160%);
+	}
+	[data-skip]:focus {
+		transform: none;
+	}
+	@media (max-width: 1000px) {
+		.intro {
+			gap: 24px;
+		}
+		.nav-links {
+			gap: 14px;
+		}
+	}
+	@media (max-width: 760px) {
+		[data-glassy-gallery] {
+			padding: 0 20px;
+		}
+		nav {
+			flex-wrap: wrap;
+			padding: 20px 0;
+		}
+		.nav-links {
+			flex-wrap: wrap;
+			gap: 16px;
+		}
+		.intro {
+			grid-template-columns: 1fr;
+			padding: 40px 0 32px;
+			gap: 32px;
+		}
+		.material {
+			max-width: 520px;
+			margin: auto;
+			width: 100%;
+		}
+		.orb-blue {
+			right: 0;
+		}
+		.grid {
+			grid-template-columns: 1fr;
+		}
+		.collection-heading {
+			flex-direction: column;
+			gap: 10px;
+		}
+	}
+	@media (max-width: 420px) {
+		.form-grid {
+			grid-template-columns: 1fr;
+		}
+		.material {
+			padding: 16px 8px;
+		}
+		.material :global(.specimen) {
+			padding: 20px;
+		}
+		.section-heading {
+			align-items: flex-start;
+		}
+		.section-heading > span {
+			white-space: nowrap;
+		}
+		.row-label {
+			width: 100%;
+		}
+	}
+</style>

@@ -9,8 +9,8 @@ const page = await browser.newPage({
 });
 await mkdir('static/previews', { recursive: true });
 try {
-	for (const demo of ['relay', 'forma', 'elsewhere']) {
-		await page.goto(`${origin}/${demo}`);
+	for (const demo of ['relay', 'forma', 'elsewhere', 'glassy']) {
+		await page.goto(`${origin}/${demo === 'glassy' ? 'themes/glassy' : demo}`);
 		await page.waitForLoadState('networkidle');
 		await page.evaluate(() => document.fonts.ready);
 		await page.screenshot({ path: `static/previews/${demo}.jpg`, type: 'jpeg', quality: 85 });

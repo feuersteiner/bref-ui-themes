@@ -10,7 +10,7 @@
 	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
-		content="Explore complete Bref demo sites and reusable Svelte themes. Relay, Forma and Elsewhere are ready to try; more themes are on the way."
+		content="Explore complete Bref demo sites and reusable Svelte themes. Relay, Forma, Elsewhere and Glassy are ready to try; more themes are on the way."
 	/>
 </svelte:head>
 
@@ -73,10 +73,30 @@
 							trailingIcon={{ name: 'arrow_outward' }}
 							size="small"
 						/>
+						<Button
+							href={resolve('/(themes)/themes/glassy')}
+							label="Glassy theme"
+							trailingIcon={{ name: 'arrow_outward' }}
+							size="small"
+						/>
 					</nav>
 				</div>
+				<a data-glassy-preview href={resolve('/(themes)/themes/glassy')} data-sveltekit-reload>
+					<img
+						src={asset('previews/glassy.jpg')}
+						alt="Glassy component collection rendered in a browser"
+						width="1440"
+						height="960"
+						loading="lazy"
+					/>
+					<div>
+						<h3>Glassy / Liquid Glass</h3>
+						<p>Translucent layers, crisp controls. Explore the component collection.</p>
+						<span>Explore theme ↗</span>
+					</div>
+				</a>
 				<div data-wip-themes>
-					{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
+					{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
 						<article>
 							<Surface variant="soft" radius="medium" spacing="large" height="fill">
 								<div data-theme-heading>
@@ -213,6 +233,40 @@
 		font-size: 13px;
 		color: var(--color-primary);
 		font-weight: 600;
+	}
+	[data-glassy-preview] {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		align-items: center;
+		gap: 32px;
+		border: 1px solid var(--showcase-rule);
+		border-radius: 24px;
+		overflow: hidden;
+		margin-bottom: 24px;
+	}
+	[data-glassy-preview] img {
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+	[data-glassy-preview] div {
+		padding: 24px;
+	}
+	[data-glassy-preview] p {
+		color: var(--color-muted);
+		font-size: 13px;
+		margin-block: 12px;
+	}
+	[data-glassy-preview] span {
+		font-size: 12px;
+		font-weight: 600;
+		color: var(--color-primary);
+	}
+	@media (max-width: 780px) {
+		[data-glassy-preview] {
+			grid-template-columns: 1fr;
+			gap: 0;
+		}
 	}
 	[data-wip-themes] {
 		display: grid;

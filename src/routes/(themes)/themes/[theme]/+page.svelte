@@ -24,7 +24,7 @@
 		<nav aria-label="Theme demonstrations" data-sveltekit-reload>
 			<a href={resolve('/')}>← Showcase</a>
 			<div>
-				{#each ['relay', 'forma', 'elsewhere'] as theme (theme)}<a
+				{#each ['relay', 'forma', 'elsewhere', 'glassy'] as theme (theme)}<a
 						href={resolve('/(themes)/themes/[theme]', { theme })}
 						aria-current={data.theme === theme ? 'page' : undefined}
 						>{theme[0].toUpperCase() + theme.slice(1)}</a
