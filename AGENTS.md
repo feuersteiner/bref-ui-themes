@@ -1,0 +1,12 @@
+# Contributing to bref-ui-themes
+
+- Communicate concisely. Stay within the requested scope and preserve unrelated work.
+- Ask before large, unrequested changes. Never commit, push, publish or deploy without authorization.
+- Use native Svelte and CSS. Preserve native semantics, keyboard access and reduced-motion preferences.
+- Keep reusable themes and their components under `src/lib/<theme>`, with an `index.ts` exporting `Theme` and themed components.
+- Keep site-specific content under `src/routes`. Separate complete site demos from theme demonstration routes.
+- Demonstrations must use the same source as the library exports. Keep theme CSS in its component or route layout.
+- Use full-page navigation between themes to prevent global style leakage.
+- Validate checks, lint, library packaging, site builds and relevant rendered interactions before delivery. Inspect tarballs and test public exports in a clean consumer for distribution changes.
+- Keep README commands, imports, previews and availability accurate. Mark unfinished themes WIP without broken links.
+- Keep `AGENTS.md` and `CONTRIBUTING.md` identical.
