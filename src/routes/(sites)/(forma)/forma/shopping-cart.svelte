@@ -76,7 +76,7 @@
 			stage === 'complete' ? 'Order confirmed' : stage === 'review' ? 'Review order' : 'Your cart',
 		icon: { name: stage === 'complete' ? 'check_circle' : 'shopping_cart' }
 	}}
-	size="medium"
+	size="large"
 	onclose={() => {
 		stage = 'cart';
 		removal = '';
@@ -106,12 +106,37 @@
 				/>
 			{:else}
 				{#if stage === 'cart'}
-					{#each items as item (item.key)}
-						<CartItemRow {item} onQuantity={changeQuantity} onRemove={remove} />
+					{#if items.length}
+						<!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard users need to scroll the cart table on narrow screens.) -->
+						<div data-cart-table role="region" aria-label="Cart items" tabindex="0">
+							<table>
+								<thead>
+									<tr>
+										<th scope="col">Product</th>
+										<th scope="col">Price</th>
+										<th scope="col">Quantity</th>
+										<th scope="col">Subtotal</th>
+										<th scope="col"><span data-visually-hidden>Remove</span></th>
+									</tr>
+								</thead>
+								<tbody>
+									{#each items as item (item.key)}
+										<CartItemRow {item} onQuantity={changeQuantity} onRemove={remove} />
+									{/each}
+								</tbody>
+								<tfoot>
+									<tr>
+										<th scope="row" colspan="3">Subtotal</th>
+										<td data-cart-item-subtotal><strong>{money(total)}</strong></td>
+										<td></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
 					{:else}<div data-cart-empty>
 							<Icon name="shopping_cart" size="large" />
 							<p>Your cart is empty.</p>
-						</div>{/each}
+						</div>{/if}
 				{:else}
 					{#each items as item (item.key)}
 						<div data-order-line>
@@ -121,10 +146,12 @@
 					{/each}
 				{/if}
 				{#if items.length}
-					<div data-cart-total>
-						<span>Subtotal</span>
-						<strong>{money(total)}</strong>
-					</div>
+					{#if stage === 'review'}
+						<div data-cart-total>
+							<span>Subtotal</span>
+							<strong>{money(total)}</strong>
+						</div>
+					{/if}
 					<p data-muted>Demo checkout. No payment, delivery or purchase is made.</p>
 				{/if}
 				<div data-cart-actions>

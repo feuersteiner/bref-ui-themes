@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
-	import { Button, Surface } from '#lib/forma/index.js';
+	import { Button } from '#lib/forma/index.js';
+	import { surface } from '#lib/components/theme/surface.js';
 	import { money } from './products.js';
 	import type { CartItem } from './products.js';
 	let {
@@ -14,22 +15,22 @@
 	} = $props();
 </script>
 
-<Surface
+<tr
 	data-cart-item
 	data-cart-item-key={item.key}
-	variant="soft"
-	radius="small"
-	spacing="medium"
+	class={surface({ variant: 'soft', color: 'background' })}
 >
-	<img src={asset(item.product.image)} alt="" width="96" height="112" />
-	<div data-cart-item-details>
-		<div data-cart-item-heading>
-			<h3>{item.product.name}</h3>
-			<strong>{money(item.product.price * item.quantity)}</strong>
+	<td>
+		<div data-cart-product>
+			<img src={asset(item.product.image)} alt="" width="64" height="80" />
+			<div data-cart-item-details>
+				<h3>{item.product.name}</h3>
+				<p data-muted>{item.finish}</p>
+			</div>
 		</div>
-		<p data-muted>{item.finish}</p>
-	</div>
-	<div data-quantity>
+	</td>
+	<td data-cart-item-price>{money(item.product.price)}</td>
+	<td>
 		<div data-quantity-stepper role="group" aria-label={`Quantity for ${item.product.name}`}>
 			<Button
 				icon={{ name: 'remove', label: `Decrease quantity of ${item.product.name}` }}
@@ -46,6 +47,9 @@
 				onClick={() => onQuantity(item.key, item.quantity + 1)}
 			/>
 		</div>
+	</td>
+	<td data-cart-item-subtotal><strong>{money(item.product.price * item.quantity)}</strong></td>
+	<td>
 		<Button
 			data-delete-item
 			icon={{ name: 'delete', label: `Remove ${item.product.name} from cart` }}
@@ -54,5 +58,5 @@
 			size="small"
 			onClick={() => onRemove(item.key)}
 		/>
-	</div>
-</Surface>
+	</td>
+</tr>
