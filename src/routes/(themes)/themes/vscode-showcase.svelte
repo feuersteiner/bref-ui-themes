@@ -17,6 +17,20 @@
 		TextInput
 	} from '#lib/vscode/index.js';
 	import type { Size, Variant, Color } from 'bref-ui/types';
+	const files = [
+		{ id: 'buttons', name: 'Buttons' },
+		{ id: 'inputs', name: 'Inputs' },
+		{ id: 'pills', name: 'Tags' },
+		{ id: 'feedback', name: 'Feedback' },
+		{ id: 'surfaces', name: 'Overlays' }
+	];
+	let activeFile = $state(files[0]);
+	let sidebarVisible = $state(true);
+	let searching = $state(false);
+	let query = $state('');
+	const visibleFiles = $derived(
+		files.filter((file) => file.name.toLowerCase().includes(query.toLowerCase()))
+	);
 	let enabled = $state(true);
 	let name = $state('');
 	let submitted = $state(false);
@@ -39,8 +53,21 @@
 		{ id: 'js', label: 'JavaScript' },
 		{ id: 'locked', label: 'Unavailable language', disabled: true }
 	];
+	const selectedLanguage = $derived(
+		options.find((option) => option.id === language)?.label ?? 'Plain text'
+	);
 	const sizes: Size[] = ['x-small', 'small', 'medium', 'large', 'x-large'];
 	const variants: Variant[] = ['neutral', 'soft', 'filled'];
+	const semanticIcons = {
+		primary: 'bolt',
+		secondary: 'auto_awesome',
+		foreground: 'code',
+		muted: 'visibility_off',
+		info: 'info',
+		success: 'check_circle',
+		warning: 'warning',
+		error: 'error'
+	} as const;
 	const colors: Exclude<Color, 'background'>[] = [
 		'primary',
 		'secondary',
@@ -54,9 +81,9 @@
 </script>
 
 <Theme>
-	<div data-vscode-gallery>
+	<div data-vscode-gallery data-sidebar-hidden={!sidebarVisible || undefined}>
 		<a class="skip" href="#components">Skip to components</a>
-		<nav aria-label="Theme demonstrations" data-sveltekit-reload>
+		<nav class="theme-nav" aria-label="Theme demonstrations" data-sveltekit-reload>
 			<a href={resolve('/')}>← Showcase</a>
 			<div>
 				{#each ['relay', 'forma', 'elsewhere', 'vscode'] as theme (theme)}<a
@@ -65,6 +92,103 @@
 						>{theme === 'vscode' ? 'VS Code' : theme[0].toUpperCase() + theme.slice(1)}</a
 					>{/each}
 			</div>
+		</nav>
+		<nav class="activity-bar" aria-label="Workbench">
+			<button
+				type="button"
+				aria-label="Explorer"
+				title="Explorer"
+				aria-pressed={sidebarVisible && !searching}
+				onclick={() => {
+					sidebarVisible = searching || !sidebarVisible;
+					searching = false;
+					query = '';
+				}}><span class="workbench-icon" aria-hidden="true"><Icon name="file_copy" /></span></button
+			>
+			<button
+				type="button"
+				aria-label="Search components"
+				title="Search components"
+				aria-pressed={sidebarVisible && searching}
+				onclick={() => {
+					sidebarVisible = true;
+					searching = !searching;
+					query = '';
+				}}><span class="workbench-icon" aria-hidden="true"><Icon name="search" /></span></button
+			>
+			<a class="manage" href="#inputs" aria-label="Settings" title="Settings"
+				><span class="workbench-icon" aria-hidden="true"><Icon name="settings" /></span></a
+			>
+		</nav>
+		<nav class="explorer" id="explorer" aria-label="Component explorer" hidden={!sidebarVisible}>
+			<div class="explorer-heading">{searching ? 'SEARCH' : 'EXPLORER'}</div>
+			{#if searching}
+				<div class="explorer-search">
+					<input aria-label="Find component file" placeholder="Search files" bind:value={query} />
+				</div>
+			{/if}
+			<details class="explorer-group open-editors">
+				<summary
+					><span class="workbench-icon twistie" aria-hidden="true"
+						><Icon name="chevron_right" /></span
+					>OPEN EDITORS</summary
+				>
+				<a class="file-entry" href={`#${activeFile.id}`}
+					><span class="workbench-icon file-icon" aria-hidden="true"
+						><Icon name="description" /></span
+					>{activeFile.name}.svelte</a
+				>
+			</details>
+			<details class="explorer-group workspace" open>
+				<summary
+					><span class="workbench-icon twistie" aria-hidden="true"
+						><Icon name="chevron_right" /></span
+					>BREF-UI-THEMES</summary
+				>
+				<details class="folder" open>
+					<summary
+						><span class="workbench-icon twistie" aria-hidden="true"
+							><Icon name="chevron_right" /></span
+						><span class="workbench-icon" aria-hidden="true"><Icon name="folder_open" /></span>src /
+						lib / vscode</summary
+					>
+					<div class="file-list">
+						{#each visibleFiles as file (file.id)}
+							<a
+								class="file-entry"
+								href={`#${file.id}`}
+								aria-current={activeFile.id === file.id ? 'true' : undefined}
+								onclick={() => (activeFile = file)}
+								><span class="workbench-icon file-icon" aria-hidden="true"
+									><Icon name="description" /></span
+								>{file.name}.svelte</a
+							>
+						{/each}
+						{#if visibleFiles.length === 0}<p class="empty-files">No matching files</p>{/if}
+					</div>
+				</details>
+			</details>
+			<details class="explorer-group outline">
+				<summary
+					><span class="workbench-icon twistie" aria-hidden="true"
+						><Icon name="chevron_right" /></span
+					>OUTLINE</summary
+				>
+				{#each files as file (file.id)}<a
+						class="file-entry"
+						href={`#${file.id}`}
+						onclick={() => (activeFile = file)}
+						><span class="workbench-icon" aria-hidden="true"><Icon name="data_object" /></span
+						>{file.name}</a
+					>{/each}
+			</details>
+		</nav>
+		<nav class="editor-tabs" aria-label="Editor files">
+			<a href={`#${activeFile.id}`} aria-current="true"
+				><span class="workbench-icon file-icon" aria-hidden="true"><Icon name="description" /></span
+				>{activeFile.name}.svelte
+				<span class="workbench-icon tab-close" aria-hidden="true"><Icon name="close" /></span></a
+			>
 		</nav>
 		<header>
 			<p class="eyebrow"><Icon name="code" /> BREF / THEME COLLECTION</p>
@@ -108,7 +232,7 @@
 						label="Disabled link"
 						disabled
 						size="small"
-					/><span role="status">Activations: {presses}</span>
+					/>
 				</div>
 				<div class="colors">
 					{#each colors as color (color)}<Button
@@ -338,7 +462,7 @@
 						<h3>Semantic icons</h3>
 						<div class="row">
 							{#each colors as color (color)}<Icon
-									name="circle"
+									name={semanticIcons[color]}
 									label={`${color} icon`}
 									{color}
 									size="medium"
@@ -362,7 +486,7 @@
 				<div class="surface-grid">
 					{#each variants as variant (variant)}<Surface
 							{variant}
-							color="background"
+							color={variant === 'filled' ? 'primary' : 'background'}
 							spacing="medium"
 							radius="0.1875rem"
 							><h3>{variant}</h3>
@@ -378,8 +502,8 @@
 						spacing="small"
 						radius="0.125rem"
 						hover="small"><Icon name="info" color="info" /><span>Horizontal surface</span></Surface
-					><Surface width="fit" spacing="small" radius="0.125rem" glass shadow
-						><span>Glass / shadow</span></Surface
+					><Surface width="fit" spacing="small" radius="0.125rem" shadow
+						><span>Widget shadow</span></Surface
 					>
 				</div>
 				<Surface
@@ -416,7 +540,8 @@
 				</div>
 			</section>
 		</main>
-		<footer>
+		<footer class="status-bar">
+			<span role="status">Activations: {presses}</span><span>{selectedLanguage}</span>
 			<span>14 exports · one reusable theme</span><a href={resolve('/')} data-sveltekit-reload
 				>Back to showcase ↗</a
 			>
@@ -448,12 +573,16 @@
 
 <style>
 	[data-vscode-gallery] {
-		max-width: 1180px;
-		padding: 0 32px;
-		margin: auto;
+		display: grid;
+		--workbench-title-height: 46px;
+		--workbench-status-height: 24px;
+		grid-template-columns: 48px 240px minmax(0, 1fr);
+		grid-template-rows: auto auto auto 1fr;
+		min-height: 100vh;
+		padding-bottom: var(--workbench-status-height);
 	}
-	nav,
-	nav div,
+	.theme-nav,
+	.theme-nav div,
 	.row,
 	.colors {
 		display: flex;
@@ -461,32 +590,217 @@
 		flex-wrap: wrap;
 		gap: 10px;
 	}
-	nav {
+	.theme-nav {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		height: var(--workbench-title-height);
+		background: var(--color-background);
+		grid-column: 1 / -1;
 		justify-content: space-between;
 		border-bottom: 1px solid var(--vscode-border);
-		padding: 16px 0;
+		padding: 8px 24px;
 	}
-	nav div {
+	.theme-nav div {
 		gap: 20px;
 	}
-	nav a {
+	.theme-nav a {
 		text-decoration: none;
 		color: var(--color-muted);
 	}
-	nav a[aria-current] {
+	.theme-nav a[aria-current] {
 		color: var(--color-foreground);
 		border-bottom: 2px solid var(--color-primary);
 	}
+	[data-vscode-gallery][data-sidebar-hidden] {
+		grid-template-columns: 48px 0 minmax(0, 1fr);
+	}
+	.activity-bar,
+	.explorer {
+		grid-row: 2 / 5;
+		position: sticky;
+		top: var(--workbench-title-height);
+		align-self: start;
+		height: calc(100dvh - var(--workbench-title-height) - var(--workbench-status-height));
+	}
+	.activity-bar {
+		grid-column: 1;
+		background: #333333;
+		display: flex;
+		flex-direction: column;
+	}
+	.activity-bar button,
+	.activity-bar a {
+		display: grid;
+		place-items: center;
+		width: 48px;
+		height: 48px;
+		flex-shrink: 0;
+		padding: 0;
+		border: 0;
+		border-left: 2px solid transparent;
+		background: transparent;
+		color: #858585;
+		text-decoration: none;
+		cursor: pointer;
+	}
+	.workbench-icon {
+		display: inline-flex;
+		flex-shrink: 0;
+		width: 16px;
+		height: 16px;
+		font-size: 16px;
+	}
+	.activity-bar .workbench-icon {
+		width: 24px;
+		height: 24px;
+		font-size: 24px;
+	}
+	.activity-bar button[aria-pressed='true'] {
+		border-left-color: #ffffff;
+		color: #ffffff;
+	}
+	.activity-bar :is(button, a):hover {
+		color: #ffffff;
+	}
+	.activity-bar .manage {
+		margin-top: auto;
+	}
+	.explorer {
+		grid-column: 2;
+		display: flex;
+		flex-direction: column;
+		background: var(--vscode-panel);
+		font-size: 13px;
+		overflow: auto;
+	}
+	.explorer[hidden] {
+		display: none;
+	}
+	.explorer-heading {
+		display: flex;
+		align-items: center;
+		min-height: 35px;
+		padding: 0 20px;
+		font-size: 11px;
+	}
+	.explorer summary,
+	.file-entry {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		height: 22px;
+		padding: 0 6px;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+	.explorer summary {
+		list-style: none;
+	}
+	.explorer summary::-webkit-details-marker {
+		display: none;
+	}
+	.explorer-group > summary {
+		font-size: 11px;
+		font-weight: 700;
+	}
+	.explorer details[open] > summary > .twistie {
+		transform: rotate(90deg);
+	}
+	.explorer .folder > summary {
+		padding-left: 18px;
+	}
+	.file-list {
+		position: relative;
+	}
+	.file-list::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 25px;
+		width: 1px;
+		background: #404040;
+		pointer-events: none;
+	}
+	.explorer .file-entry {
+		padding-left: 22px;
+		color: var(--color-foreground);
+		text-decoration: none;
+	}
+	.file-list .file-entry {
+		padding-left: 40px;
+	}
+	.file-entry:hover,
+	.explorer summary:hover {
+		background: #2a2d2e;
+	}
+	.file-entry[aria-current] {
+		background: #37373d;
+	}
+	.file-entry[aria-current]:focus {
+		background: #094771;
+	}
+	.explorer .outline {
+		margin-top: auto;
+		border-top: 1px solid #333333;
+	}
+	.explorer-search {
+		padding: 4px 12px 10px;
+	}
+	.explorer-search input {
+		width: 100%;
+		padding: 4px 6px;
+		border: 1px solid var(--vscode-border);
+		border-radius: 0;
+		background: var(--vscode-input);
+		color: var(--color-foreground);
+	}
+	.empty-files {
+		padding: 4px 40px;
+		color: var(--color-muted);
+	}
+	.file-icon {
+		color: #e37933;
+	}
+	.editor-tabs {
+		background: var(--vscode-panel);
+		border-bottom: 1px solid var(--vscode-border);
+	}
+	.editor-tabs a {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+		width: fit-content;
+		height: 35px;
+		padding: 0 12px;
+		background: var(--color-background);
+		border-top: 1px solid var(--vscode-accent);
+		border-right: 1px solid var(--vscode-border);
+		color: var(--color-foreground);
+		text-decoration: none;
+		font-size: 13px;
+	}
+	.editor-tabs .tab-close {
+		margin-left: 12px;
+	}
+	header,
+	main,
+	.editor-tabs {
+		grid-column: 3;
+		min-width: 0;
+	}
+	main {
+		padding: 0 32px;
+	}
 	header {
-		padding: 32px 0 24px;
+		padding: 32px 32px 24px;
 	}
 	.eyebrow {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		font:
-			11px / 1.5 ui-monospace,
-			monospace;
+		font: 11px / 1.5 var(--vscode-font-mono);
 		color: var(--color-info);
 		letter-spacing: 0.08em;
 	}
@@ -503,11 +817,7 @@
 		font-size: 16px;
 	}
 	code {
-		font:
-			12px / 1.6 ui-monospace,
-			'SFMono-Regular',
-			Consolas,
-			monospace;
+		font: 12px / 1.6 var(--vscode-font-mono);
 		color: var(--color-info);
 		overflow-wrap: anywhere;
 	}
@@ -532,9 +842,7 @@
 		gap: 8px;
 	}
 	h2 {
-		font:
-			12px / 1.5 ui-monospace,
-			monospace;
+		font: 12px / 1.5 var(--vscode-font-mono);
 		color: var(--color-muted);
 		margin: 0;
 	}
@@ -560,9 +868,7 @@
 	}
 	.key {
 		min-width: 52px;
-		font:
-			12px / 1.5 ui-monospace,
-			monospace;
+		font: 12px / 1.5 var(--vscode-font-mono);
 	}
 	.grid {
 		display: grid;
@@ -575,6 +881,16 @@
 		align-content: start;
 		gap: 10px;
 		min-width: 0;
+	}
+	form :global(> .button),
+	.control-stack :global(> .button) {
+		justify-self: start;
+	}
+	[data-vscode-gallery] :global(.surface[data-shadow]) {
+		--surface-shadow: 0 0 8px 2px #0000005c;
+	}
+	section:last-child {
+		padding-bottom: 180px;
 	}
 	form > label:not(:first-child) {
 		margin-top: 8px;
@@ -608,12 +924,21 @@
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 12px;
 	}
-	footer {
+	.status-bar {
+		position: fixed;
+		inset: auto 0 0;
+		z-index: 1;
 		display: flex;
 		justify-content: space-between;
-		gap: 16px;
-		padding: 20px 0;
-		border-top: 1px solid var(--vscode-border);
+		gap: 2px 16px;
+		padding: 4px 12px;
+		background: #007acc;
+		color: white;
+		font-size: 11px;
+		flex-wrap: wrap;
+	}
+	.status-bar a {
+		color: white;
 	}
 	.skip {
 		position: fixed;
@@ -628,8 +953,30 @@
 		transform: none;
 	}
 	@media (max-width: 680px) {
-		[data-vscode-gallery] {
-			padding: 0 16px;
+		[data-vscode-gallery],
+		[data-vscode-gallery][data-sidebar-hidden] {
+			--workbench-status-height: 44px;
+			grid-template-columns: 48px minmax(0, 1fr);
+		}
+		.explorer {
+			position: static;
+			height: auto;
+			grid-column: 2;
+			grid-row: 2;
+			border-bottom: 1px solid var(--vscode-border);
+		}
+		.activity-bar {
+			height: calc(100dvh - var(--workbench-title-height) - var(--workbench-status-height));
+			grid-row: 2 / 6;
+		}
+		header,
+		main,
+		.editor-tabs {
+			grid-column: 2;
+		}
+		header,
+		main {
+			padding-inline: 16px;
 		}
 		.grid,
 		.surface-grid {
@@ -640,11 +987,17 @@
 			display: block;
 			margin: 8px 0 0;
 		}
-		nav div {
+		.theme-nav div {
 			gap: 12px;
 		}
-		footer {
-			flex-wrap: wrap;
+		.explorer .outline {
+			margin-top: 16px;
+		}
+	}
+	@media (max-width: 380px) {
+		[data-vscode-gallery] {
+			--workbench-title-height: 70px;
+			--workbench-status-height: 64px;
 		}
 	}
 </style>

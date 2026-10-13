@@ -1,4 +1,4 @@
-import { chromium } from '@playwright/test';
+import { chromium } from 'playwright';
 import { mkdir } from 'node:fs/promises';
 
 const origin = process.argv[2] ?? 'http://127.0.0.1:5173';

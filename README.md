@@ -17,14 +17,13 @@ bun run package                 # library → dist; includes publint
 bun run build:site              # static showcase → build
 bun run build                   # site + library
 bun run preview                 # preview the production site
-bunx playwright install chromium
-bun run test                    # desktop/mobile tests against production build
 bun pm pack                     # creates a local npm tarball; does not publish
 ```
 
 After changes to a demo, refresh the catalog and README screenshots with the development server running:
 
 ```sh
+bunx playwright install chromium
 bun run previews http://127.0.0.1:5173
 ```
 
