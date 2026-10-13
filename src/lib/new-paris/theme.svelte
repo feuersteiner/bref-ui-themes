@@ -3,21 +3,20 @@
 	import { Theme as BrefTheme, ThemeModeToggle } from 'bref-ui';
 	import Base from '../shared/base.svelte';
 	import '@fontsource-variable/inter';
-	import '@fontsource-variable/syne';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
 <BrefTheme
 	palette={{
-		primary: '#c6402d',
-		secondary: '#526750',
-		background: '#f7f7f2',
-		foreground: '#1e231f',
-		muted: '#686d65',
-		info: '#325c78',
-		success: '#3d6548',
-		warning: '#805a19',
-		error: '#a52832'
+		primary: '#171715',
+		secondary: '#82735e',
+		background: '#faf9f6',
+		foreground: '#171715',
+		muted: '#73716c',
+		info: '#465367',
+		success: '#526149',
+		warning: '#7c642b',
+		error: '#8c3f35'
 	}}
 >
 	<ThemeModeToggle mode="light" />
@@ -29,13 +28,13 @@
 	:global([data-bref-theme='new-paris']) {
 		display: contents;
 		--font-text: 'Inter Variable', sans-serif;
-		--font-display: 'Syne Variable', sans-serif;
-		--font-accent: Georgia, 'Times New Roman', serif;
+		--font-display: 'Didot', 'Bodoni MT', 'Times New Roman', serif;
+		--font-accent: var(--font-display);
 		--np-label-size: 0.75rem;
-		--np-label-tracking: 0.09em;
+		--np-label-tracking: 0.14em;
 		--np-caption-size: 0.875rem;
-		--np-rule: #e1e3db;
-		--np-paper: #fffefa;
+		--np-rule: #d9d5cc;
+		--np-paper: #ffffff;
 	}
 	:global {
 		[data-bref-theme='new-paris'] :is(em, [data-accent]) {
@@ -44,7 +43,7 @@
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] [data-eyebrow] {
 			font-size: var(--np-label-size);
-			font-weight: 600;
+			font-weight: 500;
 			letter-spacing: var(--np-label-tracking);
 			text-transform: uppercase;
 		}
@@ -55,8 +54,8 @@
 		}
 		[data-bref-theme='new-paris'] :is(h1, h2, h3) {
 			font-family: var(--font-display);
-			font-weight: 600;
-			letter-spacing: -0.04em;
+			font-weight: 400;
+			letter-spacing: -0.035em;
 		}
 		/* The second theme attribute keeps overrides above Svelte-scoped controls regardless of import order.
 		   Native top-layer content remains a descendant of this wrapper. */
@@ -65,7 +64,7 @@
 			border-radius: 0;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .surface {
-			--surface-soft-strength: 8%;
+			--surface-soft-strength: 7%;
 			--surface-neutral-strength: 0%;
 			--surface-border: var(--np-rule);
 			--surface-highlight: 0 0 0 transparent;
@@ -86,10 +85,11 @@
 			backdrop-filter: none;
 			-webkit-backdrop-filter: none;
 		}
-		[data-bref-theme='new-paris'][data-bref-theme] .button {
-			font-size: var(--internal-font-size);
+		[data-bref-theme='new-paris'][data-bref-theme] .button[data-kind='normal'] {
+			font-size: max(0.75rem, calc(var(--internal-font-size) * 0.88));
 			font-weight: 500;
-			letter-spacing: -0.015em;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
 			padding-block: 0.4rem;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme]
@@ -112,7 +112,7 @@
 			font-size: 1.125rem;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .surface:has(> input) {
-			background: var(--color-background);
+			background: var(--np-paper);
 			--surface-border: var(--np-rule);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] [data-checkbox] {
@@ -131,13 +131,14 @@
 			border-color: var(--np-rule);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] div[data-wide][data-color] {
-			letter-spacing: 0;
+			letter-spacing: 0.06em;
 			font-size: 0.8125rem;
 			font-weight: 500;
 			border-color: transparent;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] div[data-wide][data-color].surface-neutral {
-			background: color-mix(in srgb, var(--color-foreground) 5%, var(--np-paper));
+			background: var(--color-background);
+			border-color: var(--np-rule);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] ul[role] > li > div {
 			border-radius: 0;
@@ -215,6 +216,9 @@
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] dialog::backdrop {
 			background: color-mix(in srgb, var(--color-foreground) 30%, transparent);
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] dialog header h2 {
+			font-size: 2rem;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] dialog header {
 			padding-bottom: 1.5rem;
