@@ -96,25 +96,24 @@
 		<main id="specimens" tabindex="-1">
 			<header class="hero">
 				<div class="hero-copy">
-					<p class="eyebrow">Collection 04 / Component study</p>
+					<p data-eyebrow>Collection 04 / Component study</p>
 					<h1>NEW<br />PARIS<span>.</span></h1>
-					<p class="dek">A little structure.<br /><em>A certain je ne sais quoi.</em></p>
+					<p class="dek">Clear by design.<br /><span>Distinctly New Paris.</span></p>
 				</div>
 				<div class="hero-aside">
 					<div class="monogram" aria-hidden="true">
 						<span>n<span class="serif">p</span></span><small>PARIS — 04</small>
 					</div>
 					<p>
-						Warm paper. Sharp edges. Quiet confidence.<br />A reusable theme for deliberate
-						interfaces.
+						A clear visual language.<br />Built for everyday interfaces.
 					</p>
 					<div class="swatches" aria-label="Theme palette">
-						<span style="--swatch: #242522" title="Ink #242522"></span><span
-							style="--swatch: #b73321"
-							title="Vermilion #b73321"
-						></span><span style="--swatch: #555a37" title="Olive #555a37"></span><span
-							style="--swatch: #d2cec4"
-							title="Stone #d2cec4"
+						<span style="--swatch: #1e231f" title="Ink #1e231f"></span><span
+							style="--swatch: #c6402d"
+							title="Vermilion #c6402d"
+						></span><span style="--swatch: #526750" title="Olive #526750"></span><span
+							style="--swatch: #e1e3db"
+							title="Stone #e1e3db"
 						></span>
 						<small>INK / VERMILION / OLIVE / STONE</small>
 					</div>
@@ -132,7 +131,7 @@
 						<h2 id="actions">Make a move.</h2>
 						<small>Button</small>
 					</div>
-					<p class="caption">Three treatments. One clear intention.</p>
+					<p data-caption>Three treatments. One clear intention.</p>
 					{#each variants as variant (variant)}
 						<div class="specimen-row">
 							<span class="row-label">{variant}</span><Button
@@ -171,7 +170,7 @@
 							color="primary"
 						/>
 					</div>
-					<p class="caption" role="status">Actions activated: {pillClicks}</p>
+					<p data-caption role="status">Actions activated: {pillClicks}</p>
 				</section>
 				<section aria-labelledby="inputs">
 					<div class="section-title">
@@ -179,7 +178,7 @@
 						<h2 id="inputs">Leave a mark.</h2>
 						<small>TextInput</small>
 					</div>
-					<p class="caption">Honest labels. Visible focus. Helpful feedback.</p>
+					<p data-caption>Honest labels. Visible focus. Helpful feedback.</p>
 					<form novalidate onsubmit={validate}>
 						<label for="np-name">Edition name</label><TextInput
 							id="np-name"
@@ -205,7 +204,7 @@
 						<p
 							id="np-email-help"
 							class:error={!!error}
-							class="caption"
+							data-caption
 							role={error ? 'alert' : undefined}
 						>
 							{error || 'Submit to try the error and success states.'}
@@ -248,7 +247,7 @@
 								items={options}
 								bind:value={selection}
 							/>
-							<p class="caption">Selected: {selection}</p>
+							<p data-caption>Selected: {selection}</p>
 						</div>
 						<div>
 							<label for="np-multiple">Multiple selection</label><Select
@@ -256,7 +255,6 @@
 								items={options}
 								bind:value={multiple}
 								placeholder="Choose materials"
-								size="large"
 							/>
 						</div>
 						<div>
@@ -270,6 +268,7 @@
 						<div>
 							<label for="np-unavailable">Disabled select</label><Select
 								id="np-unavailable"
+								size="small"
 								items={options}
 								value="ink"
 								disabled
@@ -321,7 +320,7 @@
 						aria-label="Edition format"
 						color="primary"
 					/>
-					<p class="caption">Selected: {singleChoice}</p>
+					<p data-caption>Selected: {singleChoice}</p>
 					<h3>Multiple choice</h3>
 					<PillChoiceGroup
 						items={choices}
@@ -367,7 +366,7 @@
 								color={index === 2 ? 'foreground' : 'background'}
 								spacing="large"
 								shadow={index === 1 ? 'small' : false}
-								><span class="eyebrow">0{index + 1} / {variant}</span>
+								><span data-eyebrow>0{index + 1} / {variant}</span>
 								<h3>{['The quiet frame.', 'A softer ground.', 'A bold conclusion.'][index]}</h3>
 								<p>Space does the work.<br />Every edge has a purpose.</p></Surface
 							>{/each}
@@ -382,10 +381,11 @@
 								hover="medium"
 								orientation="horizontal"
 								><span>Interactive surface</span><Icon name="arrow_outward" /></Surface
-							><Surface variant="neutral" glass spacing="medium" width="fit"
-								><span>Opaque glass treatment</span></Surface
 							>
 						</a>
+						<Surface variant="neutral" glass spacing="medium" width="fit"
+							><span>Opaque glass treatment</span></Surface
+						>
 					</div>
 					<Surface spacing="medium" scroll style="max-height: 100px" aria-label="Scrollable surface"
 						><p>A scrollable surface with keyboard access.</p>
@@ -429,7 +429,7 @@
 						<h2 id="overlays">Above the fold.</h2>
 						<small>Dialog · Popover</small>
 					</div>
-					<p class="caption">Native top layers. Try Tab, Shift+Tab and Escape.</p>
+					<p data-caption>Native top layers. Try Tab, Shift+Tab and Escape.</p>
 					<div class="row">
 						{#each ['small', 'medium', 'large'] as size (size)}<Button
 								label={`${size[0].toUpperCase() + size.slice(1)} dialog`}
@@ -441,7 +441,13 @@
 								}}
 							/>{/each}
 					</div>
-					<Button label="Non-dismissible dialog" size="small" onClick={() => (lockedOpen = true)} />
+					<div class="row">
+						<Button
+							label="Non-dismissible dialog"
+							size="small"
+							onClick={() => (lockedOpen = true)}
+						/>
+					</div>
 					<div class="row">
 						<Popover bind:open={popoverOpen} spacing="large" shadow width="fit">
 							{#snippet trigger()}<Button
@@ -453,7 +459,7 @@
 									color="foreground"
 								/>{/snippet}
 							<div class="popover-content">
-								<p class="eyebrow">A small aside</p>
+								<p data-eyebrow>A small aside</p>
 								<h3>Details matter.</h3>
 								<p>Click outside or press Escape to dismiss.</p>
 								<Button label="Close popover" size="small" onClick={() => (popoverOpen = false)} />
@@ -463,10 +469,6 @@
 							<p>Unavailable</p></Popover
 						>
 					</div>
-					<div class="editorial-note">
-						<span>“</span>
-						<p>Nothing extra.<br /><em>Everything considered.</em></p>
-					</div>
 				</section>
 				<section aria-labelledby="scale" class="wide-panel">
 					<div class="section-title">
@@ -474,7 +476,7 @@
 						<h2 id="scale">The finer details.</h2>
 						<small>Sizes · Palette · Icon</small>
 					</div>
-					<p class="caption">Every size, from the smallest annotation to a confident action.</p>
+					<p data-caption>Every size, from the smallest annotation to a confident action.</p>
 					<div class="row">
 						{#each sizes as size (size)}<Button
 								label={size}
@@ -506,6 +508,17 @@
 								/></label
 							>{/each}
 					</div>
+					<div class="input-sizes">
+						{#each ['small', 'medium', 'large'] as size (size)}<div>
+								<label for={`np-select-${size}`}>{size} select</label>
+								<Select
+									id={`np-select-${size}`}
+									size={size as 'small' | 'medium' | 'large'}
+									items={options}
+									value="paper"
+								/>
+							</div>{/each}
+					</div>
 					<div class="row">
 						{#each colors as color (color)}<Button
 								label={color}
@@ -536,7 +549,7 @@
 			</div>
 			<section id="usage" class="usage" aria-labelledby="usage-heading">
 				<div>
-					<p class="eyebrow">Built to be used</p>
+					<p data-eyebrow>Built to be used</p>
 					<h2 id="usage-heading">Take it from here.</h2>
 					<p>Wrap the components in one Theme per document.</p>
 				</div>
@@ -562,7 +575,7 @@
 			size={dialogSize}
 			header={{
 				title: dialogStep ? 'Consider it done.' : 'A moment of focus.',
-				icon: { name: dialogStep ? 'check' : 'crop_square' },
+				icon: { name: dialogStep ? 'check' : 'article' },
 				description: 'New Paris / Native dialog specimen'
 			}}
 			footer={{
@@ -581,7 +594,7 @@
 					? 'The title, icon and action update together.'
 					: 'Sharp edges, warm paper and a little room to think. Keyboard focus stays inside this dialog.'}
 			</p>
-			<label for="np-dialog-note">A short note</label><TextInput
+			<label class="dialog-note" for="np-dialog-note">A short note</label><TextInput
 				id="np-dialog-note"
 				placeholder="Write something thoughtful"
 				wide
@@ -604,7 +617,7 @@
 
 <style>
 	[data-new-paris-showcase] {
-		max-width: 1280px;
+		max-width: 1320px;
 		margin: auto;
 		padding: 0 48px;
 	}
@@ -613,12 +626,12 @@
 		text-decoration: none;
 	}
 	.masthead {
-		min-height: 88px;
+		min-height: 96px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 24px;
-		border-bottom: 1px solid var(--color-foreground);
+		border-bottom: 1px solid var(--np-rule);
 	}
 	.brand {
 		font: 700 23px var(--font-display);
@@ -641,20 +654,14 @@
 	}
 	.hero {
 		display: grid;
-		grid-template-columns: 1.4fr 1fr;
-		padding: 54px 0 48px;
+		grid-template-columns: 1.5fr 1fr;
+		padding: 72px 0 64px;
 		gap: 64px;
 	}
-	.eyebrow {
-		font-size: 10px;
-		font-weight: 600;
-		letter-spacing: 0.14em;
-		text-transform: uppercase;
-	}
 	h1 {
-		font-size: clamp(60px, 9.5vw, 138px);
-		line-height: 0.84;
-		letter-spacing: -0.075em;
+		font-size: clamp(60px, 9vw, 128px);
+		line-height: 0.9;
+		letter-spacing: -0.065em;
 		margin: 28px 0 26px;
 		font-weight: 800;
 	}
@@ -662,13 +669,12 @@
 		color: var(--color-primary);
 	}
 	.dek {
-		font-size: 20px;
+		font-size: 22px;
 		line-height: 1.4;
+		letter-spacing: -0.02em;
 	}
-	em,
-	.serif {
-		font-family: Georgia, serif;
-		font-weight: 400;
+	.dek > span {
+		color: var(--color-muted);
 	}
 	.hero-aside {
 		display: grid;
@@ -679,12 +685,12 @@
 		padding-left: 24px;
 	}
 	.hero-aside > p {
-		font-size: 12px;
+		font-size: 15px;
 		color: var(--color-muted);
 		line-height: 1.6;
 	}
 	.monogram {
-		background: var(--color-primary);
+		background: var(--color-foreground);
 		color: var(--color-background);
 		width: 188px;
 		height: 188px;
@@ -694,12 +700,11 @@
 	}
 	.monogram > span {
 		font: 600 90px / 1 var(--font-display);
-		letter-spacing: -12px;
+		letter-spacing: -9px;
 		padding-right: 12px;
 	}
 	.monogram .serif {
-		font-size: 108px;
-		font-style: italic;
+		color: #fa765f;
 	}
 	.monogram small {
 		font-size: 9px;
@@ -718,7 +723,7 @@
 		background: var(--swatch);
 	}
 	.swatches small {
-		font-size: 8px;
+		font-size: 11px;
 		letter-spacing: 0.08em;
 		margin-left: 8px;
 	}
@@ -728,10 +733,10 @@
 		align-items: center;
 		flex-wrap: wrap;
 		gap: 12px;
-		border-block: 1px solid var(--color-foreground);
-		padding: 16px 0;
-		font-size: 10px;
-		letter-spacing: 0.08em;
+		border-bottom: 1px solid var(--np-rule);
+		padding: 20px 0;
+		font-size: 13px;
+		letter-spacing: 0.02em;
 	}
 	.index-bar > span:first-child {
 		font-weight: 700;
@@ -743,11 +748,13 @@
 		display: flex;
 		align-items: center;
 		gap: 10px;
+		min-height: 24px;
 	}
 	.specimen-grid {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
-		border-left: 1px solid var(--np-rule);
+		align-items: start;
+		gap: 24px;
 		margin-top: 32px;
 	}
 	section {
@@ -757,13 +764,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
-		padding: 32px;
-		border: 1px solid var(--np-rule);
-		border-left: 0;
-		border-top: 0;
-	}
-	.specimen-grid > section:nth-child(-n + 2) {
-		border-top: 1px solid var(--np-rule);
+		padding: 36px;
+		background: var(--np-paper);
 	}
 	.section-title {
 		display: flex;
@@ -772,23 +774,16 @@
 		flex-wrap: wrap;
 	}
 	.section-title > span {
-		font:
-			12px Georgia,
-			serif;
-		color: var(--color-primary);
+		font: 500 12px var(--font-text);
+		color: var(--color-muted);
 	}
 	h2 {
-		font-size: 25px;
+		font-size: 28px;
 	}
 	.section-title small {
 		color: var(--color-muted);
-		font-size: 10px;
+		font-size: 12px;
 		margin-left: auto;
-	}
-	.caption {
-		font-size: 11px;
-		color: var(--color-muted);
-		line-height: 1.5;
 	}
 	.row,
 	.specimen-row,
@@ -799,14 +794,16 @@
 		flex-wrap: wrap;
 	}
 	.row-label {
-		font-size: 10px;
-		text-transform: uppercase;
-		letter-spacing: 0.08em;
+		font-size: 13px;
 		min-width: 66px;
 		color: var(--color-muted);
 	}
 	.row-divider {
 		border-top: 1px solid var(--np-rule);
+		margin-block: 4px;
+	}
+	.specimen-row {
+		padding-block: 4px;
 	}
 	form {
 		display: flex;
@@ -815,7 +812,7 @@
 	}
 	label,
 	.field-label {
-		font-size: 11px;
+		font-size: 13px;
 		font-weight: 500;
 	}
 	label {
@@ -825,7 +822,7 @@
 	}
 	label small {
 		color: var(--color-muted);
-		font-size: 10px;
+		font-size: 12px;
 		font-weight: 400;
 	}
 	.error {
@@ -840,7 +837,7 @@
 	.select-grid label {
 		margin-bottom: 8px;
 	}
-	.select-grid .caption {
+	.select-grid [data-caption] {
 		margin-top: 8px;
 	}
 	.checkboxes {
@@ -866,7 +863,7 @@
 		gap: 16px;
 	}
 	.surface-grid p {
-		font-size: 12px;
+		font-size: 14px;
 	}
 	.popover-content {
 		max-width: 240px;
@@ -874,26 +871,7 @@
 		gap: 16px;
 	}
 	.popover-content p {
-		font-size: 12px;
-	}
-	.editorial-note {
-		border-left: 3px solid var(--color-primary);
-		padding: 12px 20px;
-		display: flex;
-		gap: 20px;
-		align-items: center;
-		margin-top: 12px;
-	}
-	.editorial-note > span {
-		font:
-			64px Georgia,
-			serif;
-		color: var(--color-primary);
-		line-height: 1;
-	}
-	.editorial-note p {
-		font-size: 22px;
-		line-height: 1.3;
+		font-size: 14px;
 	}
 	.input-sizes {
 		grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -902,6 +880,7 @@
 		display: grid;
 		justify-content: stretch;
 	}
+
 	.icon-row {
 		gap: 26px;
 		padding: 12px 0;
@@ -922,8 +901,8 @@
 		color: var(--color-muted);
 	}
 	pre {
-		border: 1px solid var(--np-rule);
-		padding: 24px;
+		border: 0;
+		padding: 28px;
 		font-size: 12px;
 		line-height: 1.6;
 		white-space: pre-wrap;
@@ -935,10 +914,18 @@
 		flex-wrap: wrap;
 		justify-content: space-between;
 		gap: 16px;
-		border-top: 1px solid var(--color-foreground);
+		border-top: 1px solid var(--np-rule);
 		padding: 24px 0;
-		font-size: 10px;
+		font-size: 12px;
 		letter-spacing: 0.06em;
+	}
+	.colophon a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 24px;
+	}
+	.dialog-note {
+		margin-top: 24px;
 	}
 	.colophon span {
 		color: var(--color-muted);
@@ -968,10 +955,6 @@
 		.specimen-grid > section {
 			padding: 24px;
 		}
-		.section-title small {
-			flex-basis: 100%;
-			margin-left: 24px;
-		}
 	}
 	@media (max-width: 640px) {
 		[data-new-paris-showcase] {
@@ -985,7 +968,7 @@
 		}
 		.theme-links {
 			gap: 20px;
-			font-size: 11px;
+			font-size: 12px;
 		}
 		.hero {
 			grid-template-columns: 1fr;
@@ -1010,16 +993,14 @@
 			letter-spacing: -6px;
 			padding-right: 6px;
 		}
-		.monogram .serif {
-			font-size: 54px;
-		}
+
 		.monogram small {
 			font-size: 6px;
 			margin-top: 8px;
 		}
 		.swatches small {
 			flex-basis: 100%;
-			font-size: 7px;
+			font-size: 11px;
 			margin: 2px 0 0;
 		}
 		.index-bar > span:nth-child(2) {
@@ -1030,11 +1011,9 @@
 			margin-top: 24px;
 		}
 		.specimen-grid > section {
-			padding: 24px 18px;
+			padding: 28px 20px;
 		}
-		.specimen-grid > section:nth-child(2) {
-			border-top: 0;
-		}
+
 		.surface-grid,
 		.input-sizes,
 		.usage {

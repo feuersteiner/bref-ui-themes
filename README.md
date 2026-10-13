@@ -17,12 +17,10 @@ bun run package                 # library → dist; includes publint
 bun run build:site              # static showcase → build
 bun run build                   # site + library
 bun run preview                 # preview the production site
-bunx playwright install chromium
-bun run test                    # desktop/mobile tests against production build
 bun pm pack                     # creates a local npm tarball; does not publish
 ```
 
-After changes to a demo, refresh the catalog and README screenshots with the development server running:
+Install Chromium once with `bunx playwright install chromium` for screenshot capture. After changes to a demo, refresh the catalog and README screenshots with the development server running:
 
 ```sh
 bun run previews http://127.0.0.1:5173
@@ -53,7 +51,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 ## New Paris
 
-New Paris implements the planned Minimalist Blocky theme: warm paper, vermilion and olive, square geometry, Syne headings and Inter controls. The [component demonstration](http://localhost:5173/themes/new-paris) covers all 14 public exports, variants, sizes, keyboard interactions, disabled/loading/error states, native dialogs/popovers and responsive layouts. It is a component showcase; no separate application demo is provided.
+New Paris implements the planned Minimalist Blocky theme: warm white, vermilion and olive, square geometry, Syne headings and Inter controls. Borderless soft treatments, quiet tags and subtle overlay elevation keep the component styling light. The [component demonstration](http://localhost:5173/themes/new-paris) covers all 14 public exports, variants, sizes, keyboard interactions, disabled/loading/error states, native dialogs/popovers and responsive layouts. It is a component showcase; no separate application demo is provided.
 
 ![New Paris rendered components](static/previews/new-paris.jpg)
 
@@ -67,7 +65,7 @@ New Paris implements the planned Minimalist Blocky theme: warm paper, vermilion 
 </Theme>
 ```
 
-The theme intentionally gives rounded controls square edges and glass surfaces an opaque paper treatment. Bref bindings, props and native semantics are retained. Theme styles live in `src/lib/new-paris/theme.svelte`; the demonstration imports that same public entry. Light mode, reduced motion and forced colors are supported. Mount one theme per document and reload when changing themes.
+The theme intentionally gives rounded controls square edges and glass surfaces an opaque paper treatment. Bref bindings, props and native semantics are retained. Theme styles live in `src/lib/new-paris/theme.svelte`; the demonstration imports that same public entry. Editorial accents use `--font-accent` (Georgia with system-serif fallbacks); `data-accent`, `data-eyebrow` and `data-caption` apply reusable typography. Label size/tracking and caption size use `--np-label-size`, `--np-label-tracking` and `--np-caption-size`. Light mode, reduced motion and forced colors are supported. Mount one theme per document and reload when changing themes.
 
 ## Library imports
 

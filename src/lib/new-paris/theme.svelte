@@ -9,11 +9,11 @@
 
 <BrefTheme
 	palette={{
-		primary: '#b73321',
-		secondary: '#555a37',
-		background: '#f4f0e9',
-		foreground: '#242522',
-		muted: '#68665e',
+		primary: '#c6402d',
+		secondary: '#526750',
+		background: '#f7f7f2',
+		foreground: '#1e231f',
+		muted: '#686d65',
 		info: '#325c78',
 		success: '#3d6548',
 		warning: '#805a19',
@@ -30,10 +30,29 @@
 		display: contents;
 		--font-text: 'Inter Variable', sans-serif;
 		--font-display: 'Syne Variable', sans-serif;
-		--np-rule: #d2cec4;
-		--np-paper: #fcfaf5;
+		--font-accent: Georgia, 'Times New Roman', serif;
+		--np-label-size: 0.75rem;
+		--np-label-tracking: 0.09em;
+		--np-caption-size: 0.875rem;
+		--np-rule: #e1e3db;
+		--np-paper: #fffefa;
 	}
 	:global {
+		[data-bref-theme='new-paris'] :is(em, [data-accent]) {
+			font-family: var(--font-accent);
+			font-weight: 400;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [data-eyebrow] {
+			font-size: var(--np-label-size);
+			font-weight: 600;
+			letter-spacing: var(--np-label-tracking);
+			text-transform: uppercase;
+		}
+		[data-bref-theme='new-paris'] [data-caption] {
+			font-size: var(--np-caption-size);
+			color: var(--color-muted);
+			line-height: 1.5;
+		}
 		[data-bref-theme='new-paris'] :is(h1, h2, h3) {
 			font-family: var(--font-display);
 			font-weight: 600;
@@ -46,7 +65,7 @@
 			border-radius: 0;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .surface {
-			--surface-soft-strength: 10%;
+			--surface-soft-strength: 8%;
 			--surface-neutral-strength: 0%;
 			--surface-border: var(--np-rule);
 			--surface-highlight: 0 0 0 transparent;
@@ -55,22 +74,22 @@
 			--surface-border: var(--surface-color);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .surface-soft {
-			--surface-border: color-mix(in srgb, var(--surface-color) 22%, var(--np-rule));
+			--surface-border: transparent;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme]
 			.surface:is(.surface-shadow-small, .surface-shadow-medium, .surface-shadow-large) {
-			--surface-shadow: 5px 5px 0 color-mix(in srgb, var(--color-foreground) 14%, transparent);
+			--surface-shadow: 0 12px 36px color-mix(in srgb, var(--color-foreground) 9%, transparent);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .glass.glass.glass {
-			background: var(--glass-paint);
+			background: var(--np-paper);
 			box-shadow: var(--surface-shadow);
 			backdrop-filter: none;
 			-webkit-backdrop-filter: none;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .button {
-			font-size: calc(var(--internal-font-size) * 0.88);
-			font-weight: 600;
-			letter-spacing: 0.015em;
+			font-size: var(--internal-font-size);
+			font-weight: 500;
+			letter-spacing: -0.015em;
 			padding-block: 0.4rem;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme]
@@ -79,10 +98,22 @@
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] :is(input, [data-value]) {
 			font-weight: 400;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [data-size] > input,
+		[data-bref-theme='new-paris'][data-bref-theme] button[data-size] [data-value] {
+			font-size: 1rem;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [data-size='small'] > input,
+		[data-bref-theme='new-paris'][data-bref-theme] button[data-size='small'] [data-value] {
 			font-size: 0.875rem;
 		}
+		[data-bref-theme='new-paris'][data-bref-theme] [data-size='large'] > input,
+		[data-bref-theme='new-paris'][data-bref-theme] button[data-size='large'] [data-value] {
+			font-size: 1.125rem;
+		}
 		[data-bref-theme='new-paris'][data-bref-theme] .surface:has(> input) {
-			background: var(--np-paper);
+			background: var(--color-background);
+			--surface-border: var(--np-rule);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] [data-checkbox] {
 			--internal-border: var(--color-muted);
@@ -95,9 +126,18 @@
 		[data-bref-theme='new-paris'][data-bref-theme] [data-checkbox]:has([aria-invalid='true']) {
 			--internal-border: var(--color-error);
 		}
-		[data-bref-theme='new-paris'][data-bref-theme] [data-wide][data-color] {
-			letter-spacing: 0.035em;
+		[data-bref-theme='new-paris'][data-bref-theme] [data-checkbox]:has(:disabled:not(:checked)) {
+			background: var(--np-rule);
+			border-color: var(--np-rule);
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] div[data-wide][data-color] {
+			letter-spacing: 0;
 			font-size: 0.8125rem;
+			font-weight: 500;
+			border-color: transparent;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] div[data-wide][data-color].surface-neutral {
+			background: color-mix(in srgb, var(--color-foreground) 5%, var(--np-paper));
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] ul[role] > li > div {
 			border-radius: 0;
@@ -108,9 +148,46 @@
 		[data-bref-theme='new-paris'][data-bref-theme] button:has([data-value]) {
 			background: var(--np-paper);
 		}
-		[data-bref-theme='new-paris'][data-bref-theme] [popover] button[aria-pressed='true'] {
+		[data-bref-theme='new-paris'][data-bref-theme] [popover] > .surface {
+			border: 1px solid var(--np-rule);
+			filter: none;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme]
+			:is(.button[aria-pressed='true'], [popover] button[aria-pressed='true']),
+		[data-bref-theme='new-paris'][data-bref-theme] ul[role] div:has(> input:checked) > .surface,
+		[data-bref-theme='new-paris'][data-bref-theme]
+			.button[data-variant='neutral']:not(:disabled, [aria-disabled='true']):hover {
 			background: var(--color-foreground);
 			color: var(--color-background);
+			border-color: var(--color-foreground);
+			filter: none;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] .button[aria-busy='true'] {
+			background: var(--np-paper);
+			color: var(--color-foreground);
+			border-color: var(--color-foreground);
+			box-shadow: inset 2px 0 0 var(--color-primary);
+			opacity: 1;
+			cursor: progress;
+		}
+		/* The CLI Spinner's first child is its decorative mark; checkbox marks follow an input. */
+		[data-bref-theme='new-paris'][data-bref-theme]
+			div[data-size]
+			> span[aria-hidden='true']:first-child {
+			padding: 0;
+			mask: none;
+			width: 65%;
+			height: 65%;
+			background: var(--color-primary);
+			border: 0;
+			border-radius: 0;
+			animation: np-print 1s ease-in-out infinite alternate;
+		}
+		@keyframes np-print {
+			to {
+				opacity: 0.35;
+				transform: scale(0.7);
+			}
 		}
 		[data-bref-theme='new-paris'][data-bref-theme]
 			[popover]
@@ -134,7 +211,7 @@
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] dialog > [data-surface] {
 			background: var(--np-paper);
-			border: 1px solid var(--color-foreground);
+			border: 1px solid var(--np-rule);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] dialog::backdrop {
 			background: color-mix(in srgb, var(--color-foreground) 30%, transparent);
@@ -156,18 +233,32 @@
 			[data-bref-theme='new-paris'][data-bref-theme] .button:active {
 				translate: none;
 			}
+			[data-bref-theme='new-paris'][data-bref-theme]
+				div[data-size]
+				> span[aria-hidden='true']:first-child {
+				animation: none;
+			}
 		}
 		@media (forced-colors: active) {
 			[data-bref-theme='new-paris'][data-bref-theme]
-				:is(.surface, .glass.glass.glass, button:has([data-value])) {
+				:is(.surface, .glass.glass.glass, button:has([data-value]), .button[aria-busy='true']) {
 				background: Canvas;
 				color: CanvasText;
 				border-color: CanvasText;
 				box-shadow: none;
 			}
-			[data-bref-theme='new-paris'][data-bref-theme] [popover] button[aria-pressed='true'] {
+			[data-bref-theme='new-paris'][data-bref-theme]
+				:is(.button[aria-pressed='true'], [popover] button[aria-pressed='true']),
+			[data-bref-theme='new-paris'][data-bref-theme] ul[role] div:has(> input:checked) > .surface,
+			[data-bref-theme='new-paris'][data-bref-theme]
+				.button[data-variant='neutral']:not(:disabled, [aria-disabled='true']):hover {
 				background: Highlight;
 				color: HighlightText;
+			}
+			[data-bref-theme='new-paris'][data-bref-theme]
+				div[data-size]
+				> span[aria-hidden='true']:first-child {
+				background: Highlight;
 			}
 			[data-bref-theme='new-paris'][data-bref-theme] :focus-visible:not(input),
 			[data-bref-theme='new-paris'][data-bref-theme] .surface:has(> input:focus-visible) {
