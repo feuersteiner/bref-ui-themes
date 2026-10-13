@@ -13,7 +13,6 @@
 		"format": "prettier --write .",
 		"build:site": "vite build",
 		"package": "svelte-kit sync && svelte-package && publint",
-		"test": "playwright test",
 		"previews": "bun scripts/capture-previews.ts"
 	},
 	"files": [
@@ -56,7 +55,6 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@playwright/test": "^1.64.0",
 		"@sveltejs/adapter-static": "^4.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/package": "^3.0.0",
@@ -67,6 +65,7 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",
 		"globals": "^17.6.0",
+		"playwright": "^1.64.0",
 		"prettier": "^3.8.3",
 		"prettier-plugin-svelte": "^4.1.0",
 		"publint": "^0.3.21",
