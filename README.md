@@ -18,7 +18,6 @@ bun run build:site              # static showcase → build
 bun run build                   # site + library
 bun run preview                 # preview the production site
 bunx playwright install chromium
-bun run test                    # desktop/mobile tests against production build
 bun pm pack                     # creates a local npm tarball; does not publish
 ```
 
