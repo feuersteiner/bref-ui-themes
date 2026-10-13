@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { tick } from 'svelte';
 	import { Button, Icon, TextInput } from '#lib/relay/index.js';
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
@@ -26,6 +27,12 @@
 		done: false
 	});
 	let announcement = $state('');
+	let workspace = $state<HTMLElement>();
+	const restoreEditorFocus = async () => {
+		await tick();
+		if (document.activeElement === document.body)
+			workspace?.querySelector<HTMLButtonElement>('[data-new-task]')?.focus();
+	};
 	const projectTasks = $derived(
 		tasks.filter((task) => project === 'all' || task.project === project)
 	);
@@ -79,7 +86,7 @@
 </svelte:head>
 <div data-workspace>
 	<WorkspaceNav {projects} bind:project onCreate={() => (projectOpen = true)} />
-	<main id="demo-content" tabindex="-1">
+	<main id="demo-content" tabindex="-1" bind:this={workspace}>
 		{#key project}
 			<div
 				in:fly={{
@@ -116,6 +123,7 @@
 						size="small"
 					/><Button
 						label="New task"
+						data-new-task
 						size="small"
 						icon={{ name: 'add' }}
 						variant="filled"
@@ -132,5 +140,11 @@
 		<p role="status" data-announcement>{announcement}</p>
 	</main>
 </div>
-<TaskEditor {projects} bind:open={editorOpen} bind:task={draft} onSave={save} />
+<TaskEditor
+	{projects}
+	bind:open={editorOpen}
+	bind:task={draft}
+	onSave={save}
+	onClose={restoreEditorFocus}
+/>
 {#if projectOpen}<ProjectEditor bind:open={projectOpen} onSave={createProject} />{/if}

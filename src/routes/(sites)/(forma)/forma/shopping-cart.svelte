@@ -25,13 +25,31 @@
 		const item = items.find((item) => item.key === key);
 		if (item) removal = `${item.product.name}, ${item.finish}, removed from cart.`;
 	};
+	const removeAndFocus = async (key: string, update: () => void) => {
+		const rows = Array.from(content?.querySelectorAll<HTMLElement>('[data-cart-item-key]') ?? []);
+		const index = rows.findIndex((row) => row.dataset.cartItemKey === key);
+		const row = rows[index];
+		const focused = document.activeElement;
+		const restoreFocus = !!row?.contains(focused);
+		const deleting = focused?.hasAttribute('data-delete-item');
+		const neighbour = rows[index + 1] ?? rows[index - 1];
+		update();
+		await tick();
+		if (!restoreFocus || row.isConnected) return;
+		const target = neighbour?.querySelector<HTMLButtonElement>(
+			deleting ? 'button[data-delete-item]' : 'button'
+		);
+		(target ?? content)?.focus();
+	};
 	const remove = (key: string) => {
 		announceRemoval(key);
-		onRemove(key);
+		void removeAndFocus(key, () => onRemove(key));
 	};
 	const changeQuantity = (key: string, quantity: number) => {
-		if (quantity <= 0) announceRemoval(key);
-		onQuantity(key, quantity);
+		if (quantity <= 0) {
+			announceRemoval(key);
+			void removeAndFocus(key, () => onQuantity(key, quantity));
+		} else onQuantity(key, quantity);
 	};
 	let receipt = $state({ total: 0, count: 0 });
 	let confirmation = $state<HTMLParagraphElement>();

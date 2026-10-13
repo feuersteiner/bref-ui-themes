@@ -43,13 +43,15 @@
 		aria-invalid={error ? 'true' : undefined}
 		aria-describedby="audit-disclosure"
 	/>
-	{#if pending}<Button label="Stop" icon={{ name: 'stop' }} onClick={onStop} />{:else}<Button
-			label="Run audit"
-			icon={{ name: 'play_arrow' }}
-			type="submit"
-			variant="filled"
-			color="primary"
-		/>{/if}
+	<Button
+		data-stop-audit={pending ? '' : undefined}
+		label={pending ? 'Stop' : 'Run audit'}
+		icon={{ name: pending ? 'stop' : 'play_arrow' }}
+		type={pending ? 'button' : 'submit'}
+		variant={pending ? 'neutral' : 'filled'}
+		color={pending ? 'foreground' : 'primary'}
+		onClick={pending ? onStop : undefined}
+	/>
 </form>
 {#if error}<p data-agent-error role="alert">{error}</p>{/if}
 <p id="audit-disclosure" data-agent-disclosure>

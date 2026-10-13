@@ -14,7 +14,12 @@
 			--font-text: 'Inter Variable', sans-serif;
 			--font-display: 'Bricolage Grotesque Variable', sans-serif;
 			--forma-rule: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+			--forma-image-radius: 4px;
 			font-family: var(--font-text);
+		}
+		[data-forma] img,
+		[data-forma] [data-product-image] {
+			border-radius: var(--forma-image-radius);
 		}
 		[data-forma] [data-store-header],
 		[data-forma] main,
@@ -106,7 +111,6 @@
 			padding: 0;
 			border: 0;
 			background: #f3f4f1;
-			border-radius: 8px;
 			overflow: hidden;
 		}
 		[data-forma] [data-product-image] img {
@@ -222,7 +226,6 @@
 			width: 80px;
 			height: 100px;
 			object-fit: cover;
-			border-radius: 10px;
 		}
 		[data-forma] [data-cart-item-details] {
 			min-width: 0;
@@ -251,12 +254,23 @@
 			gap: 8px;
 		}
 		[data-forma] [data-delete-item] {
-			margin-left: 12px;
+			margin-left: auto;
 		}
-		[data-forma] [data-quantity] > span {
-			min-width: 20px;
+		[data-forma] [data-quantity-stepper] {
+			display: inline-flex;
+			align-items: center;
+			padding: 2px;
+			border: 1px solid var(--forma-rule);
+			border-radius: 999px;
+		}
+		[data-forma] [data-quantity-stepper] > button {
+			border-radius: 50%;
+		}
+		[data-forma] [data-quantity-stepper] > span {
+			min-width: 32px;
 			text-align: center;
 			font-size: 13px;
+			font-variant-numeric: tabular-nums;
 		}
 		[data-forma] [data-cart-actions],
 		[data-forma] [data-order-line] {

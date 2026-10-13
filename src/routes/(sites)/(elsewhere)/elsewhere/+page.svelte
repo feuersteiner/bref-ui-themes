@@ -44,7 +44,7 @@
 		error = '';
 		void focusInput();
 	};
-	const start = () => {
+	const start = async () => {
 		if (pending) return;
 		let target: URL;
 		try {
@@ -69,6 +69,8 @@
 			);
 			if (runs.find((item) => item.id === run.id)?.status === 'ready') clearInterval(timer);
 		}, 800);
+		await tick();
+		workspace?.querySelector<HTMLButtonElement>('[data-stop-audit]')?.focus();
 	};
 	const review = (id: string, checked: boolean) => {
 		runs = runs.map((run) =>
