@@ -11,3 +11,4 @@ export { default as Pill } from './pill/pill.svelte';
 export { default as PillGroup } from './pill-group/pill-group.svelte';
 export { default as PillChoiceGroup } from './pill-choice-group/pill-choice-group.svelte';
 export { default as Spinner } from './spinner/spinner.svelte';
+export { default as Tabs } from './tabs/tabs.svelte';
