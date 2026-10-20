@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { Theme as BrefTheme, ThemeModeToggle } from 'bref-ui';
 	import Base from '../shared/base.svelte';
-	import '@fontsource-variable/inter';
+	import '@fontsource-variable/inter/index.css';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
@@ -163,6 +163,33 @@
 			border-color: var(--color-foreground);
 			filter: none;
 		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tablist'] {
+			--tabs-indicator-height: 3px;
+			border-color: var(--np-rule);
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tablist'][data-orientation='vertical'] {
+			--tabs-indicator-width: 3px;
+			--tabs-indicator-height: auto;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tab'] {
+			font-size: var(--np-label-size);
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tab'] > span[aria-hidden='true'] {
+			font-size: 1.25rem;
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tab'][aria-selected='true'] {
+			color: var(--color-foreground);
+			background: var(--np-paper);
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tab']:hover:not(:disabled) {
+			color: var(--color-foreground);
+			background: color-mix(in srgb, var(--color-foreground) 7%, var(--color-background));
+		}
+		[data-bref-theme='new-paris'][data-bref-theme] [role='tab']:focus-visible {
+			outline-offset: -5px;
+		}
 		[data-bref-theme='new-paris'][data-bref-theme] .button[aria-busy='true'] {
 			background: var(--np-paper);
 			color: var(--color-foreground);
@@ -258,6 +285,14 @@
 				.button[data-variant='neutral']:not(:disabled, [aria-disabled='true']):hover {
 				background: Highlight;
 				color: HighlightText;
+			}
+			[data-bref-theme='new-paris'][data-bref-theme] [role='tablist'] {
+				border-color: ButtonBorder;
+			}
+			[data-bref-theme='new-paris'][data-bref-theme] [role='tab'][aria-selected='true'],
+			[data-bref-theme='new-paris'][data-bref-theme] [role='tab']:hover:not(:disabled) {
+				color: HighlightText;
+				background: Highlight;
 			}
 			[data-bref-theme='new-paris'][data-bref-theme]
 				div[data-size]

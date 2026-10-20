@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { asset, resolve } from '$app/paths';
 	import { onDestroy } from 'svelte';
+	import { prefersReducedMotion } from 'svelte/motion';
+	import { fade } from 'svelte/transition';
+	import type { TabItemDataProps } from 'bref-ui/types';
 	import {
 		Theme,
 		Button,
@@ -15,6 +18,7 @@
 		Select,
 		Spinner,
 		Surface,
+		Tabs,
 		TextInput
 	} from '#lib/new-paris/index.js';
 	const variants = ['neutral', 'soft', 'filled'] as const;
@@ -39,6 +43,74 @@
 		{ id: 'journal', label: 'Journal' },
 		{ id: 'notes', label: 'Notes' }
 	];
+	const collectionTabs: TabItemDataProps[] = [
+		{ id: 'silhouette', label: 'Silhouette', icon: 'checkroom' },
+		{ id: 'atelier', label: 'Atelier notes', icon: 'edit_note' },
+		{ id: 'materials', label: 'Materials', icon: 'texture' },
+		{ id: 'details', label: 'Finishing details', icon: 'content_cut' },
+		{ id: 'care', label: 'Care guide', icon: 'dry_cleaning' },
+		{ id: 'appointments', label: 'Appointments', icon: 'calendar_month' },
+		{ id: 'archive', label: 'Archive (unavailable)', icon: 'inventory_2', disabled: true }
+	];
+	const collectionNotes: Record<string, { title: string; description: string }> = {
+		silhouette: {
+			title: 'A considered silhouette.',
+			description:
+				'Black tailoring, ivory silk and room to move. Collection No. 04 begins with proportion.'
+		},
+		atelier: {
+			title: 'From the atelier.',
+			description:
+				'A hand-finished seam and a quiet line of stitching. Small decisions shape the whole.'
+		},
+		materials: {
+			title: 'Chosen to last.',
+			description: 'Wool suiting gives structure. Silk brings lightness. Both invite a closer look.'
+		},
+		details: {
+			title: 'The final gesture.',
+			description: 'Bound edges, covered buttons and a single pressed pleat complete the edition.'
+		},
+		care: {
+			title: 'Keep the character.',
+			description:
+				'Air wool between wears. Entrust silk and structured tailoring to a specialist cleaner.'
+		},
+		appointments: {
+			title: 'A moment in Paris.',
+			description:
+				'Private fittings take place Tuesday to Saturday. Bring a favourite piece to guide the conversation.'
+		}
+	};
+	const chapterTabs: TabItemDataProps[] = [
+		{ id: 'introduction', label: 'Introduction', icon: 'auto_stories' },
+		{ id: 'process', label: 'The process', icon: 'architecture' },
+		{ id: 'credits', label: 'Credits', icon: 'group' }
+	];
+	const chapterNotes: Record<string, string> = {
+		introduction: 'An edition about restraint: fewer pieces, more attention to every line.',
+		process:
+			'Sketch, cut, fit and refine. Each piece returns to the worktable until the balance is right.',
+		credits:
+			'Conceived in Paris. Made with independent pattern cutters, tailors and textile makers.'
+	};
+	const finishTabs: TabItemDataProps[] = [
+		{ id: 'paper', label: 'Paper', icon: 'article' },
+		{ id: 'ink', label: 'Ink', icon: 'format_color_fill' },
+		{ id: 'binding', label: 'Binding', icon: 'menu_book' },
+		{ id: 'foil', label: 'Foil (unavailable)', icon: 'auto_awesome', disabled: true }
+	];
+	const finishNotes: Record<string, string> = {
+		paper: 'Warm ivory stock, uncoated and softly textured. A quiet ground for the collection.',
+		ink: 'Rich black ink gives the typography a decisive edge against the ivory page.',
+		binding: 'An exposed thread binding lets the edition open flat and reveals how it is made.'
+	};
+	const indicatorFade = (node: HTMLElement) =>
+		fade(node, { duration: prefersReducedMotion.current ? 0 : 160 });
+	let collection = $state('silhouette');
+	let chapter = $state('introduction');
+	let finish = $state('paper');
+	let lastCollectionChange = $state('Choose a tab to explore the collection.');
 	let value = $state('');
 	let email = $state('');
 	let error = $state('');
@@ -122,10 +194,10 @@
 			</header>
 			<div class="collection-intro">
 				<h2>Details make<br /><em>the difference.</em></h2>
-				<p>Fourteen components.<br />One visual language.</p>
+				<p>Fifteen components.<br />One visual language.</p>
 			</div>
 			<div class="index-bar">
-				<span>The collection</span><span>01 — 08</span><a href="#usage"
+				<span>The collection</span><span>01 — 09</span><a href="#usage"
 					>Import this theme <Icon name="south_east" /></a
 				>
 			</div>
@@ -497,9 +569,78 @@
 						</div>
 					</div>
 				</section>
-				<section aria-labelledby="scale" class="wide-panel">
+				<section aria-labelledby="tabs" class="wide-panel">
 					<div class="section-title">
 						<span>08</span>
+						<h2 id="tabs">The chapters.</h2>
+						<small>Tabs</small>
+						<p data-caption>
+							One collection. Several perspectives. Arrow keys, Home and End move through the
+							available tabs.
+						</p>
+					</div>
+					<div class="section-content">
+						<h3>Fit / collection notes</h3>
+						<Tabs
+							items={collectionTabs}
+							bind:value={collection}
+							label="Collection notes"
+							onChange={(id) =>
+								(lastCollectionChange = `Opened ${collectionTabs.find((item) => item.id === id)?.label}.`)}
+						/>
+						<div
+							class="tab-content"
+							role="region"
+							aria-label="Collection preview"
+							aria-live="polite"
+						>
+							<p data-eyebrow>Collection No. 04</p>
+							<h3>{collectionNotes[collection].title}</h3>
+							<p>{collectionNotes[collection].description}</p>
+						</div>
+						<p data-caption>{lastCollectionChange} The strip scrolls when space is limited.</p>
+						<div class="row-divider"></div>
+						<h3>Fill / editorial chapters</h3>
+						<Tabs
+							items={chapterTabs}
+							bind:value={chapter}
+							size="fill"
+							transitionIn={indicatorFade}
+							transitionOut={indicatorFade}
+							filled
+							label="Editorial chapters"
+						/>
+						<div class="tab-content" role="region" aria-label="Chapter preview" aria-live="polite">
+							<p>{chapterNotes[chapter]}</p>
+						</div>
+						<div class="row-divider"></div>
+						<h3>Vertical / edition details</h3>
+						<div class="vertical-tabs">
+							<Tabs
+								items={finishTabs}
+								bind:value={finish}
+								orientation="vertical"
+								label="Edition details"
+							/>
+							<div
+								class="tab-content"
+								role="region"
+								aria-label="Edition detail preview"
+								aria-live="polite"
+							>
+								<p data-eyebrow>{finishTabs.find((item) => item.id === finish)?.label}</p>
+								<p>{finishNotes[finish]}</p>
+							</div>
+						</div>
+						<p data-caption>
+							On narrow screens, icons keep every choice available. The selected horizontal tab
+							keeps its label. Indicator motion follows the system preference.
+						</p>
+					</div>
+				</section>
+				<section aria-labelledby="scale" class="wide-panel">
+					<div class="section-title">
+						<span>09</span>
 						<h2 id="scale">The finishing touch.</h2>
 						<small>Sizes · Palette · Icon</small>
 						<p data-caption>Every size, from the smallest annotation to a confident action.</p>
@@ -887,6 +1028,24 @@
 	}
 	.surface-grid p {
 		font-size: 14px;
+	}
+	.tab-content {
+		display: grid;
+		align-content: start;
+		gap: 12px;
+		min-width: 0;
+		padding: 24px;
+		border: 1px solid var(--np-rule);
+		background: var(--np-paper);
+	}
+	.tab-content p {
+		max-width: 60ch;
+	}
+	.vertical-tabs {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: 24px;
+		align-items: start;
 	}
 	.popover-content {
 		max-width: 260px;

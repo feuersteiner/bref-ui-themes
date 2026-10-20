@@ -45,7 +45,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 ## New Paris
 
-New Paris is an editorial theme inspired by French couture: black and ivory, square controls, fine system-serif headings and tracked Inter labels. The exported theme includes the same typography, palette and control states as the demonstration. Original generated campaign photography and the editorial page layout belong only to the showcase. The [component demonstration](http://localhost:5173/themes/new-paris) covers all 14 public exports, variants, sizes, keyboard interactions, disabled/loading/error states, native dialogs/popovers and responsive layouts. It is a component showcase; no separate application demo is provided.
+New Paris is an editorial theme inspired by French couture: black and ivory, square controls, fine system-serif headings and tracked Inter labels. The exported theme includes the same typography, palette and control states as the demonstration. Original generated campaign photography and the editorial page layout belong only to the showcase. The [component demonstration](http://localhost:5173/themes/new-paris) covers all 15 public exports, variants, sizes, keyboard interactions, disabled/loading/error states, native dialogs/popovers and responsive layouts. It is a component showcase; no separate application demo is provided.
 
 ![New Paris rendered components](static/previews/new-paris.jpg)
 
@@ -58,6 +58,8 @@ New Paris is an editorial theme inspired by French couture: black and ivory, squ
 	<Button label="Bonjour" variant="filled" color="primary" />
 </Theme>
 ```
+
+The Tabs specimens cover horizontal `fit`/`fill`, vertical navigation, required icons, disabled items and bound collection content. `Tabs` is re-exported from the shared copied Bref source; public types remain in `bref-ui/types`.
 
 The theme intentionally gives rounded controls square edges and glass surfaces an opaque paper treatment. Bref bindings, props and native semantics are retained. Theme styles live in `src/lib/new-paris/theme.svelte`; the demonstration imports that same public entry. Headings use `--font-display` (Didot, Bodoni MT and Times New Roman system fallbacks); editorial accents use `--font-accent`; `data-accent`, `data-eyebrow` and `data-caption` apply reusable typography. Label size/tracking and caption size use `--np-label-size`, `--np-label-tracking` and `--np-caption-size`. Light mode, reduced motion and forced colors are supported. Mount one theme per document and reload when changing themes.
 
