@@ -39,6 +39,9 @@
 			outline: 2px solid var(--color-primary);
 			outline-offset: 4px;
 		}
+		[data-bref-theme] [role='tab']:focus-visible {
+			outline-offset: -4px;
+		}
 		[data-bref-theme] img {
 			display: block;
 			max-width: 100%;

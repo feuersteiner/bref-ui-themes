@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { Button, Icon, TextInput } from '#lib/relay/index.js';
+	import { Button, Icon, Tabs, TextInput } from '#lib/relay/index.js';
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import TaskBoard from './task-board.svelte';
@@ -17,6 +17,12 @@
 	const selectedProject = $derived(projects.find((item) => item.id === project));
 	const projectName = $derived(selectedProject?.label ?? 'All projects');
 	let search = $state('');
+	let status = $state('all');
+	const statuses = [
+		{ id: 'all', label: 'All tasks', icon: 'checklist' },
+		{ id: 'open', label: 'Open', icon: 'pending_actions' },
+		{ id: 'completed', label: 'Completed', icon: 'task_alt' }
+	] as const;
 	let editorOpen = $state(false);
 	let draft = $state<Task>({
 		id: 0,
@@ -39,7 +45,11 @@
 	const completed = $derived(projectTasks.filter((task) => task.done).length);
 
 	const filtered = $derived(
-		projectTasks.filter((task) => task.title.toLowerCase().includes(search.toLowerCase()))
+		projectTasks.filter(
+			(task) =>
+				task.title.toLowerCase().includes(search.toLowerCase()) &&
+				(status === 'all' || task.done === (status === 'completed'))
+		)
 	);
 	const ordered = $derived(filtered.toSorted((a, b) => Number(a.done) - Number(b.done)));
 	const edit = (task?: Task) => {
@@ -132,7 +142,16 @@
 					/>
 				</div>
 			</div>
-			<TaskBoard {projects} tasks={ordered} onEdit={edit} onToggle={toggle} />
+			<div data-task-tabs>
+				<Tabs items={statuses} bind:value={status} label="Task status" />
+			</div>
+			<div
+				role="tabpanel"
+				aria-label={statuses.find((item) => item.id === status)?.label}
+				tabindex="0"
+			>
+				<TaskBoard {projects} tasks={ordered} onEdit={edit} onToggle={toggle} />
+			</div>
 			<footer data-work-footer>
 				<span>Demo changes reset when you leave.</span>
 			</footer>
@@ -148,3 +167,10 @@
 	onClose={restoreEditorFocus}
 />
 {#if projectOpen}<ProjectEditor bind:open={projectOpen} onSave={createProject} />{/if}
+
+<style>
+	[data-task-tabs] {
+		min-width: 0;
+		margin-bottom: 20px;
+	}
+</style>
