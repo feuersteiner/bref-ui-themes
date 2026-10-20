@@ -24,6 +24,25 @@ Validation:
 
 Limits: Bun 1.3.4's package-script launcher fails here with `CouldntReadCurrentDirectory`, including default publint packing. npm script equivalents, disabled automatic packing and separate tarball inspection provide validation; a successful default `bun run build` is not claimed. Reduced-motion media rules and published indicator handling are preserved; runtime preference emulation, other browsers, real devices, screen readers and human visual approval remain unverified. No npm publication was performed.
 
+## VS Code 2.2.0 update — 2026-10-21
+
+PR #46 integrates the shared 0.1.0/Bref 2.2.0 baseline and the existing main fixes. All 15 VS Code exports remain available through the subpath and root namespace. Tabs comes from the shared copied source and retains public `bref-ui/types` imports. VS Code uses system UI type and has no bare font-package import requiring the baseline's `/index.css` correction.
+
+The theme adds workbench-gray strips, blue top/side indicators, selected/hover/focus/disabled states, equal-width fill tabs and 44px coarse-pointer targets. The component reference replaces the editor strip with exported Tabs and adds horizontal fit/fill and vertical examples. Bound scope values and checkbox settings persist when switching; panel changes exercise `onChange`. Filled icons and custom indicator transitions retain reduced-motion handling.
+
+Validation:
+
+- `npm run check`: zero errors and warnings. `npm run lint`: formatting and ESLint pass.
+- `npm run build:site` and `npm run package -- --pack false`: complete SSR/client/static and library builds pass; publint passes. `BASE_PATH=/bref-ui-themes npm run build:site` also passes.
+- `npm pack --ignore-scripts`: the 79-file tarball contains all five public entry points and Tabs source/declarations, with version 0.1.0 and Bref peer range ^2.2.0. Site files, screenshots and test tooling are excluded. Strict publint on the tarball passes.
+- A fresh npm-installed SvelteKit consumer checks public types, all 15 VS Code export identities and shared Tabs identity, then builds all four themed routes. Actual development SSR and production static/client renders verify initial HTML, hydration, bound content, `onChange`, keyboard selection, disabled skipping and assets.
+- Production Chromium checks cover horizontal/vertical arrows, Home/End, wraparound, disabled skipping, one tab stop per strip, visible focus, Tab into the bound field, independent scope values, persistent settings, fit overflow, equal-width fill, hover, editor-section navigation and Pages catalog/navigation/assets. No browser errors or local asset failures occurred.
+- Desktop, 390px and 320px layouts stay within the viewport. Touch emulation verifies 44px tab targets and tap selection. Reduced-motion emulation verifies default CSS and custom indicator completion; forced-colors emulation retains the focus outline.
+- Cropped desktop/mobile Tabs renders were inspected and saved outside the repository. The available GitHub connector has no supported image-attachment upload method, so these new captures could not be embedded in the PR. Existing pre-Tabs previews remain historical.
+- `git diff --check` and matching AGENTS/CONTRIBUTING checks pass. No test script exists, and removed test tooling was not restored.
+
+Bun 1.3.4's launcher fails in this environment with `CouldntReadCurrentDirectory`; npm/direct Node equivalents were used. A successful default `bun run build` is not claimed. Firefox, Safari, real devices and screen readers remain unverified. No npm publication or PR merge was performed.
+
 ## Historical migration verification
 
 Verified on 2026-10-12. The reset commit is `5f2e8ca`; the following migration commit contains the scaffold, migrated demos and base Bref showcase. Human visual approval remains separate from automated validation.
@@ -69,7 +88,7 @@ Bref 2.1.3's registry loader, dependency planner and installation pipeline copie
 
 ## VS Code addition
 
-- `bref-ui-themes/vscode` and the root `VSCode` namespace expose the same 14 components. `/themes/vscode` uses these library sources.
+- `bref-ui-themes/vscode` and the root `VSCode` namespace expose the same 15 exports, including shared Tabs. `/themes/vscode` uses these library sources.
 - Check, lint, library packaging/publint, default site build and the `/bref-ui-themes` Pages build pass. Browser automation previously covered native selection, validation, tag removal, seeking, overlay focus/return, reduced motion, high contrast and theme reloads. All tests and runner configuration were removed on 2026-10-13 at user request; no tests were run for the review fixes.
 - The tarball contains VS Code JS/declarations and reusable source; site assets stay excluded. A fresh Vite/Svelte consumer passes type checks, production build, namespace/export identity checks and rendered dialog/popover/input interactions.
 - Desktop, mobile and dialog previews are actual production browser captures. Latest main showcase/deployment changes are incorporated.
@@ -79,7 +98,7 @@ Bref 2.1.3's registry loader, dependency planner and installation pipeline copie
 - Added a responsive workbench frame with a 48px activity bar, five-section explorer, editor file strip and blue status bar reflecting activations and language.
 - Corrected button proportions/neutral paint/dialog primary, muted filled secondary tags, seek thumb, monospace stack, overlay shadows and production backdrop property order. Select styling now targets its markup; consumer status regions keep their inherited color.
 - Demo actions fit their labels; filled surfaces use the accent; the shadow specimen is accurately labelled; trailing space keeps the popover away from the viewport edge.
-- All test files, runner configuration and the test command were removed. Playwright remains only as the browser dependency for preview captures.
+- All test files, runner configuration and the test command were removed. At that revision, Playwright remained as the browser dependency for preview captures; the later main cleanup has now been integrated and removes that dependency and capture script.
 - Validation: type checks, lint, site/library builds, publint, Pages base-path build and clean consumer type/build checks pass. The local tarball includes all VS Code exports. Production Chromium inspection confirms backdrop blur is `none`, dialog primary uses the accent, select/popover shadows render, explorer/language updates work, and widths 1440/390/320 have no horizontal overflow. Previews were refreshed from production.
 
 ### Sidebar refinement

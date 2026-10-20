@@ -45,7 +45,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 ## VS Code theme
 
-[/themes/vscode](http://localhost:5173/themes/vscode) is a component reference covering every export, sizes, variants, semantic colors, validation, disabled states, loading, native selection, removable tags, seeking and overlays. It uses the public library sources; there is no separate application demo.
+[/themes/vscode](http://localhost:5173/themes/vscode) is a component reference covering every export, sizes, variants, semantic colors, validation, disabled states, loading, native selection, removable tags, seeking and overlays. Tabs cover horizontal fit/fill, vertical preferences, icons, disabled items, keyboard selection, overflow and independently bound content. It uses the public library sources; there is no separate application demo.
 
 ![VS Code rendered components](static/previews/vscode.jpg)
 
@@ -81,7 +81,7 @@ The same API is available from each implemented theme:
 ```ts
 import { Theme, Button } from 'bref-ui-themes/forma';
 // Or: import { Theme, Button } from 'bref-ui-themes/elsewhere';
-// Namespace exports: import { Relay, Forma, Elsewhere } from 'bref-ui-themes';
+// Namespace exports: import { Relay, Forma, Elsewhere, VSCode } from 'bref-ui-themes';
 ```
 
 Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface`, `Tabs` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.

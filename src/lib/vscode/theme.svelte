@@ -73,6 +73,50 @@
 			--surface-fill: color-mix(in srgb, var(--color-secondary) 24%, var(--vscode-panel));
 			--surface-content: #e3c4e1;
 		}
+		:root [data-bref-theme='vscode'] [role='tablist'] {
+			--tabs-indicator-block-start: 0;
+			border-color: var(--vscode-border);
+			background: var(--vscode-panel);
+		}
+		:root [data-bref-theme='vscode'] [role='tab'] {
+			min-height: 35px;
+			padding: 8px 12px;
+			border-inline-end: 1px solid var(--vscode-border);
+			color: #a0a0a0;
+			font-size: 13px;
+			font-weight: 400;
+		}
+		:root [data-bref-theme='vscode'] [role='tab'] > i {
+			background: var(--vscode-accent);
+		}
+		:root [data-bref-theme='vscode'] [role='tab'][aria-selected='true'] {
+			background: var(--color-background);
+			color: #ffffff;
+		}
+		:root [data-bref-theme='vscode'] [role='tab']:hover:not(:disabled) {
+			background: #2d2d2d;
+			color: #ffffff;
+		}
+		:root [data-bref-theme='vscode'] [role='tab']:focus-visible {
+			outline: 1px solid var(--color-primary);
+			outline-offset: -3px;
+		}
+		:root [data-bref-theme='vscode'] [role='tab']:disabled {
+			color: var(--color-muted);
+			opacity: 0.45;
+		}
+		:root [data-bref-theme='vscode'] [role='tab'][data-size='fill'] {
+			flex-basis: 0;
+			justify-content: center;
+			padding-inline: 8px;
+		}
+		:root [data-bref-theme='vscode'] [role='tablist'][data-orientation='vertical'] {
+			--tabs-indicator-inline-start: 0;
+		}
+		:root [data-bref-theme='vscode'] [role='tab'][data-orientation='vertical'] {
+			border-inline-end: 0;
+			border-block-end: 1px solid var(--vscode-border);
+		}
 		:root [data-bref-theme='vscode'] .button {
 			border-radius: 2px;
 			--internal-font-size: 0.8125rem;
@@ -193,6 +237,9 @@
 			box-shadow: none;
 		}
 		@media (pointer: coarse) {
+			:root [data-bref-theme='vscode'] [role='tab'] {
+				min-height: 44px;
+			}
 			:root [data-bref-theme='vscode'] .button {
 				--internal-target: 44px;
 			}
@@ -202,6 +249,8 @@
 			}
 		}
 		@media (forced-colors: active) {
+			:root [data-bref-theme='vscode'] [role='tablist'],
+			:root [data-bref-theme='vscode'] [role='tab'],
 			:root [data-bref-theme='vscode'] dialog[open] > .surface,
 			:root [data-bref-theme='vscode'] [popover] > .surface,
 			:root [data-bref-theme='vscode'] .surface,

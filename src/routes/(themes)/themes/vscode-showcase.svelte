@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
+	import { fade } from 'svelte/transition';
 	import {
 		Theme,
 		Button,
@@ -14,17 +15,56 @@
 		Select,
 		Spinner,
 		Surface,
+		Tabs,
 		TextInput
 	} from '#lib/vscode/index.js';
-	import type { Size, Variant, Color } from 'bref-ui/types';
+	import type { Size, Variant, Color, TabItemDataProps, TabTransition } from 'bref-ui/types';
 	const files = [
 		{ id: 'buttons', name: 'Buttons' },
 		{ id: 'inputs', name: 'Inputs' },
 		{ id: 'pills', name: 'Tags' },
 		{ id: 'feedback', name: 'Feedback' },
-		{ id: 'surfaces', name: 'Overlays' }
+		{ id: 'surfaces', name: 'Overlays' },
+		{ id: 'tabs', name: 'Tabs' }
 	];
-	let activeFile = $state(files[0]);
+	let activeFileId = $state('buttons');
+	const activeFile = $derived(files.find((file) => file.id === activeFileId) ?? files[0]);
+	const editorFiles: TabItemDataProps[] = files.map((file) => ({
+		id: file.id,
+		label: `${file.name}.svelte`,
+		icon: 'description'
+	}));
+	const revealFile = (id: string) =>
+		requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }));
+	const panelTabs: TabItemDataProps[] = [
+		{ id: 'problems', label: 'Problems', icon: 'error' },
+		{ id: 'output', label: 'Output', icon: 'output' },
+		{ id: 'debug', label: 'Debug console', icon: 'bug_report', disabled: true },
+		{ id: 'terminal', label: 'Terminal', icon: 'terminal' },
+		{ id: 'ports', label: 'Forwarded ports', icon: 'lan' }
+	];
+	const scopeTabs: TabItemDataProps[] = [
+		{ id: 'user', label: 'User', icon: 'person' },
+		{ id: 'workspace', label: 'Workspace', icon: 'folder' },
+		{ id: 'remote', label: 'Remote', icon: 'cloud_off', disabled: true }
+	];
+	const settingTabs: TabItemDataProps[] = [
+		{ id: 'editor', label: 'Editor', icon: 'edit' },
+		{ id: 'files', label: 'Files', icon: 'folder_open' },
+		{ id: 'extensions', label: 'Extensions', icon: 'extension', disabled: true }
+	];
+	let panel = $state('problems');
+	let scope = $state('user');
+	let setting = $state('editor');
+	let panelChanges = $state(0);
+	let userSetting = $state('14');
+	let workspaceSetting = $state('16');
+	let formatOnSave = $state(true);
+	let autoSave = $state(false);
+	const indicatorTransition: TabTransition = (node) =>
+		fade(node, {
+			duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 120
+		});
 	let sidebarVisible = $state(true);
 	let searching = $state(false);
 	let query = $state('');
@@ -158,7 +198,7 @@
 								class="file-entry"
 								href={`#${file.id}`}
 								aria-current={activeFile.id === file.id ? 'true' : undefined}
-								onclick={() => (activeFile = file)}
+								onclick={() => (activeFileId = file.id)}
 								><span class="workbench-icon file-icon" aria-hidden="true"
 									><Icon name="description" /></span
 								>{file.name}.svelte</a
@@ -177,19 +217,20 @@
 				{#each files as file (file.id)}<a
 						class="file-entry"
 						href={`#${file.id}`}
-						onclick={() => (activeFile = file)}
+						onclick={() => (activeFileId = file.id)}
 						><span class="workbench-icon" aria-hidden="true"><Icon name="data_object" /></span
 						>{file.name}</a
 					>{/each}
 			</details>
 		</nav>
-		<nav class="editor-tabs" aria-label="Editor files">
-			<a href={`#${activeFile.id}`} aria-current="true"
-				><span class="workbench-icon file-icon" aria-hidden="true"><Icon name="description" /></span
-				>{activeFile.name}.svelte
-				<span class="workbench-icon tab-close" aria-hidden="true"><Icon name="close" /></span></a
-			>
-		</nav>
+		<div class="editor-tabs">
+			<Tabs
+				items={editorFiles}
+				bind:value={activeFileId}
+				label="Editor files"
+				onChange={revealFile}
+			/>
+		</div>
 		<header>
 			<p class="eyebrow"><Icon name="code" /> BREF / THEME COLLECTION</p>
 			<h1>VS Code<span>Component reference</span></h1>
@@ -539,10 +580,106 @@
 					/>
 				</div>
 			</section>
+			<section aria-labelledby="tabs">
+				<div class="section-title">
+					<h2 id="tabs">06 <span>Tabs</span></h2>
+					<code>Tabs · consumer-owned content</code>
+				</div>
+				<p class="note">
+					Arrow keys select; Home and End jump. Disabled items are skipped. Overflow stays within
+					each strip.
+				</p>
+				<div class="tabs-examples">
+					<div class="tab-example" data-tabs-example="fit">
+						<h3>Panel · horizontal fit</h3>
+						<div class="panel-strip">
+							<Tabs
+								items={panelTabs}
+								bind:value={panel}
+								label="Workbench panels"
+								onChange={() => panelChanges++}
+							/>
+						</div>
+						<div class="tab-content" role="region" aria-label="Selected workbench panel">
+							{#if panel === 'problems'}
+								<p>
+									<Icon name="check_circle" color="success" /> No problems detected in the workspace.
+								</p>
+							{:else if panel === 'output'}
+								<code>[formatter] Settings loaded. Ready to format on save.</code>
+							{:else if panel === 'terminal'}
+								<code>$ bun run check<br />0 errors, 0 warnings</code>
+							{:else if panel === 'ports'}
+								<p>localhost:5173 · Development server · Private</p>
+							{/if}
+						</div>
+						<p class="note" role="status">Panel changes: {panelChanges}</p>
+					</div>
+					<div class="tab-example" data-tabs-example="fill">
+						<h3>Settings scope · horizontal fill</h3>
+						<Tabs
+							items={scopeTabs}
+							bind:value={scope}
+							size="fill"
+							label="Settings scope"
+							filled
+							transitionIn={indicatorTransition}
+							transitionOut={indicatorTransition}
+						/>
+						<div class="tab-content" role="region" aria-label="Selected settings scope">
+							<label for="scope-font-size"
+								>{scope === 'user' ? 'User' : 'Workspace'} font size</label
+							>
+							{#if scope === 'user'}
+								<TextInput
+									id="scope-font-size"
+									bind:value={userSetting}
+									aria-label="User font size"
+								/>
+							{:else}
+								<TextInput
+									id="scope-font-size"
+									bind:value={workspaceSetting}
+									aria-label="Workspace font size"
+								/>
+							{/if}
+							<p class="note">
+								Values persist independently when switching scope. Filled icons and a
+								reduced-motion-aware fade.
+							</p>
+						</div>
+					</div>
+					<div class="tab-example" data-tabs-example="vertical">
+						<h3>Preferences · vertical</h3>
+						<div class="vertical-tabs">
+							<Tabs
+								items={settingTabs}
+								bind:value={setting}
+								orientation="vertical"
+								label="Preference categories"
+							/>
+							<div class="tab-content" role="region" aria-label="Selected preference category">
+								{#if setting === 'editor'}
+									<label class="setting-check"
+										><Checkbox bind:checked={formatOnSave} /> Format on save</label
+									>
+									<p class="note">
+										Formatting is {formatOnSave ? 'enabled' : 'disabled'} for this workspace.
+									</p>
+								{:else}
+									<label class="setting-check"><Checkbox bind:checked={autoSave} /> Auto save</label
+									>
+									<p class="note">Files save {autoSave ? 'automatically' : 'only on command'}.</p>
+								{/if}
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 		</main>
 		<footer class="status-bar">
 			<span role="status">Activations: {presses}</span><span>{selectedLanguage}</span>
-			<span>14 exports · one reusable theme</span><a href={resolve('/')} data-sveltekit-reload
+			<span>15 exports · one reusable theme</span><a href={resolve('/')} data-sveltekit-reload
 				>Back to showcase ↗</a
 			>
 		</footer>
@@ -767,23 +904,7 @@
 		background: var(--vscode-panel);
 		border-bottom: 1px solid var(--vscode-border);
 	}
-	.editor-tabs a {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		width: fit-content;
-		height: 35px;
-		padding: 0 12px;
-		background: var(--color-background);
-		border-top: 1px solid var(--vscode-accent);
-		border-right: 1px solid var(--vscode-border);
-		color: var(--color-foreground);
-		text-decoration: none;
-		font-size: 13px;
-	}
-	.editor-tabs .tab-close {
-		margin-left: 12px;
-	}
+
 	header,
 	main,
 	.editor-tabs {
@@ -924,6 +1045,47 @@
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 12px;
 	}
+	.tabs-examples {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 24px;
+	}
+	.tab-example {
+		min-width: 0;
+	}
+	.tab-example h3 {
+		margin: 0 0 12px;
+		font-size: 13px;
+	}
+	.panel-strip {
+		max-width: 340px;
+	}
+	.tab-content {
+		min-width: 0;
+		padding: 16px;
+		border: 1px solid var(--vscode-border);
+		background: var(--vscode-panel);
+		overflow-wrap: anywhere;
+	}
+	.tab-content > p:first-child {
+		margin-top: 0;
+	}
+	.tab-content > label {
+		display: block;
+		margin-bottom: 8px;
+	}
+	.tab-content > code {
+		white-space: normal;
+	}
+	.vertical-tabs {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+	.setting-check {
+		display: flex !important;
+		align-items: center;
+		gap: 8px;
+	}
 	.status-bar {
 		position: fixed;
 		inset: auto 0 0;
@@ -979,7 +1141,8 @@
 			padding-inline: 16px;
 		}
 		.grid,
-		.surface-grid {
+		.surface-grid,
+		.tabs-examples {
 			grid-template-columns: 1fr;
 			gap: 20px;
 		}
