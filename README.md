@@ -43,7 +43,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 **WIP:** VS Code and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
 
-Glassy (the Liquid Glass theme) is a component collection at [/themes/glassy](http://localhost:5173/themes/glassy), with all 14 exports, variants, native keyboard interactions, validation, loading, disabled states and responsive layouts. Its translucent layers use native backdrop blur with opaque fallbacks and honor reduced motion, reduced transparency, increased contrast and forced colors.
+Glassy (the Liquid Glass theme) is a component collection at [/themes/glassy](http://localhost:5173/themes/glassy), with all 15 exports, fit/fill and vertical Tabs with bound content, variants, native keyboard interactions, validation, loading, disabled states and responsive layouts. Its translucent layers use native backdrop blur with opaque fallbacks and honor reduced motion, reduced transparency, increased contrast and forced colors.
 
 ![Glassy rendered component collection](static/previews/glassy.jpg)
 

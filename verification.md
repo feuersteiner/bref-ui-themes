@@ -1,5 +1,19 @@
 # Verification
 
+## Glassy Tabs — 2026-10-21
+
+Glassy integrates the shared 0.1.0/Bref 2.2.0 baseline and exports the same copied Tabs through `bref-ui-themes/glassy` and the root `Glassy` namespace. Its theme adds translucent strips, selected/hover/disabled/focus states, vertical styling and reduced-transparency/forced-color fallbacks. The existing collection now demonstrates all 15 exports, including horizontal fit/fill and vertical Tabs with independently bound content. Existing pill controls represent choices rather than content tabs and retain their behavior. The canonical Inter `/index.css` import supports clean SSR consumers.
+
+Validated using direct Node/npm equivalents because the installed Bun 1.3.4 script launcher fails with `CouldntReadCurrentDirectory`:
+
+- Svelte sync/check: zero errors or warnings. Prettier and ESLint pass.
+- Root SSR/client/static build, Svelte package, npm-backed publint and Pages build with `BASE_PATH=/bref-ui-themes` pass.
+- `npm pack --ignore-scripts`: 79-file 0.1.0 tarball contains Glassy, the shared Tabs source/declarations and all five package entries. Strict publint passes on the actual tarball; routes, screenshots and test tooling are absent.
+- Clean npm-installed Svelte/Vite consumer: type check, production client build, production SSR build/render, all 15 named/namespace exports and interactive bound content pass.
+- Actual browser checks at 1440px, 390px and 320px: horizontal/vertical selection, disabled skipping, Home/End, wraparound, roving Tab focus, visible inset focus, selected/hover states, fill sizing, mobile icon labels, strip scrolling without page overflow and bound content updates pass. Pages navigation/assets and interaction pass without browser errors.
+- Cropped desktop/mobile Tabs screenshots are saved outside the repository. GitHub has no connector upload tool and the browser is signed out, so the new images could not be attached to the PR. Existing historical PR images remain identified as such.
+- Reduced-motion CSS and the published indicator's media-query handling were checked in the packaged source. Runtime preference emulation, other browsers, real devices and screen readers remain unverified. No test script exists; no test suite was restored.
+
 ## Bref 2.2.0 and Tabs — 2026-10-21
 
 The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.

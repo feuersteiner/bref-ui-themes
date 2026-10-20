@@ -14,8 +14,10 @@
 		Select,
 		Spinner,
 		Surface,
+		Tabs,
 		TextInput
 	} from '#lib/glassy/index.js';
+	import type { TabItemDataProps } from 'bref-ui/types';
 	let name = $state('');
 	let email = $state('');
 	let invalid = $state(false);
@@ -47,6 +49,50 @@
 		{ id: 'frosted', label: 'Frosted' },
 		{ id: 'tinted', label: 'Tinted' }
 	];
+	let view = $state('overview');
+	let finish = $state('clear');
+	let layer = $state('blur');
+	let tabFeedback = $state('Choose a view to explore the material.');
+	const views: TabItemDataProps[] = [
+		{ id: 'overview', label: 'Overview', icon: 'dashboard' },
+		{ id: 'layers', label: 'Layers', icon: 'layers' },
+		{ id: 'light', label: 'Light', icon: 'light_mode' },
+		{ id: 'export', label: 'Export', icon: 'ios_share', disabled: true },
+		{ id: 'details', label: 'Details', icon: 'info' }
+	];
+	const viewContent: Record<string, { title: string; text: string }> = {
+		overview: {
+			title: 'Clarity in every layer',
+			text: 'A translucent surface keeps the landscape visible and the controls readable.'
+		},
+		layers: {
+			title: 'Three layers, one surface',
+			text: 'Backdrop blur, a quiet tint and a fine highlight create the glass finish.'
+		},
+		light: {
+			title: 'Let the light through',
+			text: 'Soft reflections add depth without hiding the content behind the glass.'
+		},
+		details: {
+			title: 'Native, down to the details',
+			text: 'Arrow keys, Home and End change this view. Export is disabled in this preview.'
+		}
+	};
+	const finishes: TabItemDataProps[] = [
+		{ id: 'clear', label: 'Clear', icon: 'water_drop' },
+		{ id: 'frosted', label: 'Frosted', icon: 'blur_on' },
+		{ id: 'tinted', label: 'Tinted', icon: 'palette' }
+	];
+	const layers: TabItemDataProps[] = [
+		{ id: 'blur', label: 'Blur', icon: 'blur_on' },
+		{ id: 'tint', label: 'Tint', icon: 'palette' },
+		{ id: 'highlight', label: 'Highlight', icon: 'light_mode' }
+	];
+	const layerContent: Record<string, string> = {
+		blur: 'Backdrop blur softens the scene behind the surface.',
+		tint: 'A cool tint separates controls from the background.',
+		highlight: 'A fine upper highlight defines the edge of the glass.'
+	};
 	const save = () => {
 		invalid = !email.includes('@');
 		if (invalid) {
@@ -96,7 +142,7 @@
 							icon={{ name: 'blur_on' }}
 							color="primary"
 							variant="soft"
-						/><span class="version">14 exports · Svelte 5</span>
+						/><span class="version">15 exports · Svelte 5</span>
 					</div>
 					<code>import &#123; Theme, Button &#125; from 'bref-ui-themes/glassy';</code>
 				</div>
@@ -509,6 +555,62 @@
 						<p class="note">The native dialog traps focus and restores it on close.</p>
 					</Surface>
 				</section>
+				<section id="tabs" aria-labelledby="tabs-title">
+					<Surface radius="medium" spacing="large" glass>
+						<div class="section-heading">
+							<h2 id="tabs-title">Tabs</h2>
+							<span>07 / NAVIGATION</span>
+						</div>
+						<p data-muted>Fit, fill or vertical. The selected view owns its content.</p>
+						<div class="tab-example">
+							<p class="field-title">Horizontal / fit</p>
+							<Tabs
+								items={views}
+								bind:value={view}
+								label="Material views"
+								onChange={(id) =>
+									(tabFeedback = `${views.find((item) => item.id === id)?.label} view selected.`)}
+							/>
+							<div class="tab-content" aria-live="polite">
+								<strong>{viewContent[view].title}</strong>
+								<p>{viewContent[view].text}</p>
+							</div>
+							<p class="note">{tabFeedback} Swipe the strip when space is narrow.</p>
+						</div>
+						<div class="tab-example">
+							<p class="field-title">Horizontal / fill · filled icons</p>
+							<Tabs
+								items={finishes}
+								bind:value={finish}
+								size="fill"
+								filled
+								label="Glass finish preview"
+							/>
+							<div class="finish-preview" data-finish={finish} aria-live="polite">
+								<Icon
+									name={finishes.find((item) => item.id === finish)?.icon ?? 'water_drop'}
+									size="large"
+								/>
+								<strong>{finishes.find((item) => item.id === finish)?.label} glass</strong>
+							</div>
+						</div>
+						<div class="tab-example">
+							<p class="field-title">Vertical / arrow up and down</p>
+							<div class="vertical-tabs">
+								<Tabs
+									items={layers}
+									bind:value={layer}
+									orientation="vertical"
+									label="Glass layers"
+								/>
+								<div class="tab-content" aria-live="polite">
+									<strong>{layers.find((item) => item.id === layer)?.label}</strong>
+									<p>{layerContent[layer]}</p>
+								</div>
+							</div>
+						</div>
+					</Surface>
+				</section>
 			</div>
 			<footer>
 				<span>Glassy / Liquid Glass</span><span
@@ -780,6 +882,43 @@
 		grid-template-columns: repeat(3, minmax(0, 1fr));
 		gap: 12px;
 		font-size: 12px;
+	}
+	.tab-example {
+		min-width: 0;
+	}
+	.tab-content {
+		min-width: 0;
+		padding: 16px 4px 0;
+	}
+	.tab-content strong {
+		font-size: 13px;
+	}
+	.tab-content p {
+		margin-block: 8px 0;
+		color: var(--color-muted);
+	}
+	.vertical-tabs {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: 16px;
+		align-items: start;
+	}
+	.finish-preview {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 20px;
+		margin-top: 16px;
+		border: 1px solid #ffffff99;
+		border-radius: 1rem;
+		background: #ffffff44;
+		font-size: 13px;
+	}
+	.finish-preview[data-finish='frosted'] {
+		background: #ffffffb8;
+	}
+	.finish-preview[data-finish='tinted'] {
+		background: #a4c9e070;
 	}
 	.dialog-content {
 		display: grid;

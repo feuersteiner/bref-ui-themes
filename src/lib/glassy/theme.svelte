@@ -2,7 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { Theme as BrefTheme, ThemeModeToggle } from 'bref-ui';
 	import Base from '../shared/base.svelte';
-	import '@fontsource-variable/inter';
+	import '@fontsource-variable/inter/index.css';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
@@ -76,6 +76,39 @@
 			--glassy-ink: var(--surface-color);
 			--surface-border: #ffffff70;
 			--surface-shadow: 0 2px 6px #24344210;
+		}
+		[data-bref-theme='glassy'] [role='tablist'] {
+			gap: 2px;
+			padding: 4px;
+			border: 1px solid #ffffff80;
+			border-radius: 1rem;
+			background: #ffffff30;
+			box-shadow: inset 0 1px 0 #ffffff66;
+			-webkit-backdrop-filter: blur(24px) saturate(125%);
+			backdrop-filter: blur(24px) saturate(125%);
+		}
+		[data-bref-theme='glassy'] [role='tab'] {
+			border-radius: 0.75rem;
+			color: var(--color-muted);
+		}
+		[data-bref-theme='glassy'] [role='tab'][aria-selected='true'] {
+			background: #ffffffa8;
+			color: var(--color-primary);
+			box-shadow:
+				inset 0 1px 0 #ffffffcc,
+				0 2px 6px #24344210;
+		}
+		[data-bref-theme='glassy'] [role='tab'] > i {
+			border-radius: 999px;
+		}
+		[data-bref-theme='glassy'] [role='tablist'] [role='tab']:focus-visible {
+			outline-offset: -4px;
+		}
+		@media (hover: hover) {
+			[data-bref-theme='glassy'] [role='tab']:not(:disabled):hover {
+				background: #ffffff80;
+				color: var(--color-primary);
+			}
 		}
 		[data-bref-theme='glassy'] .surface-filled {
 			--glassy-paint: var(--surface-fill);
@@ -225,7 +258,33 @@
 				backdrop-filter: none;
 			}
 		}
+		@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+			[data-bref-theme='glassy'] [role='tablist'] {
+				background: var(--color-background);
+				-webkit-backdrop-filter: none;
+				backdrop-filter: none;
+			}
+			[data-bref-theme='glassy'] [role='tab'][aria-selected='true'] {
+				background: #ffffff;
+			}
+		}
 		@media (forced-colors: active) {
+			[data-bref-theme='glassy'] [role='tablist'],
+			[data-bref-theme='glassy'] [role='tab'] {
+				background: Canvas;
+				color: CanvasText;
+				border-color: CanvasText;
+				box-shadow: none;
+				-webkit-backdrop-filter: none;
+				backdrop-filter: none;
+			}
+			[data-bref-theme='glassy'] [role='tab'][aria-selected='true'] {
+				background: Highlight;
+				color: HighlightText;
+			}
+			[data-bref-theme='glassy'] [role='tab']:disabled {
+				color: GrayText;
+			}
 			body:has([data-bref-theme='glassy']) {
 				background: Canvas;
 			}
