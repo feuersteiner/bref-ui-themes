@@ -2,8 +2,8 @@
 	import type { Snippet } from 'svelte';
 	import { Theme as BrefTheme, ThemeModeToggle } from 'bref-ui';
 	import Base from '../shared/base.svelte';
-	import '@fontsource-variable/inter';
-	import '@fontsource-variable/bricolage-grotesque';
+	import '@fontsource-variable/inter/index.css';
+	import '@fontsource-variable/bricolage-grotesque/index.css';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
@@ -29,6 +29,16 @@
 	:global {
 		[data-bref-theme='forma'] {
 			--font-display: 'Bricolage Grotesque Variable', sans-serif;
+		}
+		[data-bref-theme='forma'] [role='tablist'] {
+			border-color: color-mix(in srgb, var(--color-foreground) 24%, transparent);
+		}
+		[data-bref-theme='forma'] [role='tab'] {
+			letter-spacing: -0.02em;
+		}
+		[data-bref-theme='forma'] [role='tab'][aria-selected='true'] {
+			font-weight: 600;
+			background: color-mix(in srgb, var(--color-secondary) 5%, transparent);
 		}
 	}
 </style>

@@ -1,4 +1,30 @@
-# Migration verification
+# Verification
+
+## Bref 2.2.0 and Tabs — 2026-10-21
+
+The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.
+
+The published registry/dependency planner and preview/install pipeline copied only the Tabs entry into the existing component layout. Preview: add `tabs/tabs.svelte`, add `tabs/item.svelte`, conflict `index.ts`. The barrel merge was explicitly approved; existing Icon, Theme, checkbox, dialog and other control sources were retained. The two copied files are unchanged from CLI-prepared source and import public types from `bref-ui/types`.
+
+All three public theme entries share Tabs through the component barrel. Theme CSS supplies Relay's soft blue strip, Forma's restrained underline and Elsewhere's violet inset strip. The demonstration route covers horizontal fit/fill, vertical, disabled items, filled icons, custom indicator transitions and consumer-owned bound panels. Live sites use the same themed exports for task status, product category and finding review filters.
+
+Clean-consumer browser verification exposed a development SSR font-loading error. Explicit `/index.css` font imports in the three themes fix Vite's externalization of bare font-package imports without consumer configuration.
+
+Validation:
+
+- `bun install --frozen-lockfile --ignore-scripts`: lockfile and npm dependencies verified. Installed Bref reports 2.2.0.
+- `npm run check`: zero errors or warnings. `npm run lint`: Prettier and ESLint pass.
+- `npm run build:site`: SSR/client build and static prerender pass. `npm run package -- --pack false`: Svelte package and publint pass.
+- `BASE_PATH=/bref-ui-themes npm run build:site`: Pages project-path build passes.
+- `npm pack --ignore-scripts`: 0.1.0 tarball inspected; all four public entries and Tabs source/declarations are included. Site routes, photos, tests and development tooling are absent. Strict publint on the actual tarball passes.
+- Clean SvelteKit 3 consumer: installed the tarball and Bref 2.2.0 through npm, checked all namespace/subpath exports and public types, built SSR/client/static output, and exercised all three packaged themes in the browser. Bindings, disabled skipping and `onChange` update rendered content.
+- Rendered inspection: all three theme demonstrations and live sites at desktop and 320px widths. Horizontal overflow stays within the strip; fill stays within its parent; mobile labels/icons retain accessible names. A showcase grid sizing issue found at 320px was fixed.
+- Keyboard inspection: horizontal and vertical arrows, Home/End, wraparound, disabled skipping, one tab stop per controlled strip, visible focus and Tab into the consumer-owned panel. Default and custom indicator transitions render. Live filters produce completed/open tasks, category products, reviewed findings and an empty reviewed view.
+- `git diff --check` passes. `AGENTS.md` and `CONTRIBUTING.md` remain identical. No test script exists; the removed test suite was not restored. Tools, consumer files, tarballs and screenshots stay outside the repository.
+
+Limits: Bun 1.3.4's package-script launcher fails here with `CouldntReadCurrentDirectory`, including default publint packing. npm script equivalents, disabled automatic packing and separate tarball inspection provide validation; a successful default `bun run build` is not claimed. Reduced-motion media rules and published indicator handling are preserved; runtime preference emulation, other browsers, real devices, screen readers and human visual approval remain unverified. No npm publication was performed.
+
+## Historical migration verification
 
 Verified on 2026-10-12. The reset commit is `5f2e8ca`; the following migration commit contains the scaffold, migrated demos and base Bref showcase. Human visual approval remains separate from automated validation.
 

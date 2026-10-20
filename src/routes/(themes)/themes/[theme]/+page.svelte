@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
 	import { Relay, Forma, Elsewhere } from '#lib';
+	import type { TabItemDataProps } from 'bref-ui/types';
+	import { prefersReducedMotion } from 'svelte/motion';
+	import { fade } from 'svelte/transition';
 	import type { PageProps } from './$types.js';
 	let { data }: PageProps = $props();
 	const themes = { relay: Relay, forma: Forma, elsewhere: Elsewhere };
@@ -10,6 +13,27 @@
 	let open = $state(false);
 	let value = $state('');
 	let choice = $state<string | string[]>('one');
+	let projectTab = $state('overview');
+	let stageTab = $state('design');
+	let settingsTab = $state('members');
+	const projectTabs = [
+		{ id: 'overview', label: 'Project overview', icon: 'dashboard' },
+		{ id: 'activity', label: 'Recent activity', icon: 'history' },
+		{ id: 'files', label: 'Project files', icon: 'folder' },
+		{ id: 'analytics', label: 'Analytics', icon: 'monitoring', disabled: true }
+	] as const satisfies readonly TabItemDataProps[];
+	const stageTabs = [
+		{ id: 'design', label: 'Design', icon: 'draw' },
+		{ id: 'build', label: 'Build', icon: 'construction' },
+		{ id: 'launch', label: 'Launch', icon: 'rocket_launch' }
+	] as const satisfies readonly TabItemDataProps[];
+	const settingsTabs = [
+		{ id: 'members', label: 'Members', icon: 'group' },
+		{ id: 'notifications', label: 'Notifications', icon: 'notifications' },
+		{ id: 'security', label: 'Security', icon: 'lock' }
+	] as const satisfies readonly TabItemDataProps[];
+	const indicatorFade = (node: HTMLElement) =>
+		fade(node, { duration: prefersReducedMotion.current ? 0 : 160 });
 </script>
 
 <svelte:head
@@ -36,7 +60,86 @@
 			<p data-muted>
 				Reusable theme and copied Bref components. The complete site demo uses this same source.
 			</p>
-			<p><code>import &#123; Theme, Button &#125; from 'bref-ui-themes/{data.theme}';</code></p>
+			<p>
+				<code>import &#123; Theme, Button, Tabs &#125; from 'bref-ui-themes/{data.theme}';</code>
+			</p>
+			<section aria-labelledby="tabs">
+				<h2 id="tabs">Tabs</h2>
+				<p data-muted>Use arrow keys, Home and End to switch views. Analytics is disabled.</p>
+				<div data-tab-example>
+					<h3>Horizontal · fit</h3>
+					<components.Tabs items={projectTabs} bind:value={projectTab} label="Project views" />
+					<div
+						data-tab-panel
+						role="tabpanel"
+						aria-label={projectTabs.find((tab) => tab.id === projectTab)?.label}
+						tabindex="0"
+					>
+						{#if projectTab === 'overview'}
+							<h3>Website refresh</h3>
+							<p>8 tasks open · 3 completed. The next review is Thursday.</p>
+						{:else if projectTab === 'activity'}
+							<h3>Recent activity</h3>
+							<p>Maya completed the navigation review. Jules uploaded the new homepage draft.</p>
+						{:else}
+							<h3>Project files</h3>
+							<ul>
+								<li>Homepage draft.fig</li>
+								<li>Content checklist.pdf</li>
+							</ul>
+						{/if}
+					</div>
+				</div>
+				<div data-tab-example>
+					<h3>Horizontal · fill · filled icons</h3>
+					<components.Tabs
+						items={stageTabs}
+						bind:value={stageTab}
+						label="Project stages"
+						size="fill"
+						filled
+						transitionIn={indicatorFade}
+						transitionOut={indicatorFade}
+					/>
+					<div
+						data-tab-panel
+						role="tabpanel"
+						aria-label={stageTabs.find((tab) => tab.id === stageTab)?.label}
+						tabindex="0"
+					>
+						{#if stageTab === 'design'}<h3>Shape the experience</h3>
+							<p>Review the layout and approve the visual direction.</p>
+						{:else if stageTab === 'build'}<h3>Make it work</h3>
+							<p>Connect the approved screens and check keyboard access.</p>
+						{:else}<h3>Ready to share</h3>
+							<p>Complete the release checklist and publish the finished project.</p>{/if}
+					</div>
+				</div>
+				<div data-tab-example>
+					<h3>Vertical</h3>
+					<div data-vertical-tabs>
+						<components.Tabs
+							items={settingsTabs}
+							bind:value={settingsTab}
+							label="Project settings"
+							orientation="vertical"
+						/>
+						<div
+							data-tab-panel
+							role="tabpanel"
+							aria-label={settingsTabs.find((tab) => tab.id === settingsTab)?.label}
+							tabindex="0"
+						>
+							{#if settingsTab === 'members'}<h3>Project members</h3>
+								<p>Maya, Jules and Sam have access to this project.</p>
+							{:else if settingsTab === 'notifications'}<h3>Stay up to date</h3>
+								<p>Task assignments and review requests appear in the activity feed.</p>
+							{:else}<h3>Secure access</h3>
+								<p>Only invited members can view project files.</p>{/if}
+						</div>
+					</div>
+				</div>
+			</section>
 			<section aria-labelledby="buttons">
 				<h2 id="buttons">Buttons</h2>
 				{#each ['neutral', 'soft', 'filled'] as variant (variant)}<div data-actions>
@@ -150,6 +253,7 @@
 	}
 	section {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 24px;
 		margin-top: 48px;
 	}
@@ -158,6 +262,34 @@
 	}
 	[data-actions] > span {
 		min-width: 60px;
+	}
+	[data-tab-example] {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+		min-width: 0;
+	}
+	h3 {
+		font-size: 16px;
+	}
+	[data-tab-panel] {
+		min-width: 0;
+		padding: 20px;
+		border: 1px solid color-mix(in srgb, var(--color-foreground) 12%, transparent);
+		border-radius: 12px;
+	}
+	[data-tab-panel] p,
+	[data-tab-panel] ul {
+		margin-top: 12px;
+	}
+	[data-tab-panel] ul {
+		padding-inline-start: 20px;
+	}
+	[data-vertical-tabs] {
+		display: grid;
+		grid-template-columns: auto minmax(0, 1fr);
+		gap: 20px;
+		align-items: start;
 	}
 	[data-form] {
 		max-width: 400px;
