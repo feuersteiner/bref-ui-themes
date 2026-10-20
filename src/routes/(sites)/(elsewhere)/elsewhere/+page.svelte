@@ -44,7 +44,7 @@
 		error = '';
 		void focusInput();
 	};
-	const start = () => {
+	const start = async () => {
 		if (pending) return;
 		let target: URL;
 		try {
@@ -69,6 +69,8 @@
 			);
 			if (runs.find((item) => item.id === run.id)?.status === 'ready') clearInterval(timer);
 		}, 800);
+		await tick();
+		workspace?.querySelector<HTMLButtonElement>('[data-stop-audit]')?.focus();
 	};
 	const review = (id: string, checked: boolean) => {
 		runs = runs.map((run) =>
@@ -93,7 +95,7 @@
 </script>
 
 <svelte:head>
-	<title>Elsewhere — a Bref agent workspace demo</title>
+	<title>Site Reviewer — a Bref agent workspace demo</title>
 	<meta
 		name="description"
 		content="A simple website review agent with a task plan, sample findings and review controls, built with Bref."
@@ -101,7 +103,7 @@
 </svelte:head>
 <main id="demo-content" data-agent-workspace tabindex="-1" bind:this={workspace}>
 	<header data-agent-header>
-		<a href="#demo-content"><Icon name="all_inclusive" />Elsewhere</a>
+		<a href="#demo-content"><Icon name="all_inclusive" />Site Reviewer</a>
 		<Button label="New run" icon={{ name: 'add' }} glass onClick={newRun} />
 	</header>
 	<AuditLauncher bind:url {pending} {error} onStart={start} onStop={stop} />

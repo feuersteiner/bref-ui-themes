@@ -2,6 +2,8 @@
 
 Verified on 2026-10-12. The reset commit is `5f2e8ca`; the following migration commit contains the scaffold, migrated demos and base Bref showcase. Human visual approval remains separate from automated validation.
 
+Automated tests and their runner were removed on 2026-10-13. Validation uses checks, lint, builds and rendered inspection; the migration findings below remain historical.
+
 ## Provenance
 
 | Source branch               | Revision  | Extracted content                                                       |
@@ -19,10 +21,9 @@ Bref 2.1.3's registry loader, dependency planner and installation pipeline copie
 
 ## Validation
 
-- `bun run check`: zero errors or warnings, including browser tests and preview tooling.
+- `bun run check`: zero errors or warnings, including preview tooling.
 - `bun run lint`: formatting and ESLint pass without warnings.
 - `bun run build`: static site and `svelte-package` library builds pass; publint reports no issues.
-- `bun run test`: 30 passing tests in Chromium at desktop 1440×960 and mobile 390×664 CSS pixels (iPhone 13 emulation).
 - Showcase: base `bref-ui` components/default Theme/styles and the original Bref logo; theme isolation returns to the default Bref palette.
 - Rendered review: homepage, all sites, all theme demonstrations and Relay/Forma dialogs inspected; additional overflow checks at 320 pixels. Original photos, responsive arrangements, controls and native full-screen mobile dialogs are preserved.
 - Browser coverage: seven routes, catalog links and WIP non-availability, lazy photos, skip-link focus, task completion/creation, modal tabbing/Escape/focus restoration, furniture dialogs/cart/checkout/header updates, audit validation/completion/review/stop, keyboard selection and reduced motion.

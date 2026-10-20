@@ -1,21 +1,35 @@
 <script lang="ts">
 	import { asset, resolve } from '$app/paths';
 	import { Button, Pill, Surface, Theme, ThemeModeToggle } from 'bref-ui';
+	import type { IconName, ThemeMode } from 'bref-ui/types';
 	import '@fontsource-variable/inter';
 	import '@fontsource-variable/syne';
 	import Demos from './catalog/demos.svelte';
+	import GithubStars from './catalog/github-stars.svelte';
+
+	let mode = $state<ThemeMode>('light');
+	const modes: ThemeMode[] = ['auto', 'light', 'dark'];
+	const labels: Record<ThemeMode, string> = { auto: 'System', light: 'Light', dark: 'Dark' };
+	const icons: Record<ThemeMode, IconName> = {
+		auto: 'brightness_auto',
+		light: 'light_mode',
+		dark: 'dark_mode'
+	};
+	const cycleTheme = () => {
+		mode = modes[(modes.indexOf(mode) + 1) % modes.length];
+	};
 </script>
 
 <svelte:head>
 	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
-		content="Explore complete Bref demo sites and reusable Svelte themes. Relay, Forma, Elsewhere and Glassy are ready to try; more themes are on the way."
+		content="Explore complete Bref demo sites and reusable Svelte themes. Tasks, House Shop, Site Reviewer and Glassy are ready to try; more themes are on the way."
 	/>
 </svelte:head>
 
 <Theme>
-	<ThemeModeToggle mode="light" />
+	<ThemeModeToggle {mode} />
 	<div data-showcase>
 		<a data-skip href="#showcase-content">Skip to content</a>
 		<header>
@@ -30,6 +44,16 @@
 					size="small"
 				/>
 			</nav>
+			<span data-actions>
+				<GithubStars {mode} />
+				<Button
+					variant="neutral"
+					rounded
+					size="small"
+					icon={{ name: icons[mode], label: labels[mode] }}
+					onClick={cycleTheme}
+				/>
+			</span>
 		</header>
 		<main id="showcase-content" tabindex="-1">
 			<div data-intro>
@@ -112,11 +136,20 @@
 			</section>
 		</main>
 		<footer>
-			<span>Svelte components. Native CSS.</span>
-			<nav aria-label="Bref resources">
-				<a href="https://feuersteiner.github.io/bref-ui/">Bref documentation</a>
+			<nav aria-label="Bref UI resources">
+				<h2>Bref UI</h2>
+				<a href="https://github.com/feuersteiner/bref-ui">GitHub</a>
+				<a href="https://feuersteiner.github.io/bref-ui/">Documentation</a>
+			</nav>
+			<nav aria-label="Bref themes resources">
+				<h2>Themes</h2>
 				<a href="https://github.com/feuersteiner/bref-ui-themes">GitHub</a>
+				<a href="https://github.com/feuersteiner/bref-ui-themes#library-imports">Documentation</a>
+			</nav>
+			<nav aria-label="Community">
+				<h2>Community</h2>
 				<a href="https://discord.gg/JpgQRTUsVS">Discord</a>
+				<a href="https://x.com/feuersteinnnnn">Twitter / X</a>
 			</nav>
 		</footer>
 	</div>
@@ -137,14 +170,23 @@
 		margin: auto;
 	}
 	header {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
+		display: grid;
+		grid-template-columns: auto 1fr auto;
 		align-items: center;
 		gap: 12px;
 		min-height: 72px;
 		padding-block: 12px;
 		border-bottom: 1px solid var(--showcase-rule);
+	}
+	header nav {
+		justify-content: flex-end;
+		margin-right: 12px;
+	}
+	[data-actions] {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 8px;
 	}
 	a {
 		color: inherit;
@@ -295,17 +337,23 @@
 		color: var(--color-muted);
 	}
 	footer {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 16px;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 24px;
 		border-top: 1px solid var(--showcase-rule);
-		padding-block: 24px;
-		font-size: 12px;
+		padding-block: 32px;
+		font-size: 13px;
 		color: var(--color-muted);
 	}
 	footer nav {
-		gap: 24px;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+	footer h2 {
+		font: 600 14px / 24px var(--font-text);
+		color: var(--color-foreground);
+		letter-spacing: normal;
 	}
 	footer a:hover {
 		color: var(--color-primary);
@@ -324,6 +372,16 @@
 		transform: none;
 	}
 	@media (max-width: 780px) {
+		header {
+			grid-template-columns: minmax(0, 1fr) auto;
+		}
+		[data-brand] {
+			grid-column: 1 / -1;
+		}
+		header nav {
+			justify-content: flex-start;
+			margin-right: 0;
+		}
 		[data-intro] {
 			padding-block: 24px;
 		}
@@ -345,7 +403,7 @@
 			font-size: 20px;
 		}
 		footer {
-			flex-direction: column;
+			grid-template-columns: 1fr;
 		}
 	}
 </style>

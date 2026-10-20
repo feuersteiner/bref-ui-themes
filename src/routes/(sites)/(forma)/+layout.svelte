@@ -14,7 +14,12 @@
 			--font-text: 'Inter Variable', sans-serif;
 			--font-display: 'Bricolage Grotesque Variable', sans-serif;
 			--forma-rule: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+			--forma-image-radius: 4px;
 			font-family: var(--font-text);
+		}
+		[data-forma] img,
+		[data-forma] [data-product-image] {
+			border-radius: var(--forma-image-radius);
 		}
 		[data-forma] [data-store-header],
 		[data-forma] main,
@@ -106,7 +111,6 @@
 			padding: 0;
 			border: 0;
 			background: #f3f4f1;
-			border-radius: 8px;
 			overflow: hidden;
 		}
 		[data-forma] [data-product-image] img {
@@ -211,52 +215,101 @@
 			display: grid;
 			gap: 24px;
 		}
-		[data-forma] [data-cart-item] {
-			display: grid;
-			grid-template-columns: 80px minmax(0, 1fr);
-			align-items: center;
-			gap: 8px 16px;
+		[data-forma] [data-cart-table] {
+			overflow-x: auto;
 		}
-		[data-forma] [data-cart-item] > img {
-			grid-row: 1 / 3;
-			width: 80px;
-			height: 100px;
-			object-fit: cover;
-			border-radius: 10px;
+		[data-forma] [data-cart-table]:focus-visible {
+			outline: 2px solid var(--color-primary);
+			outline-offset: 4px;
 		}
-		[data-forma] [data-cart-item-details] {
-			min-width: 0;
+		[data-forma] [data-cart-table] table {
+			width: 100%;
+			min-width: 640px;
+			border-collapse: separate;
+			border-spacing: 0 12px;
 		}
-		[data-forma] [data-cart-item-heading] {
-			display: flex;
-			justify-content: space-between;
-			align-items: baseline;
-			gap: 12px;
+		[data-forma] [data-cart-table] th,
+		[data-forma] [data-cart-table] td {
+			padding: 16px 12px;
+			text-align: left;
+			vertical-align: middle;
 		}
-		[data-forma] [data-cart-item-heading] > strong {
+		[data-forma] [data-cart-table] thead th {
 			font-size: 13px;
+			font-weight: 500;
+		}
+		[data-forma] [data-cart-item] {
+			background: transparent;
+			border: 0;
+		}
+		[data-forma] [data-cart-item] td {
+			background: var(--surface-fill);
+		}
+		[data-forma] [data-cart-item] td:first-child {
+			border-radius: 8px 0 0 8px;
+		}
+		[data-forma] [data-cart-item] td:last-child {
+			border-radius: 0 8px 8px 0;
+		}
+		[data-forma] [data-cart-table] thead th:first-child,
+		[data-forma] [data-cart-table] tbody td:first-child {
+			width: 100%;
+		}
+		[data-forma] [data-cart-table] th:nth-child(2),
+		[data-forma] [data-cart-table] th:nth-child(4),
+		[data-forma] [data-cart-item-price],
+		[data-forma] [data-cart-item-subtotal] {
+			text-align: right;
 			white-space: nowrap;
+			font-size: 14px;
+			font-variant-numeric: tabular-nums;
+		}
+		[data-forma] [data-cart-table] th:nth-child(3) {
+			text-align: center;
+		}
+		[data-forma] [data-cart-table] tfoot th,
+		[data-forma] [data-cart-table] tfoot td {
+			padding-block: 20px;
+			border-bottom: 0;
+		}
+		[data-forma] [data-cart-table] tfoot th {
+			font-size: 14px;
+			font-weight: 500;
+		}
+		[data-forma] [data-cart-product] {
+			display: flex;
+			align-items: center;
+			gap: 16px;
+			min-width: 224px;
+		}
+		[data-forma] [data-cart-product] > img {
+			width: 64px;
+			height: 80px;
+			flex-shrink: 0;
+			object-fit: cover;
 		}
 		[data-forma] [data-cart-item] h3 {
-			font-size: 18px;
+			font-size: 16px;
 		}
 		[data-forma] [data-cart-item] p {
 			font-size: 12px;
 			margin-block: 4px 0;
 		}
-		[data-forma] [data-quantity] {
-			grid-column: 2;
-			display: flex;
+		[data-forma] [data-quantity-stepper] {
+			display: inline-flex;
 			align-items: center;
-			gap: 8px;
+			padding: 2px;
+			border: 1px solid var(--forma-rule);
+			border-radius: 999px;
 		}
-		[data-forma] [data-delete-item] {
-			margin-left: 12px;
+		[data-forma] [data-quantity-stepper] > button {
+			border-radius: 50%;
 		}
-		[data-forma] [data-quantity] > span {
-			min-width: 20px;
+		[data-forma] [data-quantity-stepper] > span {
+			min-width: 32px;
 			text-align: center;
 			font-size: 13px;
+			font-variant-numeric: tabular-nums;
 		}
 		[data-forma] [data-cart-actions],
 		[data-forma] [data-order-line] {
@@ -345,30 +398,6 @@
 			[data-forma] [data-collection-tools] > div,
 			[data-forma] [data-collection-tools] label {
 				width: 100%;
-			}
-			[data-forma] [data-cart-item] {
-				grid-template-columns: 56px minmax(0, 1fr);
-				gap: 12px;
-				padding: 12px;
-			}
-			[data-forma] [data-cart-item-heading] {
-				align-items: start;
-				flex-direction: column;
-				gap: 4px;
-			}
-			[data-forma] [data-quantity] {
-				grid-column: 1 / -1;
-			}
-			[data-forma] [data-delete-item] {
-				margin-left: auto;
-			}
-			[data-forma] [data-cart-item] h3 {
-				font-size: 16px;
-			}
-			[data-forma] [data-cart-item] > img {
-				grid-row: 1;
-				width: 56px;
-				height: 72px;
 			}
 			[data-forma] [data-product-grid] {
 				grid-template-columns: 1fr;
