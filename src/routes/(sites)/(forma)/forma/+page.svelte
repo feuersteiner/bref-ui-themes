@@ -10,7 +10,7 @@
 	import CollectionControls from './collection-controls.svelte';
 	import { products } from './products.js';
 	import type { Product, CartItem } from './products.js';
-	let category = $state<string | string[]>('all');
+	let category = $state('all');
 	let sort = $state<string | string[]>('featured');
 	let query = $state('');
 	let selected = $state<Product>(products[0]);
@@ -117,7 +117,12 @@
 			</div>
 			<CollectionControls bind:category bind:sort bind:query />
 		</div>
-		<div data-product-grid>
+		<div
+			data-product-grid
+			role="tabpanel"
+			aria-label={`${category === 'all' ? 'All' : category} furniture`}
+			tabindex="0"
+		>
 			{#each filtered as product (product.id)}<ProductCard
 					{product}
 					onSelect={select}

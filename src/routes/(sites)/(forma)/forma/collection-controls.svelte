@@ -1,24 +1,22 @@
 <script lang="ts">
-	import { PillChoiceGroup, Select, TextInput } from '#lib/forma/index.js';
+	import { Tabs, Select, TextInput } from '#lib/forma/index.js';
 	let {
 		category = $bindable('all'),
 		sort = $bindable('featured'),
 		query = $bindable('')
-	}: { category?: string | string[]; sort?: string | string[]; query?: string } = $props();
+	}: { category?: string; sort?: string | string[]; query?: string } = $props();
 </script>
 
 <div data-collection-controls>
-	<PillChoiceGroup
-		aria-label="Product category"
-		bind:selection={category}
+	<Tabs
+		label="Product category"
+		bind:value={category}
 		items={[
-			{ id: 'all', label: 'All' },
-			{ id: 'seating', label: 'Seating' },
-			{ id: 'lighting', label: 'Lighting' },
-			{ id: 'tables', label: 'Tables' }
+			{ id: 'all', label: 'All', icon: 'grid_view' },
+			{ id: 'seating', label: 'Seating', icon: 'chair' },
+			{ id: 'lighting', label: 'Lighting', icon: 'light' },
+			{ id: 'tables', label: 'Tables', icon: 'table_restaurant' }
 		]}
-		color="foreground"
-		size="small"
 	/>
 	<div data-collection-tools>
 		<TextInput

@@ -2,8 +2,8 @@
 	import type { Snippet } from 'svelte';
 	import { Theme as BrefTheme, ThemeModeToggle } from 'bref-ui';
 	import Base from '../shared/base.svelte';
-	import '@fontsource-variable/inter';
-	import '@fontsource-variable/syne';
+	import '@fontsource-variable/inter/index.css';
+	import '@fontsource-variable/syne/index.css';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
@@ -25,5 +25,21 @@
 <style>
 	:global([data-bref-theme='elsewhere']) {
 		display: contents;
+	}
+	:global {
+		[data-bref-theme='elsewhere'] [role='tablist'] {
+			gap: 4px;
+			padding: 4px;
+			border: 1px solid color-mix(in srgb, var(--color-primary) 14%, transparent);
+			border-radius: 14px;
+			background: color-mix(in srgb, var(--color-background) 70%, transparent);
+		}
+		[data-bref-theme='elsewhere'] [role='tab'] {
+			border-radius: 10px;
+		}
+		[data-bref-theme='elsewhere'] [role='tab'][aria-selected='true'] {
+			color: var(--color-primary);
+			background: color-mix(in srgb, var(--color-primary) 9%, transparent);
+		}
 	}
 </style>
