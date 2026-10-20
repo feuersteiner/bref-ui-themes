@@ -12,13 +12,10 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"build:site": "vite build",
-		"package": "svelte-kit sync && svelte-package && publint",
-		"previews": "bun scripts/capture-previews.ts"
+		"package": "svelte-kit sync && svelte-package && publint"
 	},
 	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
+		"dist"
 	],
 	"sideEffects": [
 		"**/*.css",
@@ -40,13 +37,13 @@
 			"types": "./dist/forma/index.d.ts",
 			"svelte": "./dist/forma/index.js"
 		},
-		"./new-paris": {
-			"types": "./dist/new-paris/index.d.ts",
-			"svelte": "./dist/new-paris/index.js"
-		},
 		"./elsewhere": {
 			"types": "./dist/elsewhere/index.d.ts",
 			"svelte": "./dist/elsewhere/index.js"
+		},
+		"./new-paris": {
+			"types": "./dist/new-paris/index.d.ts",
+			"svelte": "./dist/new-paris/index.js"
 		}
 	},
 	"peerDependencies": {
@@ -55,13 +52,12 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@playwright/test": "^1.64.0",
 		"@sveltejs/adapter-static": "^4.0.0",
 		"@sveltejs/kit": "^3.0.0",
 		"@sveltejs/package": "^3.0.0",
 		"@sveltejs/vite-plugin-svelte": "^7.2.0",
 		"@types/node": "^24",
-		"bref-ui": "^2.1.3",
+		"bref-ui": "^2.1.4",
 		"eslint": "^10.4.1",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.19.0",

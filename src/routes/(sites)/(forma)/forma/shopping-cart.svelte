@@ -25,13 +25,31 @@
 		const item = items.find((item) => item.key === key);
 		if (item) removal = `${item.product.name}, ${item.finish}, removed from cart.`;
 	};
+	const removeAndFocus = async (key: string, update: () => void) => {
+		const rows = Array.from(content?.querySelectorAll<HTMLElement>('[data-cart-item-key]') ?? []);
+		const index = rows.findIndex((row) => row.dataset.cartItemKey === key);
+		const row = rows[index];
+		const focused = document.activeElement;
+		const restoreFocus = !!row?.contains(focused);
+		const deleting = focused?.hasAttribute('data-delete-item');
+		const neighbour = rows[index + 1] ?? rows[index - 1];
+		update();
+		await tick();
+		if (!restoreFocus || row.isConnected) return;
+		const target = neighbour?.querySelector<HTMLButtonElement>(
+			deleting ? 'button[data-delete-item]' : 'button'
+		);
+		(target ?? content)?.focus();
+	};
 	const remove = (key: string) => {
 		announceRemoval(key);
-		onRemove(key);
+		void removeAndFocus(key, () => onRemove(key));
 	};
 	const changeQuantity = (key: string, quantity: number) => {
-		if (quantity <= 0) announceRemoval(key);
-		onQuantity(key, quantity);
+		if (quantity <= 0) {
+			announceRemoval(key);
+			void removeAndFocus(key, () => onQuantity(key, quantity));
+		} else onQuantity(key, quantity);
 	};
 	let receipt = $state({ total: 0, count: 0 });
 	let confirmation = $state<HTMLParagraphElement>();
@@ -58,7 +76,7 @@
 			stage === 'complete' ? 'Order confirmed' : stage === 'review' ? 'Review order' : 'Your cart',
 		icon: { name: stage === 'complete' ? 'check_circle' : 'shopping_cart' }
 	}}
-	size="medium"
+	size="large"
 	onclose={() => {
 		stage = 'cart';
 		removal = '';
@@ -88,12 +106,37 @@
 				/>
 			{:else}
 				{#if stage === 'cart'}
-					{#each items as item (item.key)}
-						<CartItemRow {item} onQuantity={changeQuantity} onRemove={remove} />
+					{#if items.length}
+						<!-- svelte-ignore a11y_no_noninteractive_tabindex (Keyboard users need to scroll the cart table on narrow screens.) -->
+						<div data-cart-table role="region" aria-label="Cart items" tabindex="0">
+							<table>
+								<thead>
+									<tr>
+										<th scope="col">Product</th>
+										<th scope="col">Price</th>
+										<th scope="col">Quantity</th>
+										<th scope="col">Subtotal</th>
+										<th scope="col"><span data-visually-hidden>Remove</span></th>
+									</tr>
+								</thead>
+								<tbody>
+									{#each items as item (item.key)}
+										<CartItemRow {item} onQuantity={changeQuantity} onRemove={remove} />
+									{/each}
+								</tbody>
+								<tfoot>
+									<tr>
+										<th scope="row" colspan="3">Subtotal</th>
+										<td data-cart-item-subtotal><strong>{money(total)}</strong></td>
+										<td></td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
 					{:else}<div data-cart-empty>
 							<Icon name="shopping_cart" size="large" />
 							<p>Your cart is empty.</p>
-						</div>{/each}
+						</div>{/if}
 				{:else}
 					{#each items as item (item.key)}
 						<div data-order-line>
@@ -103,10 +146,12 @@
 					{/each}
 				{/if}
 				{#if items.length}
-					<div data-cart-total>
-						<span>Subtotal</span>
-						<strong>{money(total)}</strong>
-					</div>
+					{#if stage === 'review'}
+						<div data-cart-total>
+							<span>Subtotal</span>
+							<strong>{money(total)}</strong>
+						</div>
+					{/if}
 					<p data-muted>Demo checkout. No payment, delivery or purchase is made.</p>
 				{/if}
 				<div data-cart-actions>

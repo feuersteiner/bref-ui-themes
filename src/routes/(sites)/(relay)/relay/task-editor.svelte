@@ -5,8 +5,15 @@
 		open = $bindable(false),
 		task = $bindable(),
 		projects,
-		onSave
-	}: { open?: boolean; task: Task; projects: Project[]; onSave: (task: Task) => void } = $props();
+		onSave,
+		onClose
+	}: {
+		open?: boolean;
+		task: Task;
+		projects: Project[];
+		onSave: (task: Task) => void;
+		onClose: () => void;
+	} = $props();
 	const save = (event: SubmitEvent) => {
 		event.preventDefault();
 		onSave({ ...task, title: task.title.trim() });
@@ -21,6 +28,7 @@
 		icon: { name: task.id ? 'edit' : 'add_task' }
 	}}
 	size="small"
+	onclose={onClose}
 >
 	<form data-form onsubmit={save}>
 		<label for="task-title">

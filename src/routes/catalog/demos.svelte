@@ -3,19 +3,19 @@
 	import { Icon, Surface } from 'bref-ui';
 	const demos = [
 		{
-			name: 'Relay',
+			name: 'Tasks',
 			href: resolve('/(sites)/(relay)/relay'),
 			preview: 'relay',
 			description: 'A project workspace. Complete, organize and edit tasks.'
 		},
 		{
-			name: 'Forma',
+			name: 'House Shop',
 			href: resolve('/(sites)/(forma)/forma'),
 			preview: 'forma',
 			description: 'A furniture shop. Browse the catalog and manage your cart.'
 		},
 		{
-			name: 'Elsewhere',
+			name: 'Site Reviewer',
 			href: resolve('/(sites)/(elsewhere)/elsewhere'),
 			preview: 'elsewhere',
 			description: 'An agent workspace. Run a sample website audit and review its findings.'
