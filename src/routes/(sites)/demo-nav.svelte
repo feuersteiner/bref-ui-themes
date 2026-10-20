@@ -3,9 +3,9 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	const demos = [
-		{ name: 'Relay', href: resolve('/(sites)/(relay)/relay') },
-		{ name: 'Forma', href: resolve('/(sites)/(forma)/forma') },
-		{ name: 'Elsewhere', href: resolve('/(sites)/(elsewhere)/elsewhere') }
+		{ name: 'Tasks', href: resolve('/(sites)/(relay)/relay') },
+		{ name: 'House Shop', href: resolve('/(sites)/(forma)/forma') },
+		{ name: 'Site Reviewer', href: resolve('/(sites)/(elsewhere)/elsewhere') }
 	] as const;
 </script>
 

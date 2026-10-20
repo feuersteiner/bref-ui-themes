@@ -63,14 +63,14 @@
 </script>
 
 <svelte:head>
-	<title>Forma — a Bref store demo</title>
+	<title>House Shop — a Bref store demo</title>
 	<meta
 		name="description"
 		content="Browse furniture, manage a cart and try a demo checkout built with Bref."
 	/>
 </svelte:head>
 <header data-store-header>
-	<a data-brand href="#demo-content">Forma</a>
+	<a data-brand href="#demo-content">House Shop</a>
 	<nav aria-label="Store"><a href="#collection">Collection</a></nav>
 	<Button
 		label={`Cart (${count})`}
@@ -131,7 +131,7 @@
 </main>
 <CartNotice message={notice.message} sequence={notice.sequence} />
 <footer data-store-footer>
-	<span>Forma</span>
+	<span>House Shop</span>
 	<span>Demo store · Photography via Unsplash</span>
 </footer>
 {#if productOpen}<ProductDetails product={selected} bind:open={productOpen} onAdd={add} />{/if}

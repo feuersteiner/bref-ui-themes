@@ -2,6 +2,8 @@
 
 Verified on 2026-10-12. The reset commit is `5f2e8ca`; the following migration commit contains the scaffold, migrated demos and base Bref showcase. Human visual approval remains separate from automated validation.
 
+Automated tests and their runner were removed on 2026-10-13. Validation uses checks, lint, builds and rendered inspection; the migration findings below remain historical.
+
 ## Provenance
 
 | Source branch               | Revision  | Extracted content                                                       |
