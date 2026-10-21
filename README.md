@@ -1,6 +1,6 @@
 # bref-ui-themes
 
-Reusable Svelte 5 themes for [bref-ui](https://github.com/feuersteiner/bref-ui), with interactive demos and native CSS. Version 0.1.0 is an unpublished review candidate built on SvelteKit 3 and published Bref 2.2.0.
+Reusable Svelte 5 themes for [bref-ui](https://github.com/feuersteiner/bref-ui), with interactive demos and native CSS. Version 0.1.0 is [published on npm](https://www.npmjs.com/package/bref-ui-themes) and built on SvelteKit 3 and Bref 2.2.0.
 
 [Explore the showcase](https://feuersteiner.github.io/bref-ui-themes/) · [Bref documentation](https://feuersteiner.github.io/bref-ui/) · [Join Discord](https://discord.gg/JpgQRTUsVS)
 
@@ -45,7 +45,13 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 ## Library imports
 
-Install the local tarball with `bun add ./bref-ui-themes-0.1.0.tgz`. Consumers need Svelte `^5.57.1` and Bref `^2.2.0` (peer dependencies). Fonts used by the themes are package dependencies.
+Install the published package and its Bref peer dependency:
+
+```sh
+bun add bref-ui-themes bref-ui
+```
+
+Consumers need Svelte `^5.57.1` and Bref `^2.2.0` (peer dependencies). Fonts used by the themes are package dependencies.
 
 ```svelte
 <script lang="ts">
