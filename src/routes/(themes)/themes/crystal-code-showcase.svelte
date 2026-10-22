@@ -71,7 +71,6 @@
 	let dialog = $state(false);
 	let previewName = $state('Default');
 	let draftName = $state('Default');
-	let includeProperties = $state(true);
 	let popover = $state(false);
 	let palette = $state(false);
 	let pendingFocus = '';
@@ -188,7 +187,7 @@
 			choices: `let selection = $state('default');\n  let tags = $state([{ id: 'svelte', label: 'Svelte' }]);\n</${'script'}>\n\n<Pill label={${JSON.stringify(label)}} ${props.replaceAll('\n  ', ' ')} />\n<PillGroup items={tags}\n  onDelete={(id) => tags = tags.filter(tag => tag.id !== id)} />\n<PillChoiceGroup bind:selection\n  items={[{ id: 'default', label: 'Default' },\n    { id: 'compact', label: 'Compact' }]}\n  size=${JSON.stringify(size)} variant=${JSON.stringify(choiceVariant)}\n  color="primary" disabled={${disabled}} />`,
 			feedback: `let progress = $state(0.42);\n</${'script'}>\n\n<Progress value={progress}\n  onSeek={(next) => progress = next}\n  label="Build progress" disabled={${disabled}} />\n<Spinner label="Loading preview" size=${JSON.stringify(size)} />\n<Icon name="check_circle" color="success" label="Ready" />`,
 			surfaces: `let open = $state(false);\n</${'script'}>\n\n<Surface variant=${JSON.stringify(variant)} color=${JSON.stringify(variant === 'neutral' ? 'background' : 'primary')}\n  spacing="medium" radius=${JSON.stringify(surfaceRadius)}>\n  <h3>Project settings</h3>\n  <p>Context, only when needed.</p>\n</Surface>\n<Button label="Open dialog" onClick={() => open = true} />\n<Dialog bind:open header={{ title: 'Name this preview' }}>\n  <p>Native modal focus and Escape.</p>\n</Dialog>`,
-			tabs: `let view = $state('default');\n  const items = [\n    { id: 'default', label: 'Editor', icon: 'edit' },\n    { id: 'files', label: 'Files', icon: 'folder' },\n    { id: 'locked', label: 'Unavailable', icon: 'lock', disabled: true }\n  ];\n</${'script'}>\n\n<Tabs {items} bind:value={view} label="Preview preferences" />\n<p>{view === 'default' ? 'Editor preferences' : 'File preferences'}</p>`
+			tabs: `let view = $state('default');\n  const items = [\n    { id: 'default', label: 'Editor', icon: 'edit' },\n    { id: 'files', label: 'Files', icon: 'folder' },\n    { id: 'locked', label: 'Unavailable', icon: 'lock', disabled: true }\n  ] as const;\n</${'script'}>\n\n<Tabs {items} bind:value={view} label="Preview preferences" />\n<p>{view === 'default' ? 'Editor preferences' : 'File preferences'}</p>`
 		};
 		return `<script lang="ts">\n  import { ${imports[activeId]} }\n    from 'bref-ui-themes/crystal-code';\n\n  ${examples[activeId]}`;
 	});
@@ -635,9 +634,7 @@
 			id="dialog-name"
 			bind:value={draftName}
 			wide
-		/><label class="check"
-			><Checkbox bind:checked={includeProperties} />Include current properties</label
-		></Dialog
+		/></Dialog
 	>
 	<Dialog
 		bind:open={palette}
