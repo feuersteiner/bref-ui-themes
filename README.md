@@ -47,7 +47,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 [/themes/vscode](http://localhost:5173/themes/vscode) is a component reference covering every export, sizes, variants, semantic colors, validation, disabled states, loading, native selection, removable tags, seeking and overlays. Tabs cover horizontal fit/fill, vertical preferences, icons, disabled items, keyboard selection, overflow and independently bound content. It uses the public library sources; there is no separate application demo.
 
-[Historical VS Code component preview, before the workbench refinement](static/previews/vscode.jpg).
+![VS Code rendered components](static/previews/vscode.jpg)
 
 ```svelte
 <script lang="ts">
@@ -60,7 +60,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 </Theme>
 ```
 
-The workbench uses rounded neutral panes, foreground-only hover, graphite/iris-blue dark colors and the matching light palette. Dialogs and popovers use 32px surface frost with reduced-transparency fallback and reduced-motion-aware 100ms transitions. No font installation is needed. Wrap components in `Theme`; use one theme per document. Native props and bindings follow the other theme entries. Root namespace: `import { VSCode } from 'bref-ui-themes'`.
+The fixed dark palette uses editor/workbench grays, blue focus and primary actions, crisp borders and system UI type. No font installation is needed. Wrap components in `Theme`; use one theme per document. Native props and bindings follow the other theme entries. Root namespace: `import { VSCode } from 'bref-ui-themes'`.
 
 ## Library imports
 
@@ -113,7 +113,7 @@ Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `Pil
 
 Horizontal tabs accept `size="fit"` (default, scrolls on overflow) or `size="fill"`. Vertical tabs use `orientation="vertical"` without `size`. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes fit, fill, vertical, disabled and bound-content examples.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. Relay, Forma and Elsewhere use light mode. VS Code follows the document or system color mode; use Bref’s `ThemeModeToggle` or a `data-theme="light"` / `data-theme="dark"` ancestor to choose explicitly. The VS Code demo includes a mode switch, live source and properties, a command palette (⌘/Ctrl+K), and an expandable complete component reference. They use document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+These initial themes provide the demo palettes, fonts, common CSS and component styling. Relay, Forma and Elsewhere use light mode; VS Code uses dark mode. They use document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
 
 ## Source layout
 

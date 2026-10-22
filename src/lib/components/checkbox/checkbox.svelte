@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appearanceMotion } from '../theme/overlay-motion.js';
+	import { fly } from 'svelte/transition';
 	import { elasticOut } from 'svelte/easing';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import Icon from '../icon/icon.svelte';
@@ -13,7 +13,7 @@
 	{#if checked}
 		<span
 			aria-hidden="true"
-			transition:appearanceMotion={{
+			transition:fly={{
 				duration: prefersReducedMotion.current ? 0 : 350,
 				y: prefersReducedMotion.current ? 0 : -6,
 				easing: elasticOut

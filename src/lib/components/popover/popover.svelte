@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { overlayMotion } from '../theme/overlay-motion.js';
+	import { cubicOut } from 'svelte/easing';
+	import { prefersReducedMotion } from 'svelte/motion';
+	import type { TransitionConfig } from 'svelte/transition';
 	import Surface from '../surface/surface.svelte';
 	import type { PopoverProps } from 'bref-ui/types';
 	import type { SurfaceProps } from 'bref-ui/types';
@@ -15,7 +17,12 @@
 	let anchor: HTMLDivElement;
 	let returnFocus: HTMLElement | null = null;
 
-	const flyGlass = (node: Element) => overlayMotion(node, 250, 10, true);
+	const flyGlass: (node: Element) => TransitionConfig = () => ({
+		duration: prefersReducedMotion.current ? 0 : 250,
+		easing: cubicOut,
+		css: (t: number, u: number) =>
+			`--surface-motion-offset: ${u * 10}px; --surface-motion-opacity: ${t}`
+	});
 
 	const showPopover = (node: HTMLDivElement) => {
 		if (node.matches(':popover-open')) return;

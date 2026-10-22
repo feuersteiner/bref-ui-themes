@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { overlayMotion } from '../theme/overlay-motion.js';
+	import { fly } from 'svelte/transition';
+	import { prefersReducedMotion } from 'svelte/motion';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { surface } from '../theme/surface.js';
 	import Header from './header.svelte';
@@ -31,8 +32,6 @@
 		returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
 		modal.showModal();
 	};
-
-	const dialogMotion = (node: Element) => overlayMotion(node, 300, 16);
 
 	const requestClose = () => {
 		if (dismissible) open = false;
@@ -74,7 +73,10 @@
 			data-surface
 			class={surface({ color: 'background', glass: true, shadow: 'large' })}
 			use:showModal
-			transition:dialogMotion|global
+			transition:fly|global={{
+				y: prefersReducedMotion.current ? 0 : 16,
+				duration: prefersReducedMotion.current ? 0 : 300
+			}}
 			onoutroend={() => {
 				if (!open) dialog.close();
 			}}

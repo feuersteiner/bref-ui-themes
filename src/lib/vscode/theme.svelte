@@ -1,67 +1,39 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { Theme as BrefTheme } from 'bref-ui';
+	import { Theme as BrefTheme, ThemeModeToggle } from 'bref-ui';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
 <BrefTheme
 	palette={{
-		light: {
-			primary: '#4e5969',
-			secondary: '#765d88',
-			background: '#f0f0ee',
-			foreground: '#35373c',
-			muted: '#6a6d73',
-			info: '#4e5969',
-			success: '#53674c',
-			warning: '#816b46',
-			error: '#9e5e55'
-		},
-		dark: {
-			primary: '#8aa7f8',
-			secondary: '#bfb4cd',
-			background: '#0c0d10',
-			foreground: '#d9dade',
-			muted: '#9fa1a8',
-			info: '#8aa7f8',
-			success: '#b3beac',
-			warning: '#cbbda8',
-			error: '#d4aaa3'
-		}
+		primary: '#3794ff',
+		secondary: '#c586c0',
+		background: '#1e1e1e',
+		foreground: '#cccccc',
+		muted: '#a0a0a0',
+		info: '#9cdcfe',
+		success: '#89d185',
+		warning: '#cca700',
+		error: '#f48771'
 	}}
 >
+	<ThemeModeToggle mode="dark" />
 	<div data-bref-theme="vscode">{@render children?.()}</div>
 </BrefTheme>
 
 <style>
 	:global([data-bref-theme='vscode']) {
 		display: contents;
-		--vscode-panel: light-dark(#fbfbfa, #141519);
-		--vscode-input: light-dark(#f0f0ee, #1c1e24);
-		--vscode-well: light-dark(#f5f5f3, #17191e);
-		--vscode-border: light-dark(#22252b09, #ffffff0a);
-		--vscode-bright: light-dark(#17191c, #f5f5f7);
-		--vscode-soft: light-dark(#e7e9ec, #20283a);
-		--vscode-on-primary: light-dark(#fff, #0c1426);
-		--vscode-overlay: light-dark(rgb(251 251 250 / 76%), rgb(23 25 31 / 78%));
-		--vscode-overlay-muted: light-dark(#565a60, #b9bcc4);
-		--vscode-veil: light-dark(rgb(240 240 238 / 4%), rgb(0 0 0 / 6%));
-		--vscode-pane-shadow:
-			0 7px 28px light-dark(#25252508, #00000020), 0 1px 4px light-dark(#25252505, #00000014);
-		--vscode-widget-shadow: 0 3px 12px light-dark(#25252506, #00000012);
-		--vscode-radius: 8px;
-		--vscode-font-mono: 'SFMono-Regular', Menlo, Monaco, Consolas, 'Courier New', monospace;
-		--bref-overlay-duration: 100;
-		--bref-appearance-duration: 100;
-		--bref-appearance-lift: 3;
-		--bref-overlay-lift: 4;
-		--bref-overlay-scale: 0.99;
+		--vscode-panel: #252526;
+		--vscode-input: #3c3c3c;
+		--vscode-border: #454545;
+		--vscode-accent: #0078d4;
+		--vscode-font-mono: Menlo, Monaco, Consolas, 'Droid Sans Mono', 'Courier New', monospace;
 	}
 	:global(:root body:has([data-bref-theme='vscode'])) {
 		font:
-			400 13px / 1.5 -apple-system,
-			BlinkMacSystemFont,
-			'Segoe UI',
+			400 13px / 1.5 'Segoe UI',
+			system-ui,
 			sans-serif;
 		font-synthesis: none;
 	}
@@ -72,98 +44,111 @@
 		:root [data-bref-theme='vscode'] :where(h1, h2, h3) {
 			font-weight: 500;
 		}
+		:root [data-bref-theme='vscode'] :where(a) {
+			color: var(--color-primary);
+		}
 		:root [data-bref-theme='vscode'] :focus-visible {
-			outline: 1px solid var(--color-primary);
-			outline-offset: 3px;
+			outline-color: var(--color-primary);
+			outline-offset: 2px;
 		}
 		:root [data-bref-theme='vscode'] .surface {
-			--surface-hover: 0%;
-			--surface-neutral-strength: 0%;
-			--surface-soft-strength: 5%;
-			--surface-border: transparent;
-			--surface-base: var(--vscode-panel);
-			--surface-neutral-content: var(--vscode-bright);
-			transition: color 100ms ease;
-		}
-		:root [data-bref-theme='vscode'] .surface:is(:active, [data-surface-pressed='true']) {
-			--surface-hover: 0%;
-		}
-		:root [data-bref-theme='vscode'] .surface-soft {
-			--surface-content: var(--surface-color);
-		}
-		:root [data-bref-theme='vscode'] .button.surface-primary.surface-neutral {
-			--surface-content: var(--color-foreground);
-		}
-		:root [data-bref-theme='vscode'] .surface-primary.surface-soft {
-			--surface-fill: var(--vscode-soft);
+			--surface-border: var(--vscode-border);
+			--surface-soft-strength: 14%;
 		}
 		:root [data-bref-theme='vscode'] .surface-primary.surface-filled {
-			--surface-content: var(--vscode-on-primary);
+			--surface-fill: var(--vscode-accent);
+			--surface-content: #ffffff;
 		}
-		:root [data-bref-theme='vscode'] .surface-background {
-			--surface-content: var(--color-foreground);
+		:root [data-bref-theme='vscode'] .button.surface-neutral {
+			--surface-fill: #3a3d41;
+			--surface-border: transparent;
+			--surface-content: #cccccc;
+			--surface-neutral-content: #cccccc;
 		}
-		:root [data-bref-theme='vscode'] .surface-background.surface-neutral {
-			--surface-fill: var(--vscode-input);
+		:root [data-bref-theme='vscode'] dialog footer .button.surface-foreground.surface-filled {
+			--surface-fill: var(--vscode-accent);
+			--surface-content: #ffffff;
 		}
-		:root [data-bref-theme='vscode'] .surface-background.surface-soft {
-			--surface-fill: var(--vscode-well);
+		:root [data-bref-theme='vscode'] div.surface-secondary.surface-filled[data-size][data-wide] {
+			--surface-fill: color-mix(in srgb, var(--color-secondary) 24%, var(--vscode-panel));
+			--surface-content: #e3c4e1;
 		}
-		:root [data-bref-theme='vscode'] .surface[data-shadow] {
-			--surface-shadow: var(--vscode-widget-shadow);
+		:root [data-bref-theme='vscode'] [role='tablist'] {
+			--tabs-indicator-block-start: 0;
+			border-color: var(--vscode-border);
+			background: var(--vscode-panel);
+		}
+		:root [data-bref-theme='vscode'] [role='tab'] {
+			min-height: 35px;
+			padding: 8px 12px;
+			border-inline-end: 1px solid var(--vscode-border);
+			color: #a0a0a0;
+			font-size: 13px;
+			font-weight: 400;
+		}
+		:root [data-bref-theme='vscode'] [role='tab'] > i {
+			background: var(--vscode-accent);
+		}
+		:root [data-bref-theme='vscode'] [role='tab'][aria-selected='true'] {
+			background: var(--color-background);
+			color: #ffffff;
+		}
+		:root [data-bref-theme='vscode'] [role='tab']:hover:not(:disabled) {
+			background: #2d2d2d;
+			color: #ffffff;
+		}
+		:root [data-bref-theme='vscode'] [role='tab']:focus-visible {
+			outline: 1px solid var(--color-primary);
+			outline-offset: -3px;
+		}
+		:root [data-bref-theme='vscode'] [role='tab']:disabled {
+			color: var(--color-muted);
+			opacity: 0.45;
+		}
+		:root [data-bref-theme='vscode'] [role='tab'][data-size='fill'] {
+			flex-basis: 0;
+			justify-content: center;
+			padding-inline: 8px;
+		}
+		:root [data-bref-theme='vscode'] [role='tablist'][data-orientation='vertical'] {
+			--tabs-indicator-inline-start: 0;
+		}
+		:root [data-bref-theme='vscode'] [role='tab'][data-orientation='vertical'] {
+			border-inline-end: 0;
+			border-block-end: 1px solid var(--vscode-border);
 		}
 		:root [data-bref-theme='vscode'] .button {
-			border-radius: var(--vscode-radius);
-			--internal-font-size: 13px;
-			--internal-height: 34px;
-			--internal-padding: 13px;
+			border-radius: 2px;
+			--internal-font-size: 0.8125rem;
+			--internal-padding: 1rem;
 		}
-		:root [data-bref-theme='vscode'] .button[data-size='x-small'] {
-			--internal-height: 24px;
-			--internal-padding: 7px;
-			--internal-font-size: 11px;
+		:root [data-bref-theme='vscode'] .button[data-size='medium'] {
+			--internal-height: 32px;
 		}
 		:root [data-bref-theme='vscode'] .button[data-size='small'] {
 			--internal-height: 28px;
-			--internal-padding: 10px;
-			--internal-font-size: 12px;
+			--internal-padding: 0.75rem;
+		}
+		:root [data-bref-theme='vscode'] .button[data-size='x-small'] {
+			--internal-height: 24px;
+			--internal-padding: 0.625rem;
 		}
 		:root [data-bref-theme='vscode'] .button[data-size='large'] {
 			--internal-height: 40px;
-			--internal-padding: 18px;
+			--internal-padding: 1.25rem;
 		}
 		:root [data-bref-theme='vscode'] .button[data-size='x-large'] {
-			--internal-height: 46px;
-			--internal-padding: 22px;
-			--internal-font-size: 14px;
+			--internal-height: 48px;
+			--internal-padding: 1.5rem;
 		}
 		:root [data-bref-theme='vscode'] .button[data-rounded] {
 			border-radius: 50%;
 		}
-		:root
-			[data-bref-theme='vscode']
-			.button:is(:hover, :focus-visible, :active, [aria-pressed='true']) {
-			filter: none;
-		}
-		:root [data-bref-theme='vscode'] .button:not(:disabled, [aria-disabled='true']):hover {
-			color: var(--vscode-bright);
-		}
-		:root
-			[data-bref-theme='vscode']
-			.button.surface-filled:not(:disabled, [aria-disabled='true']):hover {
-			color: var(--surface-content);
-		}
-		:root [data-bref-theme='vscode'] dialog footer .button.surface-foreground.surface-filled {
-			--surface-fill: var(--color-primary);
-			--surface-content: var(--vscode-on-primary);
-		}
 		:root [data-bref-theme='vscode'] div.surface:has(> input:not([type='range'])) {
-			border-radius: var(--vscode-radius);
+			border-radius: 2px;
 			background: var(--vscode-input);
-			box-shadow: var(--vscode-widget-shadow);
-			--internal-height: 36px;
-			--internal-padding: 11px;
-			--internal-placeholder: var(--color-muted);
+			--internal-height: 32px;
+			--internal-padding: 0.625rem;
 		}
 		:root [data-bref-theme='vscode'] div.surface[data-size='small']:has(> input) {
 			--internal-height: 28px;
@@ -172,192 +157,84 @@
 			--internal-height: 40px;
 		}
 		:root [data-bref-theme='vscode'] .surface > input {
-			font-size: 12px;
+			font-size: 13px;
 			font-weight: 400;
 		}
 		:root [data-bref-theme='vscode'] div.surface:has(> input[aria-invalid='true']) {
 			border-color: var(--color-error);
 		}
 		:root [data-bref-theme='vscode'] button[aria-expanded]:has(> .surface > [data-chevron]) {
-			border-radius: var(--vscode-radius);
+			border-radius: 2px;
 			background: var(--vscode-input);
-			box-shadow: var(--vscode-widget-shadow);
-		}
-		:root [data-bref-theme='vscode'] button[aria-expanded] > .surface:has(> [data-chevron]) {
-			border-radius: var(--vscode-radius);
-			background: transparent;
-		}
-		:root [data-bref-theme='vscode'] button[aria-expanded] > .surface > [data-value] {
-			font-size: 12px;
-			font-weight: 400;
-		}
-		:root [data-bref-theme='vscode'] [popover] button:has(> [data-label]) {
-			background: transparent;
-			color: var(--color-muted);
 		}
 		:root
 			[data-bref-theme='vscode']
-			[popover]
-			button:has(> [data-label]):is(:hover, [aria-pressed='true']) {
-			color: var(--vscode-bright);
+			button[aria-expanded]:has(> .surface > [data-chevron])
+			> .surface {
+			border-radius: 2px;
 		}
-		:root [data-bref-theme='vscode'] [role='tablist'] {
-			border: 0;
-			background: transparent;
-			gap: 8px;
-		}
-		:root [data-bref-theme='vscode'] [role='tab'] {
-			min-height: 40px;
-			border: 0;
-			padding: 8px 12px;
-			font-size: 12px;
+		:root [data-bref-theme='vscode'] button[aria-expanded] > .surface > [data-value] {
+			font-size: 13px;
 			font-weight: 400;
-			background: transparent;
 		}
-		:root [data-bref-theme='vscode'] [role='tab']:is(:hover, [aria-selected='true']) {
-			background: transparent;
-			color: var(--vscode-bright);
+		:root [data-bref-theme='vscode'] [popover] button {
+			border-radius: 2px;
 		}
-		:root [data-bref-theme='vscode'] [role='tab'] > i {
-			height: 1px;
+		:root [data-bref-theme='vscode'] [popover] > .surface,
+		:root [data-bref-theme='vscode'] dialog[open] > .surface {
+			border-radius: 3px;
+			background: var(--vscode-panel);
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
 		}
-		:root [data-bref-theme='vscode'] [role='tab'][data-orientation='vertical'] > i {
-			width: 1px;
-			height: auto;
+		:root [data-bref-theme='vscode'] [popover] > .surface {
+			box-shadow: 0 0 8px 2px #0000005c;
 		}
-		:root [data-bref-theme='vscode'] [role='tab'][data-size='fill'] {
-			flex-basis: 0;
-			justify-content: center;
+		:root [data-bref-theme='vscode'] dialog[open] > .surface {
+			border: 1px solid var(--vscode-border);
+			box-shadow: 0 12px 36px #0008;
+		}
+		:root [data-bref-theme='vscode'] dialog[data-visible]::backdrop {
+			background: #0008;
+			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
+		}
+		:root [data-bref-theme='vscode'] dialog header {
+			padding: 16px 20px 0;
+		}
+		:root [data-bref-theme='vscode'] dialog header h2 {
+			font-size: 18px;
+		}
+		:root [data-bref-theme='vscode'] dialog [data-content] {
+			padding: 16px 20px;
+		}
+		:root [data-bref-theme='vscode'] dialog footer {
+			padding: 0 20px 16px;
 		}
 		:root [data-bref-theme='vscode'] [data-checkbox] {
-			border-radius: 3px;
-			background: var(--vscode-input);
+			border-radius: 2px;
 		}
 		:root [data-bref-theme='vscode'] [data-checkbox]:has(input:checked) {
-			--internal-border: var(--color-primary);
-			background: var(--color-primary);
-			color: var(--vscode-on-primary);
+			background: var(--vscode-accent);
+			color: white;
 		}
-		:root [data-bref-theme='vscode'] [data-checkbox]:has(input:hover) {
-			--internal-border: color-mix(in srgb, var(--color-foreground) 48%, var(--color-background));
+		:root [data-bref-theme='vscode'] div.surface[data-variant][data-color]:not(.button) {
+			border-radius: 3px;
 		}
-		:root [data-bref-theme='vscode'] [data-checkbox]:has(input:checked:hover) {
-			--internal-border: var(--color-primary);
-		}
-		:root [data-bref-theme='vscode'] [data-checkbox]:has(input[aria-invalid='true']) {
-			--internal-border: var(--color-error);
-		}
-		:root [data-bref-theme='vscode'] div.surface[data-color][data-size] {
-			border-radius: var(--vscode-radius);
-			--pill-choice-hover: 0%;
-		}
-		:root [data-bref-theme='vscode'] [data-removable] > button {
-			background: transparent;
-		}
-		:root [data-bref-theme='vscode'] [data-removable] > button:hover {
-			color: var(--vscode-bright);
-		}
-		:root [data-bref-theme='vscode'] .surface-filled[data-removable] > button:hover {
-			color: var(--surface-content);
+		:root [data-bref-theme='vscode'] [role='radiogroup'] > li > div,
+		:root [data-bref-theme='vscode'] [role='group'] > li > div {
+			border-radius: 3px;
 		}
 		:root [data-bref-theme='vscode'] [data-seekable] progress {
-			border-radius: 4px;
+			border-radius: 0;
 		}
 		:root [data-bref-theme='vscode'] [data-seekable='true'] > input + span {
 			width: 10px;
-			height: 10px;
+			height: 18px;
 			border: 0;
+			border-radius: 0;
 			background: var(--progress-fill);
 			box-shadow: none;
-		}
-		:root [data-bref-theme='vscode'] [data-seekable='true'] > input:is(:hover, :active) + span {
-			transform: translate(var(--internal-thumb-offset, -50%), -50%);
-			box-shadow: none;
-		}
-		:root [data-bref-theme='vscode'] .glass.glass.glass {
-			--glass-blur: blur(32px);
-			--glass-opacity: 78%;
-			box-shadow: var(--vscode-widget-shadow);
-		}
-		:root [data-bref-theme='vscode'] [popover] {
-			--internal-duration: 100ms;
-		}
-		:root [data-bref-theme='vscode'] [popover] > .surface,
-		:root [data-bref-theme='vscode'] dialog > .surface {
-			border-radius: 14px;
-			background: var(--vscode-panel);
-			color: var(--color-foreground);
-			--color-muted: var(--vscode-overlay-muted);
-			box-shadow:
-				0 18px 70px #00000030,
-				0 3px 12px #00000014;
-		}
-		:root [data-bref-theme='vscode'] dialog[data-visible]::backdrop,
-		:root [data-bref-theme='vscode'] [popover]::backdrop {
-			background: var(--vscode-veil);
-			-webkit-backdrop-filter: blur(1px);
-			backdrop-filter: blur(1px);
-			transition: opacity 100ms ease;
-		}
-		:root [data-bref-theme='vscode'] dialog header {
-			padding: 22px 24px 8px;
-		}
-		:root [data-bref-theme='vscode'] dialog header h2 {
-			font-size: 13px;
-		}
-		:root [data-bref-theme='vscode'] dialog [data-content] {
-			padding: 18px 24px 24px;
-		}
-		:root [data-bref-theme='vscode'] dialog footer {
-			padding: 0 24px 22px;
-		}
-		:root [data-bref-theme='vscode'] [popover]::backdrop {
-			opacity: 0;
-			transition:
-				opacity 100ms ease,
-				display 100ms allow-discrete,
-				overlay 100ms allow-discrete;
-		}
-		:root [data-bref-theme='vscode'] [popover]:popover-open::backdrop {
-			opacity: 1;
-		}
-		@starting-style {
-			:root [data-bref-theme='vscode'] [popover]:popover-open::backdrop {
-				opacity: 0;
-			}
-		}
-		@supports (backdrop-filter: blur(1px)) {
-			:root [data-bref-theme='vscode'] [popover] > .surface,
-			:root [data-bref-theme='vscode'] dialog > .surface {
-				background: var(--vscode-overlay);
-				-webkit-backdrop-filter: blur(32px);
-				backdrop-filter: blur(32px);
-			}
-		}
-		@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-			:root [data-bref-theme='vscode'] .glass.glass.glass,
-			:root [data-bref-theme='vscode'] [popover] > .surface,
-			:root [data-bref-theme='vscode'] dialog > .surface {
-				background: var(--vscode-panel);
-				-webkit-backdrop-filter: none;
-				backdrop-filter: none;
-			}
-			:root [data-bref-theme='vscode'] dialog[data-visible]::backdrop,
-			:root [data-bref-theme='vscode'] [popover]::backdrop {
-				-webkit-backdrop-filter: none;
-				backdrop-filter: none;
-			}
-		}
-		@media (prefers-reduced-motion: reduce) {
-			:root [data-bref-theme='vscode'] dialog[data-visible]::backdrop,
-			:root [data-bref-theme='vscode'] [popover]::backdrop {
-				transition: none;
-			}
-			:root [data-bref-theme='vscode'] *,
-			:root [data-bref-theme='vscode'] *::before {
-				animation: none !important;
-				transition: none !important;
-			}
 		}
 		@media (pointer: coarse) {
 			:root [data-bref-theme='vscode'] [role='tab'] {
@@ -372,25 +249,20 @@
 			}
 		}
 		@media (forced-colors: active) {
-			:root [data-bref-theme='vscode'] dialog[data-visible]::backdrop,
-			:root [data-bref-theme='vscode'] [popover]::backdrop {
-				background: Canvas;
-				-webkit-backdrop-filter: none;
-				backdrop-filter: none;
-			}
-			:root [data-bref-theme='vscode'] .surface,
-			:root [data-bref-theme='vscode'] .glass.glass.glass,
-			:root [data-bref-theme='vscode'] dialog > .surface,
+			:root [data-bref-theme='vscode'] [role='tablist'],
+			:root [data-bref-theme='vscode'] [role='tab'],
+			:root [data-bref-theme='vscode'] dialog[open] > .surface,
 			:root [data-bref-theme='vscode'] [popover] > .surface,
-			:root [data-bref-theme='vscode'] [data-checkbox] {
+			:root [data-bref-theme='vscode'] .surface,
+			:root [data-bref-theme='vscode'] .surface-primary.surface-filled,
+			:root [data-bref-theme='vscode'] div.surface:has(> input),
+			:root [data-bref-theme='vscode'] button[aria-expanded]:has(> .surface > [data-chevron]),
+			:root [data-bref-theme='vscode'] [data-checkbox]:has(input:checked) {
 				background: Canvas;
 				color: CanvasText;
 				border-color: ButtonText;
-				box-shadow: none;
-				backdrop-filter: none;
 			}
 			:root [data-bref-theme='vscode'] [data-checkbox]:has(input:checked) {
-				--internal-border: var(--color-primary);
 				background: Highlight;
 				color: HighlightText;
 			}

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { appearanceMotion } from '../theme/overlay-motion.js';
+	import { fly } from 'svelte/transition';
 	import Icon from '../icon/icon.svelte';
 	import type { PillProps } from 'bref-ui/types';
 
@@ -8,7 +8,7 @@
 
 {#if icon}
 	{#key icon.name}
-		<i data-icon in:appearanceMotion>
+		<i data-icon in:fly>
 			<Icon {...icon} label={undefined} size={undefined} color={undefined} />
 		</i>
 	{/key}
