@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Button from '../button/button.svelte';
 	import Icon from '../icon/icon.svelte';
-	import { fly } from 'svelte/transition';
+	import { appearanceMotion } from '../theme/overlay-motion.js';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import type { DialogHeaderProps } from 'bref-ui/types';
 
@@ -13,7 +13,7 @@
 		{#key `${icon?.name ?? ''}:${title}`}
 			<div
 				data-title
-				in:fly={{
+				in:appearanceMotion={{
 					y: prefersReducedMotion.current ? 0 : 8,
 					duration: prefersReducedMotion.current ? 0 : 180
 				}}

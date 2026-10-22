@@ -68,6 +68,7 @@
 	[data-surface][data-surface-motion] {
 		opacity: var(--surface-motion-opacity, 1);
 		translate: 0 var(--surface-motion-offset, 0px);
+		scale: var(--surface-motion-scale, 1);
 	}
 	[data-orientation='horizontal'] {
 		flex-direction: row;

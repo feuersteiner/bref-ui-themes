@@ -1,5 +1,17 @@
 # Verification
 
+## Crystal Code separation — 2026-10-22
+
+The modern workbench is a separate theme named `crystal-code`, exported through `bref-ui-themes/crystal-code` and the root `CrystalCode` namespace, with its own `/themes/crystal-code` demonstration and reference. The original `VSCode` namespace, `/vscode` subpath, palette and component gallery remain available. Full-page links keep document-level theme styles isolated.
+
+PR #46 was restored with commit `25e2ceb`; its source tree is byte-identical to `4e99aca`. Check, lint and complete site/library builds pass for that restored tree. The separate Crystal Code PR builds on #46; both themes can coexist after merging it.
+
+Private inherited motion recipes are enabled by Crystal Code only. Existing themes retain their default timing. All 15 component exports remain shared, and no existing public component contracts changed.
+
+Fresh separation checks pass: `bun run check` (zero errors/warnings), `bun run lint`, `bun run build` (site, packaging, publint), and strict publint on the 85-file tarball. The tarball contains both theme entries among six public entry points and excludes routes, references and screenshots. Fresh npm SvelteKit and standalone Svelte/Vite consumers build and render both themes; all 15 root/subpath export identities and distinct Theme identities pass.
+
+Rendered comparison verifies the original #1e1e1e background, 2px controls and opaque overlays alongside Crystal Code's #0c0d10 background, 8px controls and 32px/1px frosted overlays. Full-page navigation changes between them without palette leakage; Crystal Code also renders in light mode. Canonical sources, activation, native Escape and focus return work in both packaged consumers. Screenshots of both themes together and each individually remain outside tracked files. The earlier workbench checks covered the unchanged layout's dark/light matrices, 390px/320px layouts, native interactions and reduced-motion helper branches. Known limits remain: field/panel boundary contrast is 1.10:1; live preference emulation, mobile-overlay interaction, other browsers, real touch devices and screen readers remain unverified. Current screenshot upload is unavailable through the GitHub connector; captures stay outside tracked files.
+
 ## Bref 2.2.0 and Tabs — 2026-10-21
 
 The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.
