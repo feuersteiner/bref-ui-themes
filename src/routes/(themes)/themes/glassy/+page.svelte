@@ -811,6 +811,18 @@
 		columns: 2;
 		column-gap: 28px;
 	}
+	.grid::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: -1;
+		pointer-events: none;
+		mask-image: linear-gradient(to right, transparent, black 8% 92%, transparent);
+		background:
+			radial-gradient(ellipse at 12% 15%, #88a8b8aa, transparent 36%),
+			radial-gradient(ellipse at 85% 45%, #baa99399, transparent 32%),
+			radial-gradient(ellipse at 25% 80%, #a59bb899, transparent 38%);
+	}
 	section {
 		break-inside: avoid;
 		margin-bottom: 28px;
@@ -1019,6 +1031,9 @@
 		}
 	}
 	@media (forced-colors: active) {
+		.grid::before {
+			display: none;
+		}
 		nav {
 			background: Canvas;
 			border-color: CanvasText;
