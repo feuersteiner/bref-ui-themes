@@ -1,5 +1,30 @@
 # Verification
 
+## Original VS Code review audit — 2026-10-22
+
+Reviewed PR #46 at `25e2ceb68725f40b7927bc965f80271eba15fe15`, restored byte-identically to `4e99aca`. The later human correction preserves this original fixed-dark theme; the rounded graphite/light workbench direction, issue #49 and the October 22 redesign comment belong to Crystal Code #51. No runtime change was warranted by this audit.
+
+Feedback-to-result checklist:
+
+- [x] Button proportions and semantics: five sizes compute 10/12/16/20/24px horizontal padding; neutral paint is `#3a3d41`; the dialog primary is `#0078d4`; disabled controls retain native semantics and 0.45 opacity.
+- [x] Filled secondary pills, rectangular accent seek thumb and the Menlo/Monaco/Consolas fallback stack are already corrected. The existing compact workbench frame remains intact.
+- [x] Selector isolation: packaged consumer status text inherits `#cccccc`, arbitrary `data-value` content retains its 21px type, and an ordinary Button with `aria-expanded` retains neutral button paint. Select triggers retain their field paint.
+- [x] Production overlays: dialog surface, dialog backdrop, Select and Popover compute `backdrop-filter: none`; surfaces are opaque `#252526`. The prefixed property precedes the standard property. Popover/Select elevation is `0 0 8px 2px #0000005c`; the old production blur defect does not reproduce.
+- [x] Showcase polish: form/reset actions fit their labels, the filled surface is blue, the widget-shadow example is accurate, and the popover fits above the viewport edge. These fixes already exist in the restored source.
+- [x] Canonical APIs: all 15 root/subpath exports match in fresh consumers. Shared Tabs matches published Bref 2.2.0 except for public `bref-ui/types` imports. No removed tests or tooling were restored.
+
+Current verification:
+
+- `npm run check`: zero errors/warnings; `npm run lint`: pass. `npm run build:site`, `npm run package -- --pack false` and `BASE_PATH=/bref-ui-themes npm run build:site`: pass. Bun 1.3.4 fails with `CouldntReadCurrentDirectory`; successful default `bun run build` is not claimed. No test script exists.
+- The 79-file `npm pack --ignore-scripts` tarball passes strict publint, includes all five entry points and Tabs, and excludes routes, references and screenshots. All 29 Svelte source files match packaged and clean-installed copies byte-for-byte.
+- Fresh npm-installed SvelteKit and standalone Svelte/Vite consumers pass type checks and production builds. Prerendered HTML, hydration, activation, native keyboard Tabs/disabled skipping, opaque overlays, Escape and trigger-focus return work without browser errors. Consumer selector-isolation checks pass.
+- Production Codex browser checks cover validation/error recovery, disabled controls, Select with Tab/Enter and disabled options, native radio arrows, tag removal/reset, keyboard seeking, dialog/Popover dismissal and focus return, horizontal/vertical Tabs, Home/End, one tab stop, visible focus and independent bound settings. All six component sections were rendered and captured. Loading indicators are present at all five sizes.
+- Layout inspection in actual 390px/320px iframe viewports finds no document overflow. The browser's viewport override did not change the page viewport, and iframe input actions failed; these captures establish responsive layout only, not mobile interaction or coarse-pointer behavior.
+- Text samples: white/accent 4.53:1; neutral button text/fill 6.80:1; body text/background 10.38:1. The original field border/field fill remains 1.15:1 (border/page 1.74:1), below the 3:1 non-text boundary criterion. Palette inputs were preserved.
+- Reduced-motion, reduced-transparency and forced-colors rules were reviewed in source; runtime preference emulation is unavailable in the connected browser. Firefox, Safari, real devices, screen readers and human visual approval remain unverified. The historical forced-colors checkbox finding remains unverified at runtime in this audit.
+- Cropped production matrices, dialog and responsive evidence stay outside tracked files. The GitHub connector has no supported image-upload method; current screenshots are not attached to the PR. Committed catalog previews are historical.
+- `AGENTS.md` and `CONTRIBUTING.md` remain identical; `git diff --check` passes. The applicable local-reference file is absent. No new public API, merge, package publication or deployment was performed.
+
 ## Bref 2.2.0 and Tabs — 2026-10-21
 
 The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.
