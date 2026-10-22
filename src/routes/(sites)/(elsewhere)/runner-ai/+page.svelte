@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick, untrack } from 'svelte';
 	import { MediaQuery } from 'svelte/reactivity';
 	import { Button, Dialog, Icon } from '#lib/elsewhere/index.js';
 	import { createRuns, workflows } from './run-state.svelte.js';
@@ -13,6 +13,7 @@
 	let workflow = $state(0);
 	let prompt = $state<string>(workflows[0].prompt);
 	let mobileView = $state('workflow');
+	let workspaceElement: HTMLElement;
 	const active = $derived(run.status === 'running' || run.status === 'queued');
 	const labels = {
 		queued: 'Queued',
@@ -22,7 +23,17 @@
 	};
 
 	$effect(() => {
-		if (run.status === 'completed') mobileView = 'workflow';
+		if (run.status !== 'completed') return;
+		untrack(() => {
+			const restoreFocus =
+				!desktop.current &&
+				workspaceElement?.querySelector(
+					mobileView === 'chat' ? '[data-chat-view] :focus' : '[data-sidebar] :focus'
+				);
+			mobileView = 'workflow';
+			if (restoreFocus)
+				tick().then(() => workspaceElement.querySelector<HTMLElement>('[data-report] h3')?.focus());
+		});
 	});
 
 	onMount(() => {
@@ -46,7 +57,13 @@
 	/>
 </svelte:head>
 
-<main id="demo-content" tabindex="-1" data-run-workspace data-view={mobileView}>
+<main
+	id="demo-content"
+	tabindex="-1"
+	data-run-workspace
+	data-view={mobileView}
+	bind:this={workspaceElement}
+>
 	<aside aria-label="Agent runs" data-sidebar>
 		<a href="#demo-content" data-brand
 			><span><Icon name="smart_toy" /></span>
@@ -71,9 +88,13 @@
 				<button
 					type="button"
 					aria-current={run.id === item.id ? 'true' : undefined}
-					onclick={() => {
+					onclick={async () => {
 						workspace.select(item.id);
 						mobileView = 'workflow';
+						if (!desktop.current) {
+							await tick();
+							workspaceElement.querySelector<HTMLElement>('[data-output]')?.focus();
+						}
 					}}
 				>
 					<span data-run-title>{item.title}</span>

@@ -1,5 +1,20 @@
 # Verification
 
+## PR #50 hardening — 2026-10-22
+
+Feedback-to-result checklist, verified against the combined PR source:
+
+- [x] Brands/routes: all three direct demo URLs and theme galleries return 200; retired `/relay`, `/forma` and `/elsewhere` return 404. Public theme source, exports, package metadata and dependencies are unchanged from main.
+- [x] Shared navigation: production client round trips through all demos and galleries retain the same header controls, dark mode, 119px desktop height and 152px logo offset at 1440px. Each route restores its palette; history and skip-link focus pass. The mobile shop navbar stays below the measured shell with its cart reachable and collection heading clear after anchor scrolling settles.
+- [x] Todo: rapid complete/reverse, filtered removal focus and tab Home/End pass at 320px. Duplicate project validation works; exactly four local covers load. A created project retains its chosen Launch icon and Lounge photo, and a new task is assigned to it. State remains temporary within the demo, as documented.
+- [x] House Shop: keyboard/repeated detail adds keep the dialog open; detail and grid disable truthfully at 99. Removal resets both views to zero. Removal/decrement-to-empty restores meaningful focus, and checkout produces the correct receipt. Every current product has one finish; finish switching is not an available state and was not claimed as tested.
+- [x] RunnerAI: fixed mobile focus loss when completion hides the chat and when backlog selection hides the run list. The automatic central report receives focus when needed, chat drafts survive, and completed chat remains accessible. A compiled-state regression reproduced an older retry jumping ahead of queued runs; retry now joins behind queued work. Compiled checks pass FIFO, per-step progress, cancel, retry/reset, conversation/draft isolation, the 12-run capacity and timer cleanup. Browser retry/cancel and automatic report focus pass.
+- [x] Preview truthfulness: the catalog now visibly labels the earlier audit image and gives it accurate alternative text. No replacement screenshot assets were added. Older audit/custom-node and bulky grid-action requests remain superseded; upstream Tabs design remains tracked separately.
+
+Validation: frozen-lockfile dependency installation, `npm run check` (zero errors/warnings), `npm run lint`, `npm run build:site`, `npm run package -- --pack false` (publint), the Pages base-path site build, instruction mirror equality and `git diff --check` pass. Bun's script launcher fails with `CouldntReadCurrentDirectory`, so successful Bun script execution is not claimed for this follow-up. No test script exists; the temporary compiled-state harness adds no project tooling or dependencies. Library source and package metadata are unchanged; clean-consumer and tarball validation were not repeated for these site-only fixes.
+
+Rendered evidence uses this PR's isolated production preview in background Codex browser tabs, at 1440px desktop and 320/390px mobile widths. The existing port 3000 server was untouched. Current report-focus, product-detail, empty-cart, sticky-header and historical-preview crops remain outside Git. GitHub is signed out and the connector has no image-upload tool, so PR screenshot attachment remains unavailable. Preference emulation is unsupported by the available browser controls: reduced-motion, reduced-transparency and forced-colors rendering, other browsers/devices and screen readers remain unverified. Source review is not runtime preference coverage or human visual approval.
+
 ## Demo review — 2026-10-22
 
 - Demo brands and routes now match: Todo at `/todo`, House Shop at `/house-shop`, and RunnerAI at `/runner-ai`. Previous demo URLs return 404; public library themes and `/themes/relay`, `/themes/forma`, `/themes/elsewhere` remain unchanged.

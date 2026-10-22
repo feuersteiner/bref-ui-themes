@@ -31,13 +31,18 @@
 	{#each demos as demo (demo.preview)}
 		<a href={demo.href}>
 			<Surface variant="soft" radius="medium" spacing="medium" hover="medium" height="fill">
-				<img
-					src={asset(`previews/${demo.preview}.jpg`)}
-					alt={`${demo.name} demo as rendered in a browser`}
-					width="1440"
-					height="960"
-					loading="lazy"
-				/>
+				<figure>
+					<img
+						src={asset(`previews/${demo.preview}.jpg`)}
+						alt={demo.preview === 'elsewhere'
+							? 'Earlier Elsewhere audit demo'
+							: `${demo.name} demo as rendered in a browser`}
+						width="1440"
+						height="960"
+						loading="lazy"
+					/>
+					{#if demo.preview === 'elsewhere'}<figcaption>Earlier audit demo</figcaption>{/if}
+				</figure>
 				<h3>
 					<span data-brand><Icon name={demo.icon} />{demo.name}</span><Icon name="arrow_outward" />
 				</h3>
@@ -64,6 +69,14 @@
 		outline: 2px solid var(--color-primary);
 		outline-offset: 4px;
 		border-radius: 1.5rem;
+	}
+	figure {
+		margin: 0;
+	}
+	figcaption {
+		margin-top: 8px;
+		color: var(--color-muted);
+		font-size: 12px;
 	}
 	img {
 		display: block;

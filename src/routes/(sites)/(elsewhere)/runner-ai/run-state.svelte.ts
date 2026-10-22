@@ -229,6 +229,8 @@ export function createRuns() {
 			node.progress = 0;
 			node.output = undefined;
 		});
+		// A retry joins behind work that is already queued.
+		runs = [run, ...runs.filter((item) => item.id !== run.id)];
 		say(run, 'agent', 'Starting again.');
 		advanceQueue();
 	}

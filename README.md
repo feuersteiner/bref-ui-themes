@@ -40,7 +40,7 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 ![Todo rendered demo](static/previews/relay.jpg)
 ![House Shop rendered demo](static/previews/forma.jpg)
 
-RunnerAI is a local agent workspace with a run backlog, linear progress steps, a central report and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; follow each step and review the completed report. Conversations keep separate drafts and directions for each run and can revise completed results. Execution is deterministic and local, with no external AI services; reloading restores the sample. The catalog preview still shows the earlier audit demo.
+RunnerAI is a local agent workspace with a run backlog, linear progress steps, a central report and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; follow each step and review the completed report. Conversations keep separate drafts and directions for each run and can revise completed results. Execution is deterministic and local, with no external AI services; reloading restores the sample. The catalog labels its historical audit preview.
 
 **WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
 

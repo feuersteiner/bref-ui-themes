@@ -8,7 +8,7 @@
 <article aria-label="Run report" data-report>
 	<div data-mark><Icon name={report.icon} /></div>
 	<p data-eyebrow>Report</p>
-	<h3>{report.title}</h3>
+	<h3 tabindex="-1">{report.title}</h3>
 	<p data-summary>{report.summary}</p>
 	<div data-findings>
 		{#each report.findings as finding (finding.title)}
