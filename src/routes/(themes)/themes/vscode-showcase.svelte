@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import { fade } from 'svelte/transition';
+	import { tick } from 'svelte';
+	import { ThemeModeToggle } from 'bref-ui';
 	import {
 		Theme,
 		Button,
@@ -18,1149 +19,1393 @@
 		Tabs,
 		TextInput
 	} from '#lib/vscode/index.js';
-	import type { Size, Variant, Color, TabItemDataProps, TabTransition } from 'bref-ui/types';
+	import type { Size, Variant, TabItemDataProps, IconName, SurfaceRadius } from 'bref-ui/types';
+	import Reference from './vscode-reference.svelte';
+
 	const files = [
-		{ id: 'buttons', name: 'Buttons' },
-		{ id: 'inputs', name: 'Inputs' },
-		{ id: 'pills', name: 'Tags' },
-		{ id: 'feedback', name: 'Feedback' },
-		{ id: 'surfaces', name: 'Overlays' },
-		{ id: 'tabs', name: 'Tabs' }
-	];
-	let activeFileId = $state('buttons');
-	const activeFile = $derived(files.find((file) => file.id === activeFileId) ?? files[0]);
-	const editorFiles: TabItemDataProps[] = files.map((file) => ({
-		id: file.id,
-		label: `${file.name}.svelte`,
-		icon: 'description'
-	}));
-	const revealFile = (id: string) =>
-		requestAnimationFrame(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }));
-	const panelTabs: TabItemDataProps[] = [
-		{ id: 'problems', label: 'Problems', icon: 'error' },
-		{ id: 'output', label: 'Output', icon: 'output' },
-		{ id: 'debug', label: 'Debug console', icon: 'bug_report', disabled: true },
-		{ id: 'terminal', label: 'Terminal', icon: 'terminal' },
-		{ id: 'ports', label: 'Forwarded ports', icon: 'lan' }
-	];
-	const scopeTabs: TabItemDataProps[] = [
-		{ id: 'user', label: 'User', icon: 'person' },
-		{ id: 'workspace', label: 'Workspace', icon: 'folder' },
-		{ id: 'remote', label: 'Remote', icon: 'cloud_off', disabled: true }
-	];
-	const settingTabs: TabItemDataProps[] = [
-		{ id: 'editor', label: 'Editor', icon: 'edit' },
-		{ id: 'files', label: 'Files', icon: 'folder_open' },
-		{ id: 'extensions', label: 'Extensions', icon: 'extension', disabled: true }
-	];
-	let panel = $state('problems');
-	let scope = $state('user');
-	let setting = $state('editor');
-	let panelChanges = $state(0);
-	let userSetting = $state('14');
-	let workspaceSetting = $state('16');
-	let formatOnSave = $state(true);
+		{ id: 'buttons', file: 'button.svelte', name: 'Button', icon: 'bolt' },
+		{ id: 'inputs', file: 'input.svelte', name: 'Inputs & selection', icon: 'input' },
+		{ id: 'choices', file: 'choice.svelte', name: 'Tags & choices', icon: 'label' },
+		{
+			id: 'feedback',
+			file: 'feedback.svelte',
+			name: 'Feedback & icons',
+			icon: 'progress_activity'
+		},
+		{ id: 'surfaces', file: 'surface.svelte', name: 'Surfaces & overlays', icon: 'layers' },
+		{ id: 'tabs', file: 'tabs.svelte', name: 'Tabs', icon: 'tab' }
+	] as const;
+	let activeId = $state<string>('buttons');
+	const active = $derived(files.find((file) => file.id === activeId) ?? files[0]);
+	let mode = $state<'dark' | 'light'>('dark');
+	let explorer = $state(true);
+	let consoleVisible = $state(true);
+	let sourceView = $state('component');
+	let label = $state('Run example');
+	let variant = $state<Variant>('neutral');
+	let size = $state<Size>('medium');
+	let controlState = $state('ready');
+	let radius = $state('8px');
+	const surfaceRadius = $derived<SurfaceRadius>(`${parseFloat(radius) / 16}rem`);
+	const fieldSize = $derived(size === 'x-small' ? 'small' : size === 'x-large' ? 'large' : size);
+	const choiceVariant = $derived(variant === 'filled' ? 'soft' : variant);
+	$effect(() => {
+		if (palette)
+			tick().then(() =>
+				document
+					.querySelector<HTMLInputElement>('[aria-label="Search files and commands"]')
+					?.focus()
+			);
+	});
+	let value = $state('');
+	let checked = $state(true);
 	let autoSave = $state(false);
-	const indicatorTransition: TabTransition = (node) =>
-		fade(node, {
-			duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 120
-		});
-	let sidebarVisible = $state(true);
-	let searching = $state(false);
-	let query = $state('');
-	const visibleFiles = $derived(
-		files.filter((file) => file.name.toLowerCase().includes(query.toLowerCase()))
-	);
-	let enabled = $state(true);
-	let name = $state('');
-	let submitted = $state(false);
-	let open = $state(false);
-	let popover = $state(false);
 	let language = $state<string | string[]>('ts');
-	let languages = $state<string | string[]>(['ts']);
 	let selection = $state<string | string[]>('default');
-	let multiple = $state<string | string[]>(['lint']);
-	let seek = $state(0.42);
-	let presses = $state(0);
+	let progress = $state(0.42);
+	let activations = $state(0);
 	let tags = $state([
 		{ id: 'svelte', label: 'Svelte' },
-		{ id: 'typescript', label: 'TypeScript' },
-		{ id: 'css', label: 'CSS' }
+		{ id: 'typescript', label: 'TypeScript' }
 	]);
-	let removable = $state(true);
+	let dialog = $state(false);
+	let previewName = $state('Default');
+	let draftName = $state('Default');
+	let includeProperties = $state(true);
+	let popover = $state(false);
+	let palette = $state(false);
+	let pendingFocus = '';
+	let query = $state('');
+	let consoleCommand = $state('');
+	let reference = $state(false);
+	let copied = $state(false);
+	let events = $state(['Workbench ready · 15 exports', 'Change a property or type help below.']);
+	const disabled = $derived(controlState !== 'ready');
 	const options = [
-		{ id: 'ts', label: 'TypeScript', icon: { name: 'code' as const } },
+		{ id: 'ts', label: 'TypeScript' },
 		{ id: 'js', label: 'JavaScript' },
-		{ id: 'locked', label: 'Unavailable language', disabled: true }
+		{ id: 'locked', label: 'Unavailable', disabled: true }
 	];
-	const selectedLanguage = $derived(
-		options.find((option) => option.id === language)?.label ?? 'Plain text'
-	);
 	const sizes: Size[] = ['x-small', 'small', 'medium', 'large', 'x-large'];
 	const variants: Variant[] = ['neutral', 'soft', 'filled'];
-	const semanticIcons = {
-		primary: 'bolt',
-		secondary: 'auto_awesome',
-		foreground: 'code',
-		muted: 'visibility_off',
-		info: 'info',
-		success: 'check_circle',
-		warning: 'warning',
-		error: 'error'
-	} as const;
-	const colors: Exclude<Color, 'background'>[] = [
-		'primary',
-		'secondary',
-		'foreground',
-		'muted',
-		'info',
-		'success',
-		'warning',
-		'error'
+	const sourceTabs = $derived<TabItemDataProps[]>([
+		{ id: 'component', label: active.file, icon: 'description' },
+		{ id: 'css', label: 'theme.css', icon: 'data_object' }
+	]);
+	const previewTabs: TabItemDataProps[] = [
+		{ id: 'default', label: 'Editor', icon: 'edit' },
+		{ id: 'files', label: 'Files', icon: 'folder' },
+		{ id: 'locked', label: 'Unavailable', icon: 'lock', disabled: true }
 	];
+	let previewTab = $state('default');
+	const commands = $derived(
+		[
+			...files.map((file) => ({ id: file.id, label: file.file, icon: file.icon })),
+			{ id: 'theme', label: 'Toggle light / dark theme', icon: 'contrast' as IconName },
+			{ id: 'reset', label: 'Reset preview properties', icon: 'restart_alt' as IconName },
+			{ id: 'console', label: 'Focus preview console', icon: 'terminal' as IconName },
+			{ id: 'reference', label: 'Open complete component reference', icon: 'widgets' as IconName }
+		].filter((item) => item.label.toLowerCase().includes(query.toLowerCase()))
+	);
+	const log = (message: string) => {
+		events = [...events.slice(-9), message];
+	};
+	function selectFile(id: string) {
+		if (controlState === 'loading') controlState = 'ready';
+		activeId = id;
+		sourceView = 'component';
+		log(`Opened ${files.find((file) => file.id === id)?.file}`);
+	}
+	function toggleMode() {
+		mode = mode === 'dark' ? 'light' : 'dark';
+		log(`Theme → ${mode}`);
+	}
+	function reset() {
+		label = 'Run example';
+		variant = 'neutral';
+		size = 'medium';
+		controlState = 'ready';
+		radius = '8px';
+		log('Preview properties reset');
+	}
+	function runCommand(id: string) {
+		const fromPalette = palette;
+		palette = false;
+		if (id === 'theme') toggleMode();
+		else if (id === 'reset') reset();
+		else if (id === 'reference') {
+			reference = true;
+			requestAnimationFrame(() => document.getElementById('reference')?.scrollIntoView());
+		} else if (id === 'console') {
+			consoleVisible = true;
+			if (fromPalette) pendingFocus = 'preview-command';
+			else requestAnimationFrame(() => document.getElementById('preview-command')?.focus());
+		} else selectFile(id);
+	}
+	function submitCommand() {
+		const command = consoleCommand.trim().toLowerCase();
+		consoleCommand = '';
+		if (command === 'help') log('Commands: open inputs · theme · reset · clear');
+		else if (command === 'clear') events = [];
+		else if (command === 'theme') toggleMode();
+		else if (command === 'reset') reset();
+		else if (command.startsWith('open ') && files.some((file) => file.id === command.slice(5)))
+			selectFile(command.slice(5));
+		else if (command) log(`Unknown command: ${command}. Type help.`);
+	}
+	function paletteKeys(event: KeyboardEvent) {
+		const targets = [
+			...(event.currentTarget as HTMLElement).querySelectorAll<
+				HTMLInputElement | HTMLButtonElement
+			>('.palette-content input, button[data-result]')
+		];
+		const index = targets.indexOf(event.target as HTMLInputElement | HTMLButtonElement);
+		if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+			event.preventDefault();
+			targets[
+				(index + (event.key === 'ArrowDown' ? 1 : targets.length - 1)) % targets.length
+			]?.focus();
+		} else if (event.key === 'Enter' && event.target === targets[0] && commands[0]) {
+			event.preventDefault();
+			runCommand(commands[0].id);
+		}
+	}
+	const source = $derived.by(() => {
+		const imports: Record<string, string> = {
+			buttons: 'Button, Spinner',
+			inputs: 'TextInput, Checkbox, Select',
+			choices: 'Pill, PillGroup, PillChoiceGroup',
+			feedback: 'Progress, Spinner, Icon',
+			surfaces: 'Surface, Dialog, Popover, Button',
+			tabs: 'Tabs, Checkbox'
+		};
+		const props = `variant=${JSON.stringify(variant)}\n  size=${JSON.stringify(size)}\n  color="primary"`;
+		if (sourceView === 'css')
+			return `/* workbench / theme.css */\n\n[data-bref-theme='vscode'] {\n  --color-background: ${mode === 'dark' ? '#0c0d10' : '#f0f0ee'};\n  --color-foreground: ${mode === 'dark' ? '#d9dade' : '#35373c'};\n  --color-primary: ${mode === 'dark' ? '#8aa7f8' : '#4e5969'};\n  --vscode-radius: ${radius};\n}\n\n/* Hover changes text and glyphs only. */\n/* Keyboard focus stays visible. */`;
+		const examples: Record<string, string> = {
+			buttons: `let activations = $state(0);\n</${'script'}>\n\n<Button\n  label={${JSON.stringify(label)}}\n  ${props}\n  icon={{ name: 'bolt' }}\n  disabled={${disabled}}\n  onClick={() => activations++}\n/>\n\n<p>{activations} activations</p>`,
+			inputs: `let value = $state('');\n  let checked = $state(true);\n  let language = $state('ts');\n</${'script'}>\n\n<TextInput aria-label="Setting name"\n  bind:value placeholder="editor.fontSize"\n  size=${JSON.stringify(fieldSize)} disabled={${disabled}} />\n<Checkbox bind:checked aria-label="Format on save"\n  size=${JSON.stringify(size)} disabled={${disabled}} />\n<Select items={[{ id: 'ts', label: 'TypeScript' },\n  { id: 'js', label: 'JavaScript' }]}\n  bind:value={language} size=${JSON.stringify(fieldSize)}\n  disabled={${disabled}} />`,
+			choices: `let selection = $state('default');\n  let tags = $state([{ id: 'svelte', label: 'Svelte' }]);\n</${'script'}>\n\n<Pill label={${JSON.stringify(label)}} ${props.replaceAll('\n  ', ' ')} />\n<PillGroup items={tags}\n  onDelete={(id) => tags = tags.filter(tag => tag.id !== id)} />\n<PillChoiceGroup bind:selection\n  items={[{ id: 'default', label: 'Default' },\n    { id: 'compact', label: 'Compact' }]}\n  size=${JSON.stringify(size)} variant=${JSON.stringify(choiceVariant)}\n  color="primary" disabled={${disabled}} />`,
+			feedback: `let progress = $state(0.42);\n</${'script'}>\n\n<Progress value={progress}\n  onSeek={(next) => progress = next}\n  label="Build progress" disabled={${disabled}} />\n<Spinner label="Loading preview" size=${JSON.stringify(size)} />\n<Icon name="check_circle" color="success" label="Ready" />`,
+			surfaces: `let open = $state(false);\n</${'script'}>\n\n<Surface variant=${JSON.stringify(variant)} color=${JSON.stringify(variant === 'neutral' ? 'background' : 'primary')}\n  spacing="medium" radius=${JSON.stringify(surfaceRadius)}>\n  <h3>Project settings</h3>\n  <p>Context, only when needed.</p>\n</Surface>\n<Button label="Open dialog" onClick={() => open = true} />\n<Dialog bind:open header={{ title: 'Name this preview' }}>\n  <p>Native modal focus and Escape.</p>\n</Dialog>`,
+			tabs: `let view = $state('default');\n  const items = [\n    { id: 'default', label: 'Editor', icon: 'edit' },\n    { id: 'files', label: 'Files', icon: 'folder' },\n    { id: 'locked', label: 'Unavailable', icon: 'lock', disabled: true }\n  ];\n</${'script'}>\n\n<Tabs {items} bind:value={view} label="Preview preferences" />\n<p>{view === 'default' ? 'Editor preferences' : 'File preferences'}</p>`
+		};
+		return `<script lang="ts">\n  import { ${imports[activeId]} }\n    from 'bref-ui-themes/vscode';\n\n  ${examples[activeId]}`;
+	});
+	$effect(() => {
+		void source;
+		copied = false;
+	});
+	function tokens(line: string) {
+		return line.split(
+			/("(?:[^"\\]|\\.)*"|'[^']*'|<\/?[\w-]+|\b(?:import|from|let|const|true|false)\b|\/\/.*)/g
+		);
+	}
+	async function copySource() {
+		try {
+			await navigator.clipboard.writeText(source);
+			copied = true;
+			log('Source copied');
+		} catch {
+			copied = false;
+			log('Copy unavailable. Select the source to copy.');
+		}
+	}
 </script>
 
+<svelte:window
+	onkeydown={(event) => {
+		if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k' && !dialog) {
+			event.preventDefault();
+			query = '';
+			palette = !palette;
+		}
+	}}
+/>
+<ThemeModeToggle {mode} />
 <Theme>
-	<div data-vscode-gallery data-sidebar-hidden={!sidebarVisible || undefined}>
-		<a class="skip" href="#components">Skip to components</a>
-		<nav class="theme-nav" aria-label="Theme demonstrations" data-sveltekit-reload>
-			<a href={resolve('/')}>← Showcase</a>
-			<div>
-				{#each ['relay', 'forma', 'elsewhere', 'vscode'] as theme (theme)}<a
-						href={resolve('/(themes)/themes/[theme]', { theme })}
-						aria-current={theme === 'vscode' ? 'page' : undefined}
-						>{theme === 'vscode' ? 'VS Code' : theme[0].toUpperCase() + theme.slice(1)}</a
-					>{/each}
+	<div class="workbench" style:--vscode-radius={radius} data-explorer={explorer}>
+		<a class="skip" href="#live-preview">Skip to live preview</a>
+		<header class="titlebar">
+			<a class="brand" href={resolve('/')} data-sveltekit-reload
+				><Icon name="code" /><strong>bref</strong><span>/ ui-workbench</span></a
+			>
+			<button
+				class="command"
+				type="button"
+				onclick={() => {
+					query = '';
+					palette = true;
+				}}><Icon name="search" /> Find a file or command… <kbd>⌘ K</kbd></button
+			>
+			<div class="window-actions">
+				<button
+					class="icon-button"
+					type="button"
+					aria-label="Toggle preview console"
+					aria-pressed={consoleVisible}
+					onclick={() => (consoleVisible = !consoleVisible)}
+					><Icon name="terminal" filled={consoleVisible} /></button
+				>
+				<button
+					class="icon-button"
+					type="button"
+					aria-label={`Switch to ${mode === 'dark' ? 'light' : 'dark'} theme`}
+					onclick={toggleMode}><Icon name={mode === 'dark' ? 'light_mode' : 'dark_mode'} /></button
+				>
 			</div>
-		</nav>
-		<nav class="activity-bar" aria-label="Workbench">
-			<button
-				type="button"
-				aria-label="Explorer"
-				title="Explorer"
-				aria-pressed={sidebarVisible && !searching}
-				onclick={() => {
-					sidebarVisible = searching || !sidebarVisible;
-					searching = false;
-					query = '';
-				}}><span class="workbench-icon" aria-hidden="true"><Icon name="file_copy" /></span></button
-			>
-			<button
-				type="button"
-				aria-label="Search components"
-				title="Search components"
-				aria-pressed={sidebarVisible && searching}
-				onclick={() => {
-					sidebarVisible = true;
-					searching = !searching;
-					query = '';
-				}}><span class="workbench-icon" aria-hidden="true"><Icon name="search" /></span></button
-			>
-			<a class="manage" href="#inputs" aria-label="Settings" title="Settings"
-				><span class="workbench-icon" aria-hidden="true"><Icon name="settings" /></span></a
-			>
-		</nav>
-		<nav class="explorer" id="explorer" aria-label="Component explorer" hidden={!sidebarVisible}>
-			<div class="explorer-heading">{searching ? 'SEARCH' : 'EXPLORER'}</div>
-			{#if searching}
-				<div class="explorer-search">
-					<input aria-label="Find component file" placeholder="Search files" bind:value={query} />
-				</div>
-			{/if}
-			<details class="explorer-group open-editors">
-				<summary
-					><span class="workbench-icon twistie" aria-hidden="true"
-						><Icon name="chevron_right" /></span
-					>OPEN EDITORS</summary
-				>
-				<a class="file-entry" href={`#${activeFile.id}`}
-					><span class="workbench-icon file-icon" aria-hidden="true"
-						><Icon name="description" /></span
-					>{activeFile.name}.svelte</a
-				>
-			</details>
-			<details class="explorer-group workspace" open>
-				<summary
-					><span class="workbench-icon twistie" aria-hidden="true"
-						><Icon name="chevron_right" /></span
-					>BREF-UI-THEMES</summary
-				>
-				<details class="folder" open>
-					<summary
-						><span class="workbench-icon twistie" aria-hidden="true"
-							><Icon name="chevron_right" /></span
-						><span class="workbench-icon" aria-hidden="true"><Icon name="folder_open" /></span>src /
-						lib / vscode</summary
-					>
-					<div class="file-list">
-						{#each visibleFiles as file (file.id)}
-							<a
-								class="file-entry"
-								href={`#${file.id}`}
-								aria-current={activeFile.id === file.id ? 'true' : undefined}
-								onclick={() => (activeFileId = file.id)}
-								><span class="workbench-icon file-icon" aria-hidden="true"
-									><Icon name="description" /></span
-								>{file.name}.svelte</a
-							>
-						{/each}
-						{#if visibleFiles.length === 0}<p class="empty-files">No matching files</p>{/if}
-					</div>
-				</details>
-			</details>
-			<details class="explorer-group outline">
-				<summary
-					><span class="workbench-icon twistie" aria-hidden="true"
-						><Icon name="chevron_right" /></span
-					>OUTLINE</summary
-				>
-				{#each files as file (file.id)}<a
-						class="file-entry"
-						href={`#${file.id}`}
-						onclick={() => (activeFileId = file.id)}
-						><span class="workbench-icon" aria-hidden="true"><Icon name="data_object" /></span
-						>{file.name}</a
-					>{/each}
-			</details>
-		</nav>
-		<div class="editor-tabs">
-			<Tabs
-				items={editorFiles}
-				bind:value={activeFileId}
-				label="Editor files"
-				onChange={revealFile}
-			/>
-		</div>
-		<header>
-			<p class="eyebrow"><Icon name="code" /> BREF / THEME COLLECTION</p>
-			<h1>VS Code<span>Component reference</span></h1>
-			<p>Editor colors. Workbench precision. Native Bref interactions.</p>
-			<code>import &#123; Theme, Button &#125; from 'bref-ui-themes/vscode';</code>
 		</header>
-		<main id="components" tabindex="-1">
-			<section aria-labelledby="buttons">
-				<div class="section-title">
-					<h2 id="buttons">01 <span>Buttons</span></h2>
-					<code>Button</code>
+		<main class="body">
+			<nav class="rail" aria-label="Workbench views">
+				<button
+					class="icon-button"
+					type="button"
+					aria-label="Toggle file explorer"
+					aria-pressed={explorer}
+					onclick={() => (explorer = !explorer)}><Icon name="file_copy" filled={explorer} /></button
+				>
+				<button
+					class="icon-button"
+					type="button"
+					aria-label="Find component"
+					onclick={() => {
+						query = '';
+						palette = true;
+					}}><Icon name="search" /></button
+				>
+				<button
+					class="icon-button"
+					type="button"
+					aria-label="Focus preview console"
+					onclick={() => runCommand('console')}><Icon name="terminal" /></button
+				>
+				<button
+					class="icon-button manage"
+					type="button"
+					aria-label="Focus properties"
+					onclick={() => document.getElementById('properties-heading')?.focus()}
+					><Icon name="tune" /></button
+				>
+			</nav>
+			<nav class="explorer" aria-label="File explorer" hidden={!explorer}>
+				<p class="sidebar-heading">EXPLORER <span>···</span></p>
+				<p class="folder"><Icon name="keyboard_arrow_down" /> ui-workbench</p>
+				<p class="folder nested"><Icon name="keyboard_arrow_down" /> src / components</p>
+				{#each files as file (file.id)}<button
+						class="file"
+						type="button"
+						aria-current={activeId === file.id && sourceView === 'component' ? 'true' : undefined}
+						onclick={() => selectFile(file.id)}
+						><Icon name="description" filled={activeId === file.id} />{file.file}</button
+					>{/each}
+				<button
+					class="file css-file"
+					type="button"
+					aria-current={sourceView === 'css' ? 'true' : undefined}
+					onclick={() => (sourceView = 'css')}><Icon name="data_object" />theme.css</button
+				>
+				<div class="sidebar-bottom">
+					<span>• Local playground</span>
+					<p>Explore reusable components and their properties.</p>
+					<a href="#reference" onclick={() => (reference = true)}>Complete component reference ↗</a>
 				</div>
-				<p class="note">Neutral, soft and filled; five sizes. Tab to inspect focus.</p>
-				{#each variants as variant (variant)}<div class="row">
-						<span class="key">{variant}</span>{#each sizes as size (size)}<Button
-								label={size}
-								{size}
-								{variant}
-								color="primary"
-								onClick={() => presses++}
-							/>{/each}
-					</div>{/each}
-				<div class="row">
-					<Button label="Disabled" disabled /><Button
-						label="Pressed"
-						aria-pressed="true"
-						color="primary"
-						variant="soft"
-					/><Button
-						icon={{ name: 'settings', label: 'Settings example' }}
-						size="small"
-						onClick={() => presses++}
-					/><Button
-						icon={{ name: 'add', label: 'Rounded example' }}
-						rounded
-						size="small"
-						onClick={() => presses++}
-					/><Button href="#inputs" label="Link button" size="small" /><Button
-						href="#inputs"
-						label="Disabled link"
-						disabled
-						size="small"
-					/>
+			</nav>
+			<section class="editor" aria-label="Component source" data-console={consoleVisible}>
+				<div class="source-tabs">
+					<Tabs items={sourceTabs} bind:value={sourceView} label="Source files" />
 				</div>
-				<div class="colors">
-					{#each colors as color (color)}<Button
-							label={color}
-							size="small"
-							variant="soft"
-							{color}
-						/>{/each}
-				</div>
-			</section>
-			<section aria-labelledby="inputs">
-				<div class="section-title">
-					<h2 id="inputs">02 <span>Inputs & selection</span></h2>
-					<code>TextInput · Checkbox · Select</code>
-				</div>
-				<div class="grid">
-					<form
-						onsubmit={(event) => {
-							event.preventDefault();
-							submitted = true;
-						}}
-						novalidate
+				<div class="editor-path">
+					<span
+						>src › {sourceView === 'css'
+							? 'lib › vscode › theme.svelte'
+							: `components › ${active.file}`}</span
+					><button type="button" class="text-button" onclick={copySource}
+						><Icon name="content_copy" />{copied ? 'Copied' : 'Copy'}</button
 					>
-						<label for="setting-name">Setting name</label><TextInput
-							id="setting-name"
-							bind:value={name}
-							placeholder="editor.fontSize"
-							icon={{ name: 'search' }}
-							required
-							aria-invalid={submitted && !name.trim()}
-							aria-describedby="name-feedback"
-							wide
-						/>
-						<p
-							id="name-feedback"
-							class:error={submitted && !name.trim()}
-							role={submitted && !name.trim() ? 'alert' : 'status'}
-						>
-							{submitted
-								? name.trim()
-									? `Accepted: ${name}`
-									: 'Enter a setting name.'
-								: 'Submit an empty value to inspect the error state.'}
-						</p>
-						<Button
-							type="submit"
-							label="Validate input"
-							variant="filled"
-							color="primary"
-							size="small"
-						/>
-						<label for="readonly">Read only</label><TextInput
-							id="readonly"
-							value="workbench.colorTheme"
-							readonly
-							wide
-						/>
-						<label for="disabled-input">Disabled</label><TextInput
-							id="disabled-input"
-							value="Managed by policy"
-							disabled
-							wide
-						/>
-						<div class="row">
-							{#each ['small', 'medium', 'large'] as size (size)}<TextInput
-									aria-label={`${size} input`}
-									placeholder={size}
-									size={size as 'small' | 'medium' | 'large'}
-								/>{/each}
-						</div>
-					</form>
-					<div class="control-stack">
-						<label for="language">Language</label><Select
-							id="language"
-							items={options}
-							bind:value={language}
-						/>
-						<p class="note">Selected: {language}. Open, Tab to an option, then Enter.</p>
-						<label for="languages">Multiple languages</label><Select
-							id="languages"
-							items={options}
-							bind:value={languages}
-							size="small"
-						/>
-						<label for="disabled-select">Disabled select</label><Select
-							id="disabled-select"
-							items={options}
-							value="ts"
-							disabled
-						/>
-						<label for="empty-select">Empty select</label><Select
-							id="empty-select"
-							items={[]}
-							placeholder="No languages"
-							size="large"
-						/>
-						<div class="checks">
-							<label><Checkbox bind:checked={enabled} /> Enable formatting</label><label
-								><Checkbox checked disabled /> Disabled checked</label
-							><label><Checkbox disabled /> Disabled unchecked</label><label
-								><Checkbox aria-invalid="true" /> Error checkbox</label
+				</div>
+				<div
+					class="source-scroll"
+					tabindex="0"
+					role="textbox"
+					aria-readonly="true"
+					aria-multiline="true"
+					aria-label="Svelte usage example"
+				>
+					<pre><code
+							>{#each source.split('\n') as line, index (index)}<span class="code-line"
+									><span class="line-number" aria-hidden="true">{index + 1}</span><span
+										>{#each tokens(line) as token, t (t)}<span
+												class:syntax-string={/^['"]/.test(token)}
+												class:syntax-tag={token.startsWith('<')}
+												class:syntax-key={/^(import|from|let|const|true|false)$/.test(token)}
+												>{token}</span
+											>{/each}</span
+									></span
+								>{/each}</code
+						></pre>
+				</div>
+				{#if consoleVisible}<section class="console" aria-label="Preview console">
+						<div class="console-head">
+							<span>Preview console <small>{events.length} events</small></span><button
+								type="button"
+								class="icon-button"
+								aria-label="Clear console"
+								onclick={() => (events = [])}><Icon name="delete" /></button
 							>
 						</div>
-						<div class="row">
-							{#each sizes as size (size)}<label class="size-check"
-									><Checkbox {size} aria-label={`${size} checkbox`} />{size}</label
+						<div class="logs" role="log" aria-label="Preview events">
+							{#each events as event, index (index)}<p>
+									<span>{String(index + 1).padStart(2, '0')}</span>{event}
+								</p>{/each}
+						</div>
+						<form
+							class="prompt"
+							onsubmit={(event) => {
+								event.preventDefault();
+								submitCommand();
+							}}
+						>
+							<span aria-hidden="true">›</span><input
+								id="preview-command"
+								aria-label="Preview command"
+								placeholder="help · open inputs · theme"
+								bind:value={consoleCommand}
+								autocomplete="off"
+							/>
+						</form>
+					</section>{/if}
+			</section>
+			<aside class="right" aria-label="Live component preview and properties">
+				<div class="pane-heading"><span>Preview</span><small>• Live</small></div>
+				<nav class="mobile-files" aria-label="Components">
+					{#each files as file (file.id)}<button
+							type="button"
+							aria-current={activeId === file.id ? 'true' : undefined}
+							onclick={() => selectFile(file.id)}>{file.name.split(' ')[0]}</button
+						>{/each}
+				</nav>
+				<section class="preview" id="live-preview" aria-label="Live preview" tabindex="-1">
+					<div class="preview-caption">
+						<span>{active.name}</span><span
+							>{activeId === 'tabs'
+								? 'native selection'
+								: `${variant} / ${activeId === 'inputs' ? fieldSize : size}`}</span
+						>
+					</div>
+					<div class="preview-stage">
+						{#if activeId === 'buttons'}
+							{#if controlState === 'loading'}<Spinner label="Loading preview" {size} />{/if}
+							<Button
+								{label}
+								{variant}
+								{size}
+								color="primary"
+								icon={{ name: 'bolt' }}
+								{disabled}
+								onClick={() => {
+									activations++;
+									log(`Button activated · ${activations}`);
+								}}
+							/>
+						{:else if activeId === 'inputs'}
+							<div class="stack">
+								<label for="live-input">Setting name</label><TextInput
+									id="live-input"
+									size={fieldSize}
+									bind:value
+									placeholder="editor.fontSize"
+									{disabled}
+									wide
+								/><label class="check"
+									><Checkbox bind:checked {size} {disabled} />Format on save</label
+								><label for="live-language">Language</label><Select
+									size={fieldSize}
+									id="live-language"
+									items={options}
+									bind:value={language}
+									{disabled}
+								/>
+							</div>
+						{:else if activeId === 'choices'}
+							<div class="stack">
+								<Pill {label} {size} {variant} color="primary" /><PillGroup
+									items={tags}
+									{size}
+									onDelete={disabled
+										? undefined
+										: (id) => (tags = tags.filter((tag) => tag.id !== id))}
+								/><PillChoiceGroup
+									items={[
+										{ id: 'default', label: 'Default' },
+										{ id: 'compact', label: 'Compact' }
+									]}
+									bind:selection
+									{size}
+									variant={choiceVariant}
+									color="primary"
+									{disabled}
+								/><Button
+									label="Restore tags"
+									size="small"
+									{disabled}
+									onClick={() =>
+										(tags = [
+											{ id: 'svelte', label: 'Svelte' },
+											{ id: 'typescript', label: 'TypeScript' }
+										])}
+								/>
+							</div>
+						{:else if activeId === 'feedback'}
+							<div class="stack">
+								<label for="live-progress">Build progress · {Math.round(progress * 100)}%</label
+								><Progress
+									id="live-progress"
+									value={progress}
+									onSeek={(next) => (progress = next)}
+									{disabled}
+								/>
+								<div class="feedback-row">
+									<Spinner label="Loading preview" {size} /><span>Loading indicator</span><Icon
+										name="check_circle"
+										color="success"
+										label="Ready"
+									/>
+								</div>
+							</div>
+						{:else if activeId === 'surfaces'}
+							<div class="stack">
+								<Surface
+									{variant}
+									color={variant === 'neutral' ? 'background' : 'primary'}
+									spacing="medium"
+									radius={surfaceRadius}
+									><h3>Project settings</h3>
+									<p>Context, only when needed.</p></Surface
+								>
+								<div class="overlay-actions">
+									<Button
+										label="Open dialog"
+										size="small"
+										{disabled}
+										onClick={() => {
+											draftName = previewName;
+											dialog = true;
+										}}
+									/><Popover bind:open={popover} spacing="medium"
+										>{#snippet trigger()}<Button
+												label="Open popover"
+												size="small"
+												{disabled}
+												aria-expanded={popover}
+												onClick={() => (popover = !popover)}
+											/>{/snippet}
+										<h3>Preview context</h3>
+										<p>Click outside or press Escape to dismiss.</p>
+										<Button
+											label="Dismiss"
+											size="small"
+											onClick={() => (popover = false)}
+										/></Popover
+									>
+								</div>
+							</div>
+						{:else}
+							<div class="stack">
+								<Tabs items={previewTabs} bind:value={previewTab} label="Preview preferences" />
+								<p>{previewTab === 'default' ? 'Editor preferences' : 'File preferences'}</p>
+								{#if previewTab === 'default'}<label class="check"
+										><Checkbox bind:checked />Format on save</label
+									>
+								{:else}<label class="check"><Checkbox bind:checked={autoSave} />Auto save</label
+									>{/if}
+							</div>
+						{/if}
+					</div>
+					<div class="preview-foot">
+						<span
+							>{previewName !== 'Default'
+								? previewName
+								: activeId === 'buttons'
+									? `${activations} activations`
+									: 'Native controls · live state'}</span
+						><span>Tab ↹</span>
+					</div>
+				</section>
+				<section class="properties" aria-labelledby="properties-heading">
+					<div class="properties-head">
+						<h2 id="properties-heading" tabindex="-1">Properties</h2>
+						<button type="button" class="text-button" onclick={reset}
+							><Icon name="restart_alt" />Reset</button
+						>
+					</div>
+					<div class="property" hidden={!['buttons', 'choices'].includes(activeId)}>
+						<label for="preview-label">label</label><TextInput
+							id="preview-label"
+							bind:value={label}
+							wide
+						/>
+					</div>
+					<fieldset
+						class="property"
+						hidden={!['buttons', 'choices', 'surfaces'].includes(activeId)}
+					>
+						<legend>variant</legend>
+						<div class="segments">
+							{#each variants as item (item)}<button
+									type="button"
+									aria-pressed={variant === item}
+									onclick={() => (variant = item)}>{item}</button
 								>{/each}
 						</div>
-					</div>
-				</div>
-			</section>
-			<section aria-labelledby="pills">
-				<div class="section-title">
-					<h2 id="pills">03 <span>Tags & choices</span></h2>
-					<code>Pill · PillGroup · PillChoiceGroup</code>
-				</div>
-				<div class="row">
-					{#each variants as variant (variant)}<Pill
-							label={variant}
-							{variant}
-							color="secondary"
-							icon={{ name: 'label' }}
-						/>{/each}<Pill
-						label="Activate tag"
-						onClick={() => presses++}
-						color="primary"
-					/>{#if removable}<Pill
-							label="Removable tag"
-							onDelete={() => (removable = false)}
-						/>{:else}<Button
-							label="Restore tag"
-							size="small"
-							onClick={() => (removable = true)}
-						/>{/if}
-				</div>
-				<div class="row">
-					{#each sizes as size (size)}<Pill
-							label={size}
-							{size}
-							color="info"
-							variant="soft"
-						/>{/each}
-				</div>
-				<div class="grid">
-					<div class="control-stack">
-						<h3>Removable group</h3>
-						<PillGroup
-							items={tags}
-							onDelete={(id) => (tags = tags.filter((tag) => tag.id !== id))}
-							size="small"
-						/><Button
-							label="Reset tags"
-							size="small"
-							onClick={() =>
-								(tags = [
-									{ id: 'svelte', label: 'Svelte' },
-									{ id: 'typescript', label: 'TypeScript' },
-									{ id: 'css', label: 'CSS' }
-								])}
-						/>
-					</div>
-					<div class="control-stack">
-						<h3>Single choice / native radios</h3>
-						<PillChoiceGroup
-							aria-label="Formatting mode"
-							items={[
-								{ id: 'default', label: 'Default' },
-								{ id: 'compact', label: 'Compact' },
-								{ id: 'expanded', label: 'Expanded' }
-							]}
-							bind:selection
-							color="primary"
-							size="small"
-						/>
-						<p class="note">Mode: {selection}</p>
-						<h3>Multiple choice / native checkboxes</h3>
-						<PillChoiceGroup
-							aria-label="Checks"
-							items={[
-								{ id: 'lint', label: 'Lint' },
-								{ id: 'types', label: 'Types' }
-							]}
-							bind:selection={multiple}
-							variant="soft"
-							color="success"
-						/><PillChoiceGroup
-							aria-label="Disabled choices"
-							items={[{ id: 'locked', label: 'Locked choice' }]}
-							selection="locked"
-							disabled
-						/>
-					</div>
-				</div>
-			</section>
-			<section aria-labelledby="feedback">
-				<div class="section-title">
-					<h2 id="feedback">04 <span>Feedback & icons</span></h2>
-					<code>Progress · Spinner · Icon</code>
-				</div>
-				<div class="grid">
-					<div class="control-stack">
-						<label for="seek">Seekable progress · {Math.round(seek * 100)}%</label><Progress
-							id="seek"
-							value={seek}
-							onSeek={(value) => (seek = value)}
-						/><Progress label="Disabled seek" value={0.6} onSeek={() => {}} disabled /><Progress
-							label="Indeterminate progress"
-						/>
-						<div class="row">
-							{#each ['small', 'medium', 'large'] as size (size)}<div class="progress-sample">
-									<span>{size}</span><Progress
-										label={`${size} progress`}
-										value={0.65}
-										size={size as 'small' | 'medium' | 'large'}
-									/>
-								</div>{/each}
+					</fieldset>
+					<fieldset
+						class="property"
+						hidden={!['buttons', 'inputs', 'choices', 'feedback'].includes(activeId)}
+					>
+						<legend>size</legend>
+						<div class="segments">
+							{#each sizes as item, index (item)}<button
+									type="button"
+									aria-label={item}
+									aria-pressed={size === item}
+									onclick={() => (size = item)}>{['XS', 'S', 'M', 'L', 'XL'][index]}</button
+								>{/each}
+						</div>
+					</fieldset>
+					<div class="property field-row">
+						<div hidden={activeId === 'tabs'}>
+							<label for="preview-state">state</label><select
+								id="preview-state"
+								bind:value={controlState}
+								><option value="ready">Ready</option><option value="disabled">Disabled</option
+								>{#if activeId === 'buttons'}<option value="loading">Loading</option>{/if}</select
+							>
+						</div>
+						<div>
+							<label for="preview-radius">radius</label><select
+								id="preview-radius"
+								bind:value={radius}
+								>{#each ['0px', '3px', '6px', '8px', '10px'] as item (item)}<option value={item}
+										>{item}</option
+									>{/each}</select
+							>
 						</div>
 					</div>
-					<div class="control-stack">
-						<h3>Loading indicators</h3>
-						<div class="row">
-							{#each sizes as size (size)}<Spinner
-									label={`${size} loading example`}
-									{size}
-								/>{/each}
-						</div>
-						<h3>Semantic icons</h3>
-						<div class="row">
-							{#each colors as color (color)}<Icon
-									name={semanticIcons[color]}
-									label={`${color} icon`}
-									{color}
-									size="medium"
-								/>{/each}
-						</div>
-						<div class="row">
-							{#each sizes as size (size)}<Icon
-									name="code"
-									label={`${size} code icon`}
-									{size}
-								/>{/each}<Icon name="star" filled label="Filled star" color="warning" />
-						</div>
-					</div>
-				</div>
-			</section>
-			<section aria-labelledby="surfaces">
-				<div class="section-title">
-					<h2 id="surfaces">05 <span>Surfaces & overlays</span></h2>
-					<code>Surface · Popover · Dialog</code>
-				</div>
-				<div class="surface-grid">
-					{#each variants as variant (variant)}<Surface
-							{variant}
-							color={variant === 'filled' ? 'primary' : 'background'}
-							spacing="medium"
-							radius="0.1875rem"
-							><h3>{variant}</h3>
-							<p>A crisp container with semantic paint and explicit spacing.</p>
-							<Pill label="Surface" size="x-small" /></Surface
-						>{/each}
-				</div>
-				<div class="row">
-					<Surface
-						width="fit"
-						orientation="horizontal"
-						variant="soft"
-						spacing="small"
-						radius="0.125rem"
-						hover="small"><Icon name="info" color="info" /><span>Horizontal surface</span></Surface
-					><Surface width="fit" spacing="small" radius="0.125rem" shadow
-						><span>Widget shadow</span></Surface
+					<p class="property-help">
+						Change a property to update the preview and usage example. Native form state persists.
+					</p>
+				</section>
+				<div class="bottom-note">
+					Native Svelte 5 components<br />Tab to focus. Enter or Space to activate.<br /><a
+						href="#reference"
+						onclick={() => (reference = true)}>All variants and states ↗</a
 					>
 				</div>
-				<Surface
-					scroll
-					spacing="small"
-					radius="0.125rem"
-					style="max-height: 96px"
-					aria-label="Scrollable surface"
-					>{#each [1, 2, 3, 4, 5] as line (line)}<p>
-							Scrollable content, line {line}. Focus and use the arrow keys.
-						</p>{/each}</Surface
-				>
-				<div class="row">
-					<Popover bind:open={popover} spacing="medium" radius="0.1875rem"
-						>{#snippet trigger()}<Button
-								label="Open popover"
-								aria-expanded={popover}
-								size="small"
-								onClick={() => (popover = !popover)}
-							/>{/snippet}
-						<h3>Popover reference</h3>
-						<p>Native light dismissal and Escape.</p>
-						<Button label="Close popover" size="small" onClick={() => (popover = false)} /></Popover
-					><Popover disabled spacing="small"
-						>{#snippet trigger()}<Button label="Disabled popover" disabled size="small" />{/snippet}
-						<p>Disabled content</p></Popover
-					><Button
-						label="Open dialog"
-						size="small"
-						variant="filled"
-						color="primary"
-						onClick={() => (open = true)}
-					/>
-				</div>
-			</section>
-			<section aria-labelledby="tabs">
-				<div class="section-title">
-					<h2 id="tabs">06 <span>Tabs</span></h2>
-					<code>Tabs · consumer-owned content</code>
-				</div>
-				<p class="note">
-					Arrow keys select; Home and End jump. Disabled items are skipped. Overflow stays within
-					each strip.
-				</p>
-				<div class="tabs-examples">
-					<div class="tab-example" data-tabs-example="fit">
-						<h3>Panel · horizontal fit</h3>
-						<div class="panel-strip">
-							<Tabs
-								items={panelTabs}
-								bind:value={panel}
-								label="Workbench panels"
-								onChange={() => panelChanges++}
-							/>
-						</div>
-						<div class="tab-content" role="region" aria-label="Selected workbench panel">
-							{#if panel === 'problems'}
-								<p>
-									<Icon name="check_circle" color="success" /> No problems detected in the workspace.
-								</p>
-							{:else if panel === 'output'}
-								<code>[formatter] Settings loaded. Ready to format on save.</code>
-							{:else if panel === 'terminal'}
-								<code>$ bun run check<br />0 errors, 0 warnings</code>
-							{:else if panel === 'ports'}
-								<p>localhost:5173 · Development server · Private</p>
-							{/if}
-						</div>
-						<p class="note" role="status">Panel changes: {panelChanges}</p>
-					</div>
-					<div class="tab-example" data-tabs-example="fill">
-						<h3>Settings scope · horizontal fill</h3>
-						<Tabs
-							items={scopeTabs}
-							bind:value={scope}
-							size="fill"
-							label="Settings scope"
-							filled
-							transitionIn={indicatorTransition}
-							transitionOut={indicatorTransition}
-						/>
-						<div class="tab-content" role="region" aria-label="Selected settings scope">
-							<label for="scope-font-size"
-								>{scope === 'user' ? 'User' : 'Workspace'} font size</label
-							>
-							{#if scope === 'user'}
-								<TextInput
-									id="scope-font-size"
-									bind:value={userSetting}
-									aria-label="User font size"
-								/>
-							{:else}
-								<TextInput
-									id="scope-font-size"
-									bind:value={workspaceSetting}
-									aria-label="Workspace font size"
-								/>
-							{/if}
-							<p class="note">
-								Values persist independently when switching scope. Filled icons and a
-								reduced-motion-aware fade.
-							</p>
-						</div>
-					</div>
-					<div class="tab-example" data-tabs-example="vertical">
-						<h3>Preferences · vertical</h3>
-						<div class="vertical-tabs">
-							<Tabs
-								items={settingTabs}
-								bind:value={setting}
-								orientation="vertical"
-								label="Preference categories"
-							/>
-							<div class="tab-content" role="region" aria-label="Selected preference category">
-								{#if setting === 'editor'}
-									<label class="setting-check"
-										><Checkbox bind:checked={formatOnSave} /> Format on save</label
-									>
-									<p class="note">
-										Formatting is {formatOnSave ? 'enabled' : 'disabled'} for this workspace.
-									</p>
-								{:else}
-									<label class="setting-check"><Checkbox bind:checked={autoSave} /> Auto save</label
-									>
-									<p class="note">Files save {autoSave ? 'automatically' : 'only on command'}.</p>
-								{/if}
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
+			</aside>
 		</main>
-		<footer class="status-bar">
-			<span role="status">Activations: {presses}</span><span>{selectedLanguage}</span>
-			<span>15 exports · one reusable theme</span><a href={resolve('/')} data-sveltekit-reload
-				>Back to showcase ↗</a
+		<footer class="status">
+			<span
+				><Icon name="commit" /> theme-workbench <span class="status-file">{active.file}</span></span
+			><span
+				>Svelte 5 <button type="button" onclick={() => (consoleVisible = !consoleVisible)}
+					>{events.length} events</button
+				></span
 			>
 		</footer>
-		<Dialog
-			bind:open
-			header={{
-				title: 'Dialog reference',
-				icon: { name: 'settings' },
-				description: 'Native modal focus, Escape and return to trigger.'
-			}}
-			footer={{
-				primary: { label: 'Done', onClick: () => (open = false) },
-				secondary: { label: 'Cancel', onClick: () => (open = false) }
-			}}
-			size="small"
-			><label for="dialog-setting">Example value</label><TextInput
-				id="dialog-setting"
-				placeholder="Type here"
+	</div>
+	<details class="reference-panel" id="reference" bind:open={reference}>
+		<summary>Complete component reference · all 15 exports</summary>{#if reference}<Reference
+			/>{/if}
+	</details>
+	<Dialog
+		bind:open={dialog}
+		header={{ title: 'Name this preview', description: 'Native modal focus and Escape.' }}
+		footer={{
+			primary: {
+				label: 'Apply name',
+				onClick: () => {
+					dialog = false;
+					previewName = draftName;
+					log(`Preview named: ${previewName}`);
+				}
+			},
+			secondary: { label: 'Cancel', onClick: () => (dialog = false) }
+		}}
+		size="small"
+		><label for="dialog-name">Preview name</label><TextInput
+			id="dialog-name"
+			bind:value={draftName}
+			wide
+		/><label class="check"
+			><Checkbox bind:checked={includeProperties} />Include current properties</label
+		></Dialog
+	>
+	<Dialog
+		bind:open={palette}
+		onclose={() => {
+			if (pendingFocus) {
+				const id = pendingFocus;
+				pendingFocus = '';
+				requestAnimationFrame(() => document.getElementById(id)?.focus());
+			}
+		}}
+		header={{ title: 'Find file or command' }}
+		size="small"
+		onkeydown={paletteKeys}
+		><div class="palette-content" role="group" aria-label="Files and commands">
+			<TextInput
+				aria-label="Search files and commands"
+				bind:value={query}
+				placeholder="Find a file or command…"
 				wide
 			/>
-			<p>
-				Tab and Shift+Tab cycle within the dialog. Small screens use the native full-screen
-				presentation.
-			</p></Dialog
-		>
-	</div>
+			<div class="palette-results">
+				{#each commands as command (command.id)}<button
+						type="button"
+						data-result
+						onclick={() => runCommand(command.id)}
+						><Icon name={command.icon} />{command.label}<kbd
+							>{files.some((file) => file.id === command.id) ? 'open' : 'command'}</kbd
+						></button
+					>{/each}{#if !commands.length}<p>No matching files or commands.</p>{/if}
+			</div>
+			<p class="property-help">↑ ↓ to navigate · Enter to open · Escape to close</p>
+		</div></Dialog
+	>
 </Theme>
 
 <style>
-	[data-vscode-gallery] {
+	.workbench {
+		height: 100dvh;
+		min-height: 600px;
 		display: grid;
-		--workbench-title-height: 46px;
-		--workbench-status-height: 24px;
-		grid-template-columns: 48px 240px minmax(0, 1fr);
-		grid-template-rows: auto auto auto 1fr;
-		min-height: 100vh;
-		padding-bottom: var(--workbench-status-height);
-	}
-	.theme-nav,
-	.theme-nav div,
-	.row,
-	.colors {
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 10px;
-	}
-	.theme-nav {
-		position: sticky;
-		top: 0;
-		z-index: 2;
-		height: var(--workbench-title-height);
+		grid-template-rows: 52px minmax(0, 1fr) 28px;
 		background: var(--color-background);
-		grid-column: 1 / -1;
-		justify-content: space-between;
-		border-bottom: 1px solid var(--vscode-border);
-		padding: 8px 24px;
 	}
-	.theme-nav div {
-		gap: 20px;
+	button,
+	a,
+	input,
+	select {
+		touch-action: manipulation;
 	}
-	.theme-nav a {
+	button {
+		cursor: pointer;
+		color: inherit;
+		font: inherit;
+	}
+	button:disabled {
+		cursor: default;
+	}
+	button {
+		border: 0;
+		background: transparent;
+	}
+	a {
+		color: inherit;
 		text-decoration: none;
+	}
+	button:hover,
+	a:hover {
+		color: var(--vscode-bright);
+	}
+	p,
+	h2,
+	h3 {
+		margin: 0;
+	}
+	h2,
+	h3 {
+		font-size: 12px;
+	}
+	kbd {
+		font: 10px var(--vscode-font-mono);
 		color: var(--color-muted);
 	}
-	.theme-nav a[aria-current] {
-		color: var(--color-foreground);
-		border-bottom: 2px solid var(--color-primary);
+	.titlebar {
+		display: grid;
+		grid-template-columns: 215px minmax(170px, 400px) 1fr;
+		align-items: center;
+		gap: 20px;
+		padding: 0 21px;
 	}
-	[data-vscode-gallery][data-sidebar-hidden] {
-		grid-template-columns: 48px 0 minmax(0, 1fr);
-	}
-	.activity-bar,
-	.explorer {
-		grid-row: 2 / 5;
-		position: sticky;
-		top: var(--workbench-title-height);
-		align-self: start;
-		height: calc(100dvh - var(--workbench-title-height) - var(--workbench-status-height));
-	}
-	.activity-bar {
-		grid-column: 1;
-		background: #333333;
+	.brand,
+	.window-actions {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
+		gap: 12px;
 	}
-	.activity-bar button,
-	.activity-bar a {
+	.brand {
+		font-size: 13px;
+	}
+	.brand span {
+		color: var(--color-muted);
+		font-size: 12px;
+	}
+	.window-actions {
+		justify-self: end;
+	}
+	.command {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 0 12px;
+		height: 30px;
+		border-radius: 9px;
+		background: var(--vscode-panel);
+		color: var(--color-muted);
+		font-size: 12px;
+		text-align: left;
+		box-shadow: var(--vscode-widget-shadow);
+	}
+	.command kbd {
+		margin-left: auto;
+		white-space: nowrap;
+	}
+	.icon-button {
+		width: 30px;
+		height: 30px;
 		display: grid;
 		place-items: center;
-		width: 48px;
-		height: 48px;
-		flex-shrink: 0;
 		padding: 0;
-		border: 0;
-		border-left: 2px solid transparent;
-		background: transparent;
-		color: #858585;
-		text-decoration: none;
-		cursor: pointer;
+		color: var(--color-muted);
+		font-size: 18px;
 	}
-	.workbench-icon {
-		display: inline-flex;
-		flex-shrink: 0;
-		width: 16px;
-		height: 16px;
-		font-size: 16px;
+	.icon-button[aria-pressed='true'] {
+		color: var(--vscode-bright);
 	}
-	.activity-bar .workbench-icon {
-		width: 24px;
-		height: 24px;
-		font-size: 24px;
+	.body {
+		display: grid;
+		grid-template-columns: 42px 176px minmax(0, 1fr) 330px;
+		gap: 12px;
+		min-height: 0;
+		padding: 0 14px 10px 2px;
 	}
-	.activity-bar button[aria-pressed='true'] {
-		border-left-color: #ffffff;
-		color: #ffffff;
+	.workbench[data-explorer='false'] .body {
+		grid-template-columns: 42px minmax(0, 1fr) 330px;
 	}
-	.activity-bar :is(button, a):hover {
-		color: #ffffff;
+	.rail {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 19px;
+		padding: 20px 0 12px;
 	}
-	.activity-bar .manage {
+	.rail .manage {
 		margin-top: auto;
 	}
 	.explorer {
-		grid-column: 2;
 		display: flex;
 		flex-direction: column;
-		background: var(--vscode-panel);
-		font-size: 13px;
+		min-width: 0;
+		padding: 21px 8px 15px 0;
 		overflow: auto;
 	}
 	.explorer[hidden] {
 		display: none;
 	}
-	.explorer-heading {
+	.sidebar-heading {
 		display: flex;
-		align-items: center;
-		min-height: 35px;
-		padding: 0 20px;
+		justify-content: space-between;
 		font-size: 11px;
+		color: var(--color-muted);
+		padding: 0 9px 17px;
 	}
-	.explorer summary,
-	.file-entry {
+	.folder {
 		display: flex;
 		align-items: center;
-		gap: 6px;
-		height: 22px;
-		padding: 0 6px;
-		cursor: pointer;
+		gap: 5px;
+		height: 30px;
+		padding-left: 7px;
+		color: var(--color-muted);
+		font-size: 12px;
+	}
+	.folder.nested {
+		padding-left: 17px;
+	}
+	.file {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		width: 100%;
+		min-height: 34px;
+		padding: 0 8px 0 24px;
+		text-align: left;
+		color: var(--color-muted);
+		font-size: 12px;
 		white-space: nowrap;
 	}
-	.explorer summary {
-		list-style: none;
+	.file[aria-current] {
+		color: var(--vscode-bright);
 	}
-	.explorer summary::-webkit-details-marker {
+	.css-file {
+		margin-top: 12px;
+	}
+	.sidebar-bottom {
+		margin-top: auto;
+		padding: 26px 10px 4px;
+		font-size: 11px;
+		color: var(--color-muted);
+		line-height: 1.8;
+	}
+	.sidebar-bottom p {
+		margin: 7px 0 14px;
+	}
+	.editor {
+		display: grid;
+		grid-template-rows: 44px 38px minmax(0, 1fr) 184px;
+		min-width: 0;
+		min-height: 0;
+		background: var(--vscode-panel);
+		border-radius: 14px;
+		box-shadow: var(--vscode-pane-shadow);
+		overflow: hidden;
+	}
+	.editor[data-console='false'] {
+		grid-template-rows: 44px 38px minmax(0, 1fr);
+	}
+	.source-tabs :global([role='tab'] > i) {
 		display: none;
 	}
-	.explorer-group > summary {
-		font-size: 11px;
-		font-weight: 700;
-	}
-	.explorer details[open] > summary > .twistie {
-		transform: rotate(90deg);
-	}
-	.explorer .folder > summary {
-		padding-left: 18px;
-	}
-	.file-list {
-		position: relative;
-	}
-	.file-list::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		bottom: 0;
-		left: 25px;
-		width: 1px;
-		background: #404040;
-		pointer-events: none;
-	}
-	.explorer .file-entry {
-		padding-left: 22px;
-		color: var(--color-foreground);
-		text-decoration: none;
-	}
-	.file-list .file-entry {
-		padding-left: 40px;
-	}
-	.file-entry:hover,
-	.explorer summary:hover {
-		background: #2a2d2e;
-	}
-	.file-entry[aria-current] {
-		background: #37373d;
-	}
-	.file-entry[aria-current]:focus {
-		background: #094771;
-	}
-	.explorer .outline {
-		margin-top: auto;
-		border-top: 1px solid #333333;
-	}
-	.explorer-search {
-		padding: 4px 12px 10px;
-	}
-	.explorer-search input {
-		width: 100%;
-		padding: 4px 6px;
-		border: 1px solid var(--vscode-border);
-		border-radius: 0;
-		background: var(--vscode-input);
-		color: var(--color-foreground);
-	}
-	.empty-files {
-		padding: 4px 40px;
-		color: var(--color-muted);
-	}
-	.file-icon {
-		color: #e37933;
-	}
-	.editor-tabs {
-		background: var(--vscode-panel);
-		border-bottom: 1px solid var(--vscode-border);
-	}
-
-	header,
-	main,
-	.editor-tabs {
-		grid-column: 3;
+	.source-tabs {
+		padding-left: 14px;
 		min-width: 0;
 	}
-	main {
-		padding: 0 32px;
-	}
-	header {
-		padding: 32px 32px 24px;
-	}
-	.eyebrow {
+	.editor-path {
 		display: flex;
 		align-items: center;
-		gap: 8px;
-		font: 11px / 1.5 var(--vscode-font-mono);
-		color: var(--color-info);
-		letter-spacing: 0.08em;
+		justify-content: space-between;
+		gap: 10px;
+		padding: 0 24px;
+		font-size: 11px;
+		color: var(--color-muted);
 	}
-	h1 {
-		margin: 12px 0;
-		font-size: 36px;
-		line-height: 1.2;
-		color: #f0f0f0;
+	.editor-path > span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
-	h1 span {
-		display: inline-block;
+	.text-button {
+		display: flex;
+		align-items: center;
+		gap: 7px;
+		padding: 0;
+		min-height: 28px;
+		font-size: 11px;
+		color: var(--color-muted);
+		white-space: nowrap;
+	}
+	.source-scroll {
+		overflow: auto;
+		min-height: 0;
+		padding: 19px 8px 31px;
+		scrollbar-color: var(--vscode-border) transparent;
+	}
+	.source-scroll pre {
+		margin: 0;
+		min-width: max-content;
+	}
+	.source-scroll code {
+		font: 12.5px/26px var(--vscode-font-mono);
+	}
+	.code-line {
+		display: grid;
+		grid-template-columns: 54px minmax(0, 1fr);
+		min-height: 26px;
+		white-space: pre;
+		padding-right: 34px;
+	}
+	.line-number {
+		text-align: right;
+		padding-right: 20px;
+		font-size: 10px;
+		color: var(--color-muted);
+		user-select: none;
+	}
+	.syntax-string {
+		color: var(--color-success);
+	}
+	.syntax-key {
+		color: var(--color-secondary);
+	}
+	.syntax-tag {
+		color: var(--color-primary);
+	}
+	.console {
+		display: grid;
+		grid-template-rows: 36px minmax(0, 1fr) 33px;
+		min-height: 0;
+		background: var(--vscode-well);
+		margin: 10px 14px 14px;
+		border-radius: 10px;
+		box-shadow: var(--vscode-widget-shadow);
+		animation: appear 100ms ease-out;
+	}
+	.console-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 15px 0 18px;
+		font-size: 11px;
+	}
+	.console-head small {
+		font: 10px var(--vscode-font-mono);
 		margin-left: 16px;
 		color: var(--color-muted);
-		font-size: 16px;
 	}
-	code {
-		font: 12px / 1.6 var(--vscode-font-mono);
-		color: var(--color-info);
-		overflow-wrap: anywhere;
+	.logs {
+		padding: 3px 18px;
+		overflow: auto;
+		font: 11px/23px var(--vscode-font-mono);
+		color: var(--color-muted);
 	}
-	header > code {
-		display: block;
-		border-left: 2px solid var(--color-primary);
-		padding: 8px 12px;
-		background: var(--vscode-panel);
-	}
-	section {
-		display: grid;
-		gap: 16px;
-		padding: 24px 0;
-		border-top: 1px solid var(--vscode-border);
-		scroll-margin-top: 16px;
-	}
-	.section-title {
+	.logs p {
 		display: flex;
-		align-items: baseline;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 8px;
-	}
-	h2 {
-		font: 12px / 1.5 var(--vscode-font-mono);
-		color: var(--color-muted);
-		margin: 0;
-	}
-	h2 span {
-		margin-left: 10px;
-		font:
-			500 18px / 1.5 'Segoe UI',
-			system-ui,
-			sans-serif;
-		color: var(--color-foreground);
-	}
-	h3 {
-		font-size: 13px;
-		margin: 0;
-	}
-	p {
-		margin: 0;
-	}
-	.note,
-	.key,
-	footer {
-		color: var(--color-muted);
-	}
-	.key {
-		min-width: 52px;
-		font: 12px / 1.5 var(--vscode-font-mono);
-	}
-	.grid {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		gap: 32px;
-	}
-	form,
-	.control-stack {
-		display: grid;
-		align-content: start;
 		gap: 10px;
-		min-width: 0;
 	}
-	form :global(> .button),
-	.control-stack :global(> .button) {
-		justify-self: start;
-	}
-	[data-vscode-gallery] :global(.surface[data-shadow]) {
-		--surface-shadow: 0 0 8px 2px #0000005c;
-	}
-	section:last-child {
-		padding-bottom: 180px;
-	}
-	form > label:not(:first-child) {
-		margin-top: 8px;
-	}
-	.error {
-		color: var(--color-error);
-	}
-	.checks {
-		display: grid;
-		gap: 12px;
-		padding: 8px 0;
-	}
-	.checks label,
-	.size-check {
-		display: inline-flex;
+	.prompt {
+		display: flex;
 		align-items: center;
-		gap: 8px;
+		padding: 0 18px;
+		gap: 10px;
+		font: 12px var(--vscode-font-mono);
 	}
-	.size-check {
+	.prompt > span {
+		color: var(--color-primary);
+	}
+	.prompt input {
+		width: 100%;
+		min-width: 0;
+		border: 0;
+		background: transparent;
+		color: var(--color-foreground);
+		font: 11px var(--vscode-font-mono);
+		padding: 4px 0;
+	}
+	.prompt input::placeholder {
+		color: var(--color-muted);
+	}
+	.right {
+		display: flex;
 		flex-direction: column;
+		overflow: auto;
+		min-height: 0;
+		min-width: 0;
+		background: var(--vscode-panel);
+		border-radius: 14px;
+		box-shadow: var(--vscode-pane-shadow);
+		scrollbar-color: var(--vscode-border) transparent;
+	}
+	.pane-heading {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		min-height: 44px;
+		padding: 0 25px;
 		font-size: 11px;
 	}
-	.progress-sample {
-		display: grid;
-		flex: 1;
-		min-width: 60px;
-		gap: 8px;
+	.pane-heading small {
+		font-size: 10px;
+		color: var(--color-muted);
 	}
-	.surface-grid {
-		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 12px;
-	}
-	.tabs-examples {
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+	.preview {
+		padding: 27px 25px 30px;
+		min-height: 266px;
+		display: flex;
+		flex-direction: column;
 		gap: 24px;
 	}
-	.tab-example {
-		min-width: 0;
+	.preview-caption {
+		display: flex;
+		justify-content: space-between;
+		gap: 10px;
+		color: var(--color-muted);
+		font: 10px var(--vscode-font-mono);
 	}
-	.tab-example h3 {
-		margin: 0 0 12px;
-		font-size: 13px;
+	.preview-stage {
+		min-height: 105px;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 12px;
 	}
-	.panel-strip {
-		max-width: 340px;
+	.preview-foot {
+		display: flex;
+		justify-content: space-between;
+		gap: 8px;
+		color: var(--color-muted);
+		font-size: 11px;
 	}
-	.tab-content {
-		min-width: 0;
-		padding: 16px;
-		border: 1px solid var(--vscode-border);
-		background: var(--vscode-panel);
-		overflow-wrap: anywhere;
-	}
-	.tab-content > p:first-child {
-		margin-top: 0;
-	}
-	.tab-content > label {
-		display: block;
-		margin-bottom: 8px;
-	}
-	.tab-content > code {
-		white-space: normal;
-	}
-	.vertical-tabs {
+	.stack {
 		display: grid;
-		grid-template-columns: auto minmax(0, 1fr);
+		gap: 14px;
+		width: 100%;
+		min-width: 0;
+		animation: appear 100ms ease-out;
 	}
-	.setting-check {
-		display: flex !important;
+	.stack label {
+		font-size: 11px;
+		color: var(--color-muted);
+	}
+	.stack p {
+		font-size: 12px;
+	}
+	.check,
+	.feedback-row {
+		display: flex;
 		align-items: center;
 		gap: 8px;
 	}
-	.status-bar {
-		position: fixed;
-		inset: auto 0 0;
-		z-index: 1;
+	.check {
+		margin-block: 14px;
+		font-size: 12px;
+	}
+	.feedback-row {
+		color: var(--color-muted);
+		font-size: 11px;
+	}
+	.overlay-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+	.properties {
+		padding: 24px 25px 29px;
+		margin-top: 7px;
+	}
+	.properties-head {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 25px;
+	}
+	.property {
+		margin: 0 0 24px;
+		min-width: 0;
+		padding: 0;
+		border: 0;
+	}
+	.property label,
+	.property legend {
+		display: block;
+		color: var(--color-muted);
+		font-size: 11px;
+		margin-bottom: 9px;
+	}
+	.segments {
 		display: flex;
 		justify-content: space-between;
-		gap: 2px 16px;
-		padding: 4px 12px;
-		background: #007acc;
-		color: white;
-		font-size: 11px;
-		flex-wrap: wrap;
+		gap: 7px;
 	}
-	.status-bar a {
-		color: white;
+	.segments button {
+		padding: 4px 0;
+		min-width: 24px;
+		min-height: 28px;
+		color: var(--color-muted);
+		font-size: 11px;
+		position: relative;
+	}
+	.segments button[aria-pressed='true'] {
+		color: var(--vscode-bright);
+	}
+	.segments button[aria-pressed='true']::after {
+		content: '';
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 1px;
+		background: var(--color-primary);
+	}
+	.field-row {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 18px;
+	}
+	select {
+		width: 100%;
+		min-width: 0;
+		background: var(--vscode-input);
+		border: 0;
+		border-radius: 8px;
+		min-height: 36px;
+		padding: 8px 11px;
+		font-size: 12px;
+		color: var(--color-foreground);
+		box-shadow: var(--vscode-widget-shadow);
+	}
+	.property-help {
+		font-size: 11px;
+		color: var(--color-muted);
+		line-height: 1.65;
+	}
+	.bottom-note {
+		margin-top: auto;
+		padding: 27px 25px 23px;
+		font-size: 11px;
+		color: var(--color-muted);
+		line-height: 1.8;
+	}
+	.status {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 15px;
+		font-size: 10px;
+		color: var(--color-muted);
+	}
+	.status > span {
+		display: flex;
+		align-items: center;
+		gap: 15px;
+	}
+	.status-file {
+		color: var(--color-foreground);
+	}
+	.status button {
+		font-size: 10px;
+		padding: 0;
+	}
+	.mobile-files {
+		display: none;
+	}
+	.reference-panel {
+		margin: 12px 14px 30px 56px;
+		background: var(--vscode-panel);
+		border-radius: 14px;
+	}
+	.reference-panel summary {
+		cursor: pointer;
+		padding: 18px 24px;
+		color: var(--color-muted);
+		font-size: 12px;
+	}
+	.palette-content {
+		display: grid;
+		gap: 16px;
+	}
+	.palette-results {
+		display: grid;
+		gap: 5px;
+		max-height: 40dvh;
+		overflow: auto;
+	}
+	.palette-results button {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		text-align: left;
+		padding: 10px 5px;
+		min-height: 38px;
+		color: var(--color-muted);
+		font-size: 12px;
+	}
+	.palette-results kbd {
+		margin-left: auto;
+	}
+	.palette-results button:focus-visible {
+		outline-offset: -1px;
 	}
 	.skip {
 		position: fixed;
-		left: 8px;
-		top: 8px;
+		left: 12px;
+		top: -60px;
 		z-index: 10;
-		padding: 8px 12px;
-		background: var(--vscode-panel);
-		transform: translateY(-160%);
+		background: var(--vscode-input);
+		padding: 10px;
 	}
 	.skip:focus {
-		transform: none;
+		top: 10px;
 	}
-	@media (max-width: 680px) {
-		[data-vscode-gallery],
-		[data-vscode-gallery][data-sidebar-hidden] {
-			--workbench-status-height: 44px;
-			grid-template-columns: 48px minmax(0, 1fr);
+	@keyframes appear {
+		from {
+			opacity: 0;
+			transform: translateY(3px);
 		}
-		.explorer {
-			position: static;
-			height: auto;
-			grid-column: 2;
-			grid-row: 2;
-			border-bottom: 1px solid var(--vscode-border);
+		to {
+			opacity: 1;
+			transform: none;
 		}
-		.activity-bar {
-			height: calc(100dvh - var(--workbench-title-height) - var(--workbench-status-height));
-			grid-row: 2 / 6;
+	}
+	@media (max-width: 1100px) {
+		.body {
+			grid-template-columns: 37px 139px minmax(0, 1fr) 280px;
 		}
-		header,
-		main,
-		.editor-tabs {
-			grid-column: 2;
+		.workbench[data-explorer='false'] .body {
+			grid-template-columns: 37px minmax(0, 1fr) 280px;
 		}
-		header,
-		main {
-			padding-inline: 16px;
-		}
-		.grid,
-		.surface-grid,
-		.tabs-examples {
-			grid-template-columns: 1fr;
-			gap: 20px;
-		}
-		h1 span {
-			display: block;
-			margin: 8px 0 0;
-		}
-		.theme-nav div {
+		.titlebar {
+			grid-template-columns: 162px minmax(160px, 1fr) auto;
 			gap: 12px;
 		}
-		.explorer .outline {
-			margin-top: 16px;
+		.file {
+			font-size: 11px;
+			padding-left: 17px;
+		}
+		.preview,
+		.properties {
+			padding-inline: 17px;
+		}
+		.brand {
+			gap: 7px;
+		}
+	}
+	@media (max-width: 760px) {
+		.workbench {
+			height: auto;
+			min-height: 100dvh;
+			grid-template-rows: 52px 1fr 28px;
+		}
+		.titlebar {
+			position: sticky;
+			top: 0;
+			z-index: 3;
+			grid-template-columns: auto minmax(110px, 1fr) auto;
+			background: var(--color-background);
+			padding: 0 12px;
+			gap: 10px;
+		}
+		.brand span {
+			display: none;
+		}
+		.window-actions {
+			gap: 2px;
+		}
+		.command {
+			font-size: 11px;
+			height: 28px;
+		}
+		.command kbd {
+			display: none;
+		}
+		.body,
+		.workbench[data-explorer='false'] .body {
+			grid-template-columns: 32px minmax(0, 1fr);
+			grid-template-rows: auto 1fr;
+			gap: 12px 6px;
+			padding: 2px 10px 12px 0;
+		}
+		.explorer {
+			display: none;
+		}
+		.rail {
+			grid-column: 1;
+			grid-row: 1/3;
+			gap: 18px;
+			padding-top: 13px;
+		}
+		.rail .manage {
+			margin-top: 20px;
+		}
+		.editor {
+			grid-column: 2;
+			grid-row: 1;
+			height: 54dvh;
+			min-height: 485px;
+			grid-template-rows: 40px 34px minmax(0, 1fr) 136px;
+		}
+		.editor[data-console='false'] {
+			grid-template-rows: 40px 34px minmax(0, 1fr);
+		}
+		.right {
+			grid-column: 2;
+			grid-row: 2;
+			overflow: visible;
+		}
+		.console {
+			grid-template-rows: 32px minmax(0, 1fr) 29px;
+			margin: 8px 10px 10px;
+		}
+		.console-head,
+		.logs,
+		.prompt {
+			padding-inline: 12px;
+		}
+		.properties {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 0 22px;
+		}
+		.properties-head,
+		.property-help {
+			grid-column: 1/-1;
+		}
+		.field-row {
+			grid-column: 1/-1;
+		}
+		.bottom-note {
+			display: none;
+		}
+		.preview {
+			min-height: 205px;
+		}
+		.mobile-files {
+			display: flex;
+			gap: 14px;
+			overflow: auto;
+			padding: 9px 17px;
+			white-space: nowrap;
+		}
+		.mobile-files button {
+			font-size: 11px;
+			color: var(--color-muted);
+			padding: 3px 0;
+			min-height: 28px;
+		}
+		.mobile-files button[aria-current] {
+			color: var(--vscode-bright);
+		}
+		.source-scroll {
+			padding-top: 10px;
+		}
+		.source-scroll code {
+			font-size: 12px;
+		}
+		.editor-path {
+			padding-inline: 16px;
+		}
+		.status {
+			position: sticky;
+			bottom: 0;
+			z-index: 2;
+			background: var(--color-background);
+		}
+		.status-file {
+			display: none;
+		}
+		.reference-panel {
+			margin-left: 38px;
 		}
 	}
 	@media (max-width: 380px) {
-		[data-vscode-gallery] {
-			--workbench-title-height: 70px;
-			--workbench-status-height: 64px;
+		.properties {
+			grid-template-columns: 1fr;
+		}
+		.property {
+			grid-column: 1/-1;
+		}
+		.brand strong {
+			display: none;
+		}
+	}
+	@media (pointer: coarse) {
+		.icon-button,
+		.segments button,
+		.file,
+		.mobile-files button,
+		.text-button,
+		.command,
+		.palette-results button {
+			min-height: 44px;
+		}
+		.segments button {
+			min-width: 34px;
+		}
+		.icon-button {
+			width: 34px;
+		}
+		.titlebar .command {
+			min-height: 36px;
 		}
 	}
 </style>

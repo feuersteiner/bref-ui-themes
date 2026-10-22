@@ -1,5 +1,24 @@
 # Verification
 
+## VS Code workbench — 2026-10-22
+
+PR #46 follows issue #49 and the committed workbench HTML reference. The reusable theme keeps all 15 exports and their public contracts, adds both approved palettes, rounded tonal surfaces, foreground-only hover and frosted overlays. Shared motion helpers accept inherited private theme recipes; other themes retain their default timing. The demonstration uses canonical exports for live previews, editable properties, valid usage snippets, command search and a complete expandable reference.
+
+Validation:
+
+- `bun run check`: zero errors/warnings. `bun run lint`: Prettier and ESLint pass. `bun run build`: SSR/client/static output, packaging and publint pass. Bun 1.3.4's launcher works in the isolated checkout; earlier launcher failures below are historical.
+- `BASE_PATH=/bref-ui-themes bun run build:site`: passes. No test script exists and no test tooling was added.
+- The 81-file npm tarball retains all five entry points, includes the private motion helper and declarations, and excludes routes, references and screenshots. Strict publint passes on the tarball.
+- Fresh npm consumers: SvelteKit checks and builds all four theme routes; standalone Svelte/Vite builds the full VS Code component reference and checks all 15 root/subpath export identities. Installed sources match the packaged source.
+- Actual desktop renders cover every reference section in dark/light. Responsive frames at 390px and 320px have no document overflow. Keyboard checks cover visible focus, native radios, Select activation, seeking, horizontal/vertical Tabs, End, disabled skipping, command search, dismissal and focus return. Form values persist through property edits and preview changes.
+- Production overlays compute 32px surface blur, 1px outside blur and 100ms backdrop timing. Motion-helper checks cover original shared defaults, the theme's 100ms/4px/.99 overlay recipe, 100ms/3px appearances and zero-duration reduced-motion branches. Reduced-transparency and forced-colors fallbacks are included; live operating-system preference emulation was unavailable.
+- Hover paint comparison keeps background, border, shadow, filter and transform unchanged while foreground brightens. Tag removal and progress thumbs also suppress inherited hover fill/scaling.
+- Text pairs: dark body/panel 13.06:1, muted/panel 7.07:1, primary/soft 6.29:1, on-primary/primary 7.84:1; light muted/field 4.55:1 and primary/soft 5.84:1. Semantic soft fills use 5% tint so the light error/warning examples exceed 4.5:1 without changing palette inputs. Approved field/panel tonal boundaries remain 1.10:1, below the 3:1 non-text boundary criterion; keyboard focus remains explicit.
+- Rendered screenshots for all six reference sections in both modes, the workbench, native overlays and mobile layouts remain outside tracked files. GitHub's connector provides no screenshot upload method, and the browser session is signed out; new screenshots could not be attached to the PR. Existing committed catalog previews are historical.
+- `git diff --check`, matching AGENTS/CONTRIBUTING and the unchanged reference checksum pass. The original checkout and other worktrees remain untouched.
+
+Limits: Firefox, Safari, real touch devices, screen readers and live reduced-preference emulation remain unverified. Visual approval belongs to the human reviewer. No package publication, deployment or merge was performed.
+
 ## Bref 2.2.0 and Tabs — 2026-10-21
 
 The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.
