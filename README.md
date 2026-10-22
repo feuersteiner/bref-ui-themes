@@ -62,6 +62,23 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 The fixed dark palette uses editor/workbench grays, blue focus and primary actions, crisp borders and system UI type. No font installation is needed. Wrap components in `Theme`; use one theme per document. Native props and bindings follow the other theme entries. Root namespace: `import { VSCode } from 'bref-ui-themes'`.
 
+## Crystal Code theme
+
+[/themes/crystal-code](http://localhost:5173/themes/crystal-code) is a separate modern developer workbench with an explorer, source examples, live component previews, contextual properties, command palette and complete component reference. The original VS Code theme remains available at `/themes/vscode` with its existing imports and styling.
+
+```svelte
+<script lang="ts">
+	import { Theme, Button, TextInput } from 'bref-ui-themes/crystal-code';
+</script>
+
+<Theme>
+	<TextInput aria-label="Setting name" placeholder="editor.fontSize" />
+	<Button label="Apply" variant="filled" color="primary" />
+</Theme>
+```
+
+Crystal Code uses rounded neutral panes, foreground-only hover, graphite/iris-blue dark colors and a matching light palette. Dialogs and popovers use 32px surface frost with reduced-transparency fallbacks and reduced-motion-aware 100ms transitions. It follows the document/system color mode; use Bref's `ThemeModeToggle` or a `data-theme="light"` / `data-theme="dark"` ancestor to choose explicitly. Its demo includes a mode switch and command search (⌘/Ctrl+K). Root namespace: `import { CrystalCode } from 'bref-ui-themes'`. All 15 exports retain the same native APIs as the other themes.
+
 ## Library imports
 
 Install the local tarball with `bun add ./bref-ui-themes-0.1.0.tgz`. Consumers need Svelte `^5.57.1` and Bref `^2.2.0` (peer dependencies). Fonts used by the themes are package dependencies.
@@ -81,7 +98,7 @@ The same API is available from each implemented theme:
 ```ts
 import { Theme, Button } from 'bref-ui-themes/forma';
 // Or: import { Theme, Button } from 'bref-ui-themes/elsewhere';
-// Namespace exports: import { Relay, Forma, Elsewhere, VSCode } from 'bref-ui-themes';
+// Namespace exports: import { Relay, Forma, Elsewhere, VSCode, CrystalCode } from 'bref-ui-themes';
 ```
 
 Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface`, `Tabs` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.
@@ -113,7 +130,7 @@ Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `Pil
 
 Horizontal tabs accept `size="fit"` (default, scrolls on overflow) or `size="fill"`. Vertical tabs use `orientation="vertical"` without `size`. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes fit, fill, vertical, disabled and bound-content examples.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. Relay, Forma and Elsewhere use light mode; VS Code uses dark mode. They use document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+These initial themes provide the demo palettes, fonts, common CSS and component styling. Relay, Forma and Elsewhere use light mode; VS Code uses dark mode. Crystal Code supports both color modes. They use document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
 
 ## Source layout
 

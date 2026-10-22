@@ -126,10 +126,14 @@
 		<nav class="theme-nav" aria-label="Theme demonstrations" data-sveltekit-reload>
 			<a href={resolve('/')}>← Showcase</a>
 			<div>
-				{#each ['relay', 'forma', 'elsewhere', 'vscode'] as theme (theme)}<a
+				{#each ['relay', 'forma', 'elsewhere', 'vscode', 'crystal-code'] as theme (theme)}<a
 						href={resolve('/(themes)/themes/[theme]', { theme })}
 						aria-current={theme === 'vscode' ? 'page' : undefined}
-						>{theme === 'vscode' ? 'VS Code' : theme[0].toUpperCase() + theme.slice(1)}</a
+						>{theme === 'crystal-code'
+							? 'Crystal Code'
+							: theme === 'vscode'
+								? 'VS Code'
+								: theme[0].toUpperCase() + theme.slice(1)}</a
 					>{/each}
 			</div>
 		</nav>

@@ -1,5 +1,37 @@
 # Verification
 
+## Crystal Code hardening audit — 2026-10-22
+
+PR #51 remains stacked on the original VS Code #46. Parent audit `985cfc8852a37bf9a1357700fa9ade581ace72ea` was merged with history preserved; its original Theme source and both earlier verification sections remain intact. Issue #49 and the later human correction govern Crystal Code separately from VS Code. The shared-header feature belongs to #50 and was not imported.
+
+Feedback-to-change/result checklist:
+
+- [x] Identity and design: independent `CrystalCode`, `/crystal-code` and `/themes/crystal-code`; all 15 exports and canonical imports preserved. The explorer, source tabs, properties, console, palette, approved light palette and graphite/iris-blue dark palette remain unchanged.
+- [x] Actionable example fixes: the copied Tabs array now retains literal icon types (`as const`); its original example reproduced a clean-consumer TypeScript error. The copied loading example includes its visible Spinner. The name dialog no longer offers an “Include current properties” checkbox whose value had no effect. Apply commits the draft name; Cancel discards it.
+- [x] Native behavior: production checks cover activation, disabled/loading controls, form validation/error recovery, bound text/checkbox/select/radio state, disabled options, removable tags, keyboard seeking and Tabs disabled skipping. Palette search, no results, arrow/Enter navigation, console focus, Escape, overlay focus return and repeated dialog show/hide were exercised. Radio keyboard arrows and visible-label clicks work; automation against the visually hidden 1px input was not a component failure.
+- [x] Responsive overlays: actual browser viewports report 320px and 390px; dialogs/palette use full-screen presentation and popovers remain within the viewport. Neither mode overflows horizontally. These are desktop-browser responsive checks, not real touch-device approval.
+- [x] Production isolation: Crystal Code computes 8px controls, `#0c0d10`/`#f0f0ee` page colors, 32px overlay frost, 1px outside blur and 78% dark surface opacity. Packaged original VS Code retains `#1e1e1e`, 2px controls, opaque `#252526` overlays, no blur and no Crystal motion tokens.
+- [x] Motion/fallback review: isolated helper assertions pass for default 300ms dialog/250ms popover timing, Crystal 100ms/4px/.99 overlays and 100ms/3px appearances, and zero duration/lift under reduced motion. Appearance wrappers are not keyed to ordinary input/property changes. Reduced-transparency/contrast and forced-colors CSS were inspected. The connected browser exposes no preference-emulation API, so live reduced-motion/transparency/forced-colors rendering remains unverified.
+
+Verification on the combined tree:
+
+- `npm run check` (zero errors/warnings), `npm run lint`, `npm run build:site`, `npm run package -- --pack false` and the Pages base-path site build pass. No test script exists. Bun 1.3.4 still fails with `CouldntReadCurrentDirectory`; default Bun build and default publint packing are not claimed as successful.
+- The 85-file npm tarball passes strict publint and contains six public entries, including both themes, without routes, references or screenshots. Svelte source/packaged/clean-installed files match. Fresh npm SvelteKit and standalone Svelte/Vite consumers pass type/build checks; all 15 root/subpath identities and distinct Theme identities pass. Prerendered HTML, hydration, activation, native Escape/focus return and theme isolation work without browser warnings/errors. All six copied examples pass clean-consumer type checking after the Tabs correction.
+- Contrast samples from rendered colors: body/panel 13.06:1 dark and 11.50:1 light; muted/panel 7.07:1 and 5.01:1; filled primary text 7.84:1 and 7.10:1. Muted overlay text over the alpha-composited panel background measures 9.33:1 dark and 6.70:1 light. These are sampled pairs, not a universal contrast certification. Field/panel boundaries remain 1.10:1 in both modes, below the 3:1 non-text criterion; approved palette inputs were preserved.
+- Instruction mirrors and `git diff --check` pass. `references.local.md` is absent. Screenshots remain outside tracked files; the connector has no supported image upload, so current captures are not attached to the PR. Human visual approval, Firefox/Safari, screen readers and real devices remain pending. Cross-PR shared-header compatibility is not established by this audit. No GitHub merge, publication or deployment was performed.
+
+## Crystal Code separation — 2026-10-22
+
+The modern workbench is a separate theme named `crystal-code`, exported through `bref-ui-themes/crystal-code` and the root `CrystalCode` namespace, with its own `/themes/crystal-code` demonstration and reference. The original `VSCode` namespace, `/vscode` subpath, palette and component gallery remain available. Full-page links keep document-level theme styles isolated.
+
+PR #46 was restored with commit `25e2ceb`; its source tree is byte-identical to `4e99aca`. Check, lint and complete site/library builds pass for that restored tree. The separate Crystal Code PR builds on #46; both themes can coexist after merging it.
+
+Private inherited motion recipes are enabled by Crystal Code only. Existing themes retain their default timing. All 15 component exports remain shared, and no existing public component contracts changed.
+
+Fresh separation checks pass: `bun run check` (zero errors/warnings), `bun run lint`, `bun run build` (site, packaging, publint), and strict publint on the 85-file tarball. The tarball contains both theme entries among six public entry points and excludes routes, references and screenshots. Fresh npm SvelteKit and standalone Svelte/Vite consumers build and render both themes; all 15 root/subpath export identities and distinct Theme identities pass.
+
+Rendered comparison verifies the original #1e1e1e background, 2px controls and opaque overlays alongside Crystal Code's #0c0d10 background, 8px controls and 32px/1px frosted overlays. Full-page navigation changes between them without palette leakage; Crystal Code also renders in light mode. Canonical sources, activation, native Escape and focus return work in both packaged consumers. Screenshots of both themes together and each individually remain outside tracked files. The earlier workbench checks covered the unchanged layout's dark/light matrices, 390px/320px layouts, native interactions and reduced-motion helper branches. Known limits remain: field/panel boundary contrast is 1.10:1; live preference emulation, mobile-overlay interaction, other browsers, real touch devices and screen readers remain unverified. Current screenshot upload is unavailable through the GitHub connector; captures stay outside tracked files.
+
 ## Original VS Code review audit — 2026-10-22
 
 Reviewed PR #46 at `25e2ceb68725f40b7927bc965f80271eba15fe15`, restored byte-identically to `4e99aca`. The later human correction preserves this original fixed-dark theme; the rounded graphite/light workbench direction, issue #49 and the October 22 redesign comment belong to Crystal Code #51. No runtime change was warranted by this audit.
