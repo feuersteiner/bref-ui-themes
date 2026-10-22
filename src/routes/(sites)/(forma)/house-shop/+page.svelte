@@ -7,6 +7,7 @@
 	import ProductCard from './product-card.svelte';
 	import ProductDetails from './product-details.svelte';
 	import ShoppingCart from './shopping-cart.svelte';
+	import StoreNav from './store-nav.svelte';
 	import CollectionControls from './collection-controls.svelte';
 	import { products } from './products.js';
 	import type { Product, CartItem } from './products.js';
@@ -40,12 +41,14 @@
 	const add = (product: Product, finish: string) => {
 		const key = `${product.id}-${finish}`;
 		const existing = cart.find((item) => item.key === key);
+		if (existing && existing.quantity >= 99) return false;
 		cart = existing
 			? cart.map((item) =>
 					item.key === key ? { ...item, quantity: Math.min(item.quantity + 1, 99) } : item
 				)
 			: [...cart, { key, product, finish, quantity: 1 }];
-		announce(`${product.name} added to your cart.`);
+		announce(`${product.name}, ${finish}, added. ${(existing?.quantity ?? 0) + 1} in cart.`);
+		return true;
 	};
 	const changeQuantity = (key: string, quantity: number) => {
 		cart = cart.flatMap((item) =>
@@ -63,22 +66,13 @@
 </script>
 
 <svelte:head>
-	<title>House Shop — a Bref store demo</title>
+	<title>House Shop — a Bref ecommerce demo</title>
 	<meta
 		name="description"
-		content="Browse furniture, manage a cart and try a demo checkout built with Bref."
+		content="House Shop is an ecommerce furniture shop built with Bref. Browse the collection, manage a cart and try a demo checkout."
 	/>
 </svelte:head>
-<header data-store-header>
-	<a data-brand href="#demo-content">House Shop</a>
-	<nav aria-label="Store"><a href="#collection">Collection</a></nav>
-	<Button
-		label={`Cart (${count})`}
-		icon={{ name: 'shopping_cart' }}
-		variant="neutral"
-		onClick={() => (cartOpen = true)}
-	/>
-</header>
+<StoreNav {count} onCart={() => (cartOpen = true)} />
 <main id="demo-content" tabindex="-1">
 	<section
 		data-store-hero
@@ -127,9 +121,9 @@
 					{product}
 					onSelect={select}
 					onAdd={add}
-					quantity={cart
-						.filter((item) => item.product.id === product.id)
-						.reduce((sum, item) => sum + item.quantity, 0)}
+					quantity={cart.find(
+						(item) => item.product.id === product.id && item.finish === product.finishes[0]
+					)?.quantity ?? 0}
 				/>{:else}<p data-empty>No furniture found. Try another search or category.</p>{/each}
 		</div>
 	</section>
@@ -139,7 +133,12 @@
 	<span>House Shop</span>
 	<span>Demo store · Photography via Unsplash</span>
 </footer>
-{#if productOpen}<ProductDetails product={selected} bind:open={productOpen} onAdd={add} />{/if}
+{#if productOpen}<ProductDetails
+		product={selected}
+		bind:open={productOpen}
+		onAdd={add}
+		items={cart}
+	/>{/if}
 <ShoppingCart
 	bind:open={cartOpen}
 	items={cart}

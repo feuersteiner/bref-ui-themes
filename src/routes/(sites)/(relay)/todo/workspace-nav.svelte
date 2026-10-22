@@ -21,7 +21,7 @@
 		duration: prefersReducedMotion.current ? 0 : 180
 	}}
 >
-	<a data-brand href="#demo-content"><Icon name="layers" />Tasks</a>
+	<a data-brand href="#demo-content"><Icon name="checklist" />Todo</a>
 	<nav aria-label="Project filter">
 		<label for="project-selector">
 			<span data-visually-hidden>Project</span>

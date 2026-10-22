@@ -1,23 +1,26 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import { untrack } from 'svelte';
-	import { Button, Dialog, Select } from '#lib/forma/index.js';
+	import { Dialog, Select } from '#lib/forma/index.js';
+	import AddToCart from './add-to-cart.svelte';
 	import { money } from './products.js';
-	import type { Product } from './products.js';
+	import type { Product, CartItem } from './products.js';
 	let {
 		product,
 		open = $bindable(false),
-		onAdd
+		onAdd,
+		items
 	}: {
 		product: Product;
 		open?: boolean;
-		onAdd: (product: Product, finish: string) => void;
+		onAdd: (product: Product, finish: string) => boolean;
+		items: CartItem[];
 	} = $props();
 	let finish = $state<string | string[]>(untrack(() => product.finishes[0]));
-	const add = () => {
-		onAdd(product, String(finish));
-		open = false;
-	};
+	const quantity = $derived(
+		items.find((item) => item.product.id === product.id && item.finish === String(finish))
+			?.quantity ?? 0
+	);
 </script>
 
 <Dialog
@@ -42,13 +45,14 @@
 				</label>
 			{:else}<p data-muted>Finish: {product.finishes[0]}</p>{/if}
 
-			<Button
-				label="Add to cart"
-				icon={{ name: 'add_shopping_cart' }}
-				color="primary"
-				variant="filled"
-				onClick={add}
-			/>
+			{#key String(finish)}
+				<AddToCart
+					name={product.name}
+					finish={String(finish)}
+					{quantity}
+					onAdd={() => onAdd(product, String(finish))}
+				/>
+			{/key}
 		</div>
 	</div>
 </Dialog>

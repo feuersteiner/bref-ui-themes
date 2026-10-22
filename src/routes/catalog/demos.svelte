@@ -3,29 +3,33 @@
 	import { Icon, Surface } from 'bref-ui';
 	const demos = [
 		{
-			name: 'Tasks',
-			href: resolve('/(sites)/(relay)/relay'),
+			name: 'Todo',
+			icon: 'checklist',
+			href: resolve('/(sites)/(relay)/todo'),
 			preview: 'relay',
-			description: 'A project workspace. Complete, organize and edit tasks.'
+			description: 'A SaaS workspace for projects and tasks. Organize, edit and complete work.'
 		},
 		{
 			name: 'House Shop',
-			href: resolve('/(sites)/(forma)/forma'),
+			icon: 'storefront',
+			href: resolve('/(sites)/(forma)/house-shop'),
 			preview: 'forma',
-			description: 'A furniture shop. Browse the catalog and manage your cart.'
+			description: 'An ecommerce furniture shop. Browse the catalog and manage your cart.'
 		},
 		{
-			name: 'Site Reviewer',
-			href: resolve('/(sites)/(elsewhere)/elsewhere'),
+			name: 'RunnerAI',
+			icon: 'smart_toy',
+			href: resolve('/(sites)/(elsewhere)/runner-ai'),
 			preview: 'elsewhere',
-			description: 'An agent workspace. Run a sample website audit and review its findings.'
+			description:
+				'An agent workspace with linear progress steps. Queue runs, chat and review the central report.'
 		}
 	] as const;
 </script>
 
 <div data-live-demos>
 	{#each demos as demo (demo.preview)}
-		<a href={demo.href} data-sveltekit-reload>
+		<a href={demo.href}>
 			<Surface variant="soft" radius="medium" spacing="medium" hover="medium" height="fill">
 				<img
 					src={asset(`previews/${demo.preview}.jpg`)}
@@ -34,7 +38,9 @@
 					height="960"
 					loading="lazy"
 				/>
-				<h3>{demo.name}<Icon name="arrow_outward" /></h3>
+				<h3>
+					<span data-brand><Icon name={demo.icon} />{demo.name}</span><Icon name="arrow_outward" />
+				</h3>
 				<p>{demo.description}</p>
 				<span data-link>Explore demo</span>
 			</Surface>
@@ -78,6 +84,11 @@
 		color: var(--color-muted);
 		font-size: 14px;
 		line-height: 1.6;
+	}
+	[data-brand] {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
 	}
 	[data-link] {
 		font-size: 13px;

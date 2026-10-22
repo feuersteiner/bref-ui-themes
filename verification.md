@@ -1,5 +1,16 @@
 # Verification
 
+## Demo review — 2026-10-22
+
+- Demo brands and routes now match: Todo at `/todo`, House Shop at `/house-shop`, and RunnerAI at `/runner-ai`. Previous demo URLs return 404; public library themes and `/themes/relay`, `/themes/forma`, `/themes/elsewhere` remain unchanged.
+- The shared Bref header is owned by the root layout. Client navigation retains its mode and geometry; route palettes reset correctly. Content view transitions respect reduced motion. Scrollbar space is stable, native scrollbars are styled, and the header has restrained elevation.
+- Todo has private status tabs, completion/reversal motion and project icon/four-cover selection. Browser checks covered keyboard selection, completion, project creation and dialog focus return.
+- House Shop has a sticky Surface-glass navbar, minimal grid cart actions, persistent detail quantities, and animated removal/empty states. Repeated additions and final-item removal were verified, including focus on the empty-state heading.
+- RunnerAI uses a simple linear step list with progress per execution, separate run conversations, a queue/backlog and an automatic icon-led central report. Queueing, cancellation, retry/reset, run switching, keyboard submission and mobile completion/report behavior were verified. Retired audit/monitoring and custom-canvas implementations were removed.
+- `bun run check`: zero errors or warnings. `bun run lint`, `bun run build` (including packaging/publint), and `BASE_PATH=/bref-ui-themes bun run build:site` pass. Prerendered demo links resolve under the Pages base path. No test script exists.
+- Rendered review used the existing development server on port 3000 without creating or restarting a server. Desktop/mobile captures remain outside Git. GitHub image attachment is unavailable because the browser is signed out and the connector has no upload tool. Human visual approval remains separate.
+- Limits: deterministic local simulation, historical catalog thumbnails, and no Firefox/Safari, real-device or screen-reader coverage. Reduced-motion/forced-color rules were reviewed in source; runtime preference emulation was unavailable.
+
 ## Bref 2.2.0 and Tabs — 2026-10-21
 
 The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.
