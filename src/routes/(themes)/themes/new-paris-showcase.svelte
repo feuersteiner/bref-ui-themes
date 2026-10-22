@@ -505,6 +505,7 @@
 						/>
 						<Progress label="Disabled seekable progress" value={0.32} onSeek={() => {}} disabled />
 						<div class="row">
+							<Spinner label="Loading (inherited size)" />
 							{#each sizes as size (size)}<Spinner {size} label={`Loading (${size})`} />{/each}
 						</div>
 						<div class="row">

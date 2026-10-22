@@ -82,8 +82,8 @@
 		[data-bref-theme='new-paris'][data-bref-theme] .glass.glass.glass {
 			background: var(--np-paper);
 			box-shadow: var(--surface-shadow);
-			backdrop-filter: none;
 			-webkit-backdrop-filter: none;
+			backdrop-filter: none;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] .button[data-kind='normal'] {
 			font-size: max(0.75rem, calc(var(--internal-font-size) * 0.88));
@@ -150,7 +150,8 @@
 			background: var(--np-paper);
 		}
 		[data-bref-theme='new-paris'][data-bref-theme] [popover] > .surface {
-			border: 1px solid var(--np-rule);
+			--surface-shadow: 4px 4px 0 var(--color-foreground);
+			border: 1px solid var(--color-foreground);
 			filter: none;
 		}
 		[data-bref-theme='new-paris'][data-bref-theme]
@@ -200,7 +201,7 @@
 		}
 		/* The CLI Spinner's first child is its decorative mark; checkbox marks follow an input. */
 		[data-bref-theme='new-paris'][data-bref-theme]
-			div[data-size]
+			div:is([role='status'], [aria-hidden='true'])
 			> span[aria-hidden='true']:first-child {
 			padding: 0;
 			mask: none;
@@ -265,7 +266,7 @@
 				translate: none;
 			}
 			[data-bref-theme='new-paris'][data-bref-theme]
-				div[data-size]
+				div:is([role='status'], [aria-hidden='true'])
 				> span[aria-hidden='true']:first-child {
 				animation: none;
 			}
@@ -295,7 +296,7 @@
 				background: Highlight;
 			}
 			[data-bref-theme='new-paris'][data-bref-theme]
-				div[data-size]
+				div:is([role='status'], [aria-hidden='true'])
 				> span[aria-hidden='true']:first-child {
 				background: Highlight;
 			}
