@@ -31,15 +31,16 @@ BASE_PATH=/bref-ui-themes bun run preview # http://localhost:4173/bref-ui-themes
 
 Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Theme, Button, Surface, Pill and Icon components, default palette/styles, documentation fonts and the Bref logo. Each card uses an actual browser screenshot and links to the working site. Every demo provides a Showcase link; navigation between themes reloads the document to avoid retaining global CSS.
 
-| Demo          | Implemented interactions                                                                  | Site                                          | Theme demonstration                                         |
-| ------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------- | ----------------------------------------------------------- |
-| Tasks         | Project creation/filtering, task status tabs, search, completion and task editing         | [/relay](http://localhost:5173/relay)         | [/themes/relay](http://localhost:5173/themes/relay)         |
-| House Shop    | Category tabs, furniture sorting, product dialogs, cart quantities and simulated checkout | [/forma](http://localhost:5173/forma)         | [/themes/forma](http://localhost:5173/themes/forma)         |
-| Site Reviewer | URL validation, simulated audit progress, history and finding review tabs                 | [/elsewhere](http://localhost:5173/elsewhere) | [/themes/elsewhere](http://localhost:5173/themes/elsewhere) |
+| Demo      | Implemented interactions                                                             | Site                                          | Theme demonstration                                         |
+| --------- | ------------------------------------------------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------- |
+| Relay     | SaaS workspace: projects, task status tabs, search, completion and task editing      | [/relay](http://localhost:5173/relay)         | [/themes/relay](http://localhost:5173/themes/relay)         |
+| Forma     | Ecommerce shop: category tabs, sorting, product dialogs, cart and simulated checkout | [/forma](http://localhost:5173/forma)         | [/themes/forma](http://localhost:5173/themes/forma)         |
+| Elsewhere | Agent runs: connected workflows, run history and interactive chat                    | [/elsewhere](http://localhost:5173/elsewhere) | [/themes/elsewhere](http://localhost:5173/themes/elsewhere) |
 
-![Tasks rendered demo](static/previews/relay.jpg)
-![House Shop rendered demo](static/previews/forma.jpg)
-![Site Reviewer rendered demo](static/previews/elsewhere.jpg)
+![Relay rendered demo](static/previews/relay.jpg)
+![Forma rendered demo](static/previews/forma.jpg)
+
+Elsewhere is a minimal agent workspace with three-step workflows, a run backlog and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; select, drag or keyboard-move nodes to inspect their work. Conversations keep separate drafts and directions for each run, explain selected steps and revise completed results. Cancel/retry preserves conversation history; queued work progresses in the background. Mobile uses explicit Runs, Workflow and Chat views. Execution is deterministic and local, with no external AI services; reloading restores the sample. History is bounded to 12 runs and 40 messages per run. The catalog preview still shows the earlier audit demo.
 
 **WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
 
@@ -107,7 +108,7 @@ These initial themes provide the demo palettes, fonts, common CSS and component 
 - `src/lib/<theme>/index.ts`: public theme entry; each site's demo and theme demonstration consume it.
 - `src/lib/components`: Bref CLI-copied controls and their local dependencies, with `bref-ui/types` imports preserved.
 - `src/lib/shared`: common reusable theme styling.
-- `src/routes/(sites)`: complete Tasks, House Shop and Site Reviewer sites and the latest shared demo shell.
+- `src/routes/(sites)`: complete Relay, Forma and Elsewhere sites and the latest shared demo shell.
 - `src/routes/(themes)`: demonstrations of implemented public theme exports.
 - `src/routes/catalog`: showcase content adapted from the reusable gallery.
 - `static/demos`: original photographic assets; `static/previews`: rendered catalog previews. Neither is included in the npm package.
