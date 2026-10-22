@@ -1,5 +1,43 @@
 # Verification
 
+## Glassy review hardening — 2026-10-22
+
+The [October design review](https://github.com/feuersteiner/bref-ui-themes/pull/45#issuecomment-6139438994) was reproduced against the current branch. Earlier agent verification claims were rechecked; unrelated demo and Crystal Code feedback was not applied.
+
+Feedback checklist:
+
+- [x] Glass across the collection and nested depth: added a restrained color field behind the gallery, brighter surface highlights and deeper pane shadows. Existing translucent paint values remain; the suggested 70–80% opacity was not a required contract.
+- [x] Neutral/soft, pressed and multiple selection: existing tint/state treatments already distinguish them. Reused Bref's darker content recipe for soft and pressed ink, with explicit dark ink on the white single-choice selection. Palette tokens are unchanged.
+- [x] Placeholder/value distinction: placeholders now use the existing muted token. Background samples from the rendered desktop controls, choices, tabs and placeholders have approximate text contrast above 4.5:1 (minimum sampled ratio 4.67:1). These JPEG samples are scene-specific, not a guarantee over arbitrary consumer backgrounds.
+- [x] Overlay defaults: the existing primary-colored dialog action, muted disabled progress, compact mobile dialog and popover gutters were already present and verified. Added missing dialog-backdrop reduced-motion, reduced-transparency and forced-color fallbacks, plus forced-color selected/pressed and disabled/placeholder treatments.
+- [x] Mobile import wrapping and empty progress-card space: already corrected by the current scrolling code snippet and content-sized columns. No collection redesign was needed.
+- [x] Historical flaky test: its tooling was intentionally removed. No test script exists and no suite was restored. Sequential popover/empty-select opening and Escape closing were exercised against production output with explicit closure checks.
+- [x] Base integration: a direct merge-tree check against fetched main `d0d12b4` reports no conflicts. The reported conflict was stale; no base merge was necessary.
+
+Validation:
+
+- Frozen-lockfile installation passes. Bun 1.3.4 still fails to launch scripts with `CouldntReadCurrentDirectory`; direct Node equivalents of check (zero errors/warnings), Prettier, ESLint, root and Pages builds, Svelte packaging and npm-backed strict publint pass.
+- The 79-file tarball passes strict publint; packaged Glassy source matches the canonical source. All five package entries and 15 Glassy exports are retained; routes, screenshots and test tooling are excluded.
+- Fresh npm Svelte/Vite and SvelteKit consumers pass type checks and production builds. Development and compiled production SSR rendering pass in the Svelte consumer; the SvelteKit build prerenders the initial content. Both hydrated consumers confirm all 15 namespace/subpath export identities and keyboard-driven bound-content updates without console errors.
+- Production collection inspected in the Codex in-app browser at 1440px, 390px and 320px: pressed/multiple/radio selection, disabled controls, validation, loading, native seeking, Tabs fit/fill/vertical selection and disabled skipping, dialog dismissal/focus return and popover clearance. At 320px the popover remains within the viewport and the dialog is content-sized. No page overflow or production console errors were observed.
+- Instruction mirrors and `git diff --check` pass. No public component API or copied component source changed. Glassy intentionally selects light mode; a separate dark presentation is not exposed.
+
+Limits: preference fallback rules were checked in source and packaged output; runtime media emulation is unavailable in the browser API. Firefox, Safari/WebKit, real devices and screen readers remain unverified. Current cropped captures are saved outside Git; GitHub is signed out in the browser and the connector has no image-upload tool, so they cannot be attached to the PR. Human visual approval remains pending. The branch has no reported CI checks.
+
+## Glassy Tabs — 2026-10-21
+
+Glassy integrates the shared 0.1.0/Bref 2.2.0 baseline and exports the same copied Tabs through `bref-ui-themes/glassy` and the root `Glassy` namespace. Its theme adds translucent strips, selected/hover/disabled/focus states, vertical styling and reduced-transparency/forced-color fallbacks. The existing collection now demonstrates all 15 exports, including horizontal fit/fill and vertical Tabs with independently bound content. Existing pill controls represent choices rather than content tabs and retain their behavior. The canonical Inter `/index.css` import supports clean SSR consumers.
+
+Validated using direct Node/npm equivalents because the installed Bun 1.3.4 script launcher fails with `CouldntReadCurrentDirectory`:
+
+- Svelte sync/check: zero errors or warnings. Prettier and ESLint pass.
+- Root SSR/client/static build, Svelte package, npm-backed publint and Pages build with `BASE_PATH=/bref-ui-themes` pass.
+- `npm pack --ignore-scripts`: 79-file 0.1.0 tarball contains Glassy, the shared Tabs source/declarations and all five package entries. Strict publint passes on the actual tarball; routes, screenshots and test tooling are absent.
+- Clean npm-installed Svelte/Vite consumer: type check, production client build, production SSR build/render, all 15 named/namespace exports and interactive bound content pass.
+- Actual browser checks at 1440px, 390px and 320px: horizontal/vertical selection, disabled skipping, Home/End, wraparound, roving Tab focus, visible inset focus, selected/hover states, fill sizing, mobile icon labels, strip scrolling without page overflow and bound content updates pass. Pages navigation/assets and interaction pass without browser errors.
+- Cropped desktop/mobile Tabs screenshots are saved outside the repository. GitHub has no connector upload tool and the browser is signed out, so the new images could not be attached to the PR. Existing historical PR images remain identified as such.
+- Reduced-motion CSS and the published indicator's media-query handling were checked in the packaged source. Runtime preference emulation, other browsers, real devices and screen readers remain unverified. No test script exists; no test suite was restored.
+
 ## Bref 2.2.0 and Tabs — 2026-10-21
 
 The 0.1.0 candidate uses npm-installed `bref-ui@2.2.0`, with `^2.2.0` in both peer and development dependencies and the Bun lockfile. No sibling source was linked.
