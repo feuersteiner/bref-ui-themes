@@ -42,7 +42,27 @@ Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Th
 
 Elsewhere is a minimal agent workspace with three-step workflows, a run backlog and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; select, drag or keyboard-move nodes to inspect their work. Conversations keep separate drafts and directions for each run, explain selected steps and revise completed results. Cancel/retry preserves conversation history; queued work progresses in the background. Mobile uses explicit Runs, Workflow and Chat views. Execution is deterministic and local, with no external AI services; reloading restores the sample. History is bounded to 12 runs and 40 messages per run. The catalog preview still shows the earlier audit demo.
 
-**WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
+**WIP:** VS Code and Liquid Glass are planned. They have no exports, demonstration routes or availability links.
+
+## New Paris
+
+New Paris is an editorial theme inspired by French couture: black and ivory, square controls, fine system-serif headings and tracked Inter labels. The exported theme includes the same typography, palette and control states as the demonstration. Original generated campaign photography and the editorial page layout belong only to the showcase. The [component demonstration](http://localhost:5173/themes/new-paris) covers all 15 public exports, variants, sizes, keyboard interactions, disabled/loading/error states, native dialogs/popovers and responsive layouts. It is a component showcase; no separate application demo is provided.
+
+![New Paris rendered components](static/previews/new-paris.jpg)
+
+```svelte
+<script lang="ts">
+	import { Theme, Button } from 'bref-ui-themes/new-paris';
+</script>
+
+<Theme>
+	<Button label="Bonjour" variant="filled" color="primary" />
+</Theme>
+```
+
+The Tabs specimens cover horizontal `fit`/`fill`, vertical navigation, required icons, disabled items and bound collection content. `Tabs` is re-exported from the shared copied Bref source; public types remain in `bref-ui/types`.
+
+The theme intentionally gives rounded controls square edges and glass surfaces an opaque paper treatment. Bref bindings, props and native semantics are retained. Theme styles live in `src/lib/new-paris/theme.svelte`; the demonstration imports that same public entry. Headings use `--font-display` (Didot, Bodoni MT and Times New Roman system fallbacks); editorial accents use `--font-accent`; `data-accent`, `data-eyebrow` and `data-caption` apply reusable typography. Label size/tracking and caption size use `--np-label-size`, `--np-label-tracking` and `--np-caption-size`. Light mode, reduced motion and forced colors are supported. Mount one theme per document and reload when changing themes.
 
 ## Library imports
 
@@ -69,7 +89,8 @@ The same API is available from each implemented theme:
 ```ts
 import { Theme, Button } from 'bref-ui-themes/forma';
 // Or: import { Theme, Button } from 'bref-ui-themes/elsewhere';
-// Namespace exports: import { Relay, Forma, Elsewhere } from 'bref-ui-themes';
+// Or: import { Theme, Button } from 'bref-ui-themes/new-paris';
+// Namespace exports: import { Relay, Forma, Elsewhere, NewParis } from 'bref-ui-themes';
 ```
 
 Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface`, `Tabs` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.
@@ -101,7 +122,7 @@ Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `Pil
 
 Horizontal tabs accept `size="fit"` (default, scrolls on overflow) or `size="fill"`. Vertical tabs use `orientation="vertical"` without `size`. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes fit, fill, vertical, disabled and bound-content examples.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+These themes provide palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
 
 ## Source layout
 
