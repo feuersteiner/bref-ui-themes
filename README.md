@@ -1,58 +1,27 @@
-# bref-ui-themes
+# Bref-ui themes
 
-Reusable Svelte 5 themes for [bref-ui](https://github.com/feuersteiner/bref-ui), with interactive demos and native CSS. Version 0.1.0 is [published on npm](https://www.npmjs.com/package/bref-ui-themes) and built on SvelteKit 3 and Bref 2.2.0.
+Reusable Svelte 5 themes and complete site demos, part of
+[Bref-ui](https://github.com/feuersteiner/bref-ui). Each theme combines a palette,
+fonts and component styling with native Svelte and CSS.
 
-[Explore the showcase](https://feuersteiner.github.io/bref-ui-themes/) · [Bref documentation](https://feuersteiner.github.io/bref-ui/) · [Join Discord](https://discord.gg/JpgQRTUsVS)
+[![npm](https://img.shields.io/npm/v/bref-ui-themes?logo=npm)](https://www.npmjs.com/package/bref-ui-themes)
+[![Discord](https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white)](https://discord.gg/JpgQRTUsVS)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-## Local development
+[Explore the showcase](https://feuersteiner.github.io/bref-ui-themes/) ·
+[Bref-ui documentation](https://feuersteiner.github.io/bref-ui/)
 
-Requires Bun 1.3.4 or newer. The scaffold uses Svelte 5, SvelteKit 3, Vite 8 and `svelte-package` 3.
+## Get started
 
-```sh
-bun install
-bun run dev                     # http://localhost:5173
-bun run check
-bun run lint
-bun run package                 # library → dist; includes publint
-bun run build:site              # static showcase → build
-bun run build                   # site + library
-bun run preview                 # preview the production site
-bun pm pack                     # creates a local npm tarball; does not publish
-```
+### Install the package
 
-The restored GitHub Pages workflow builds `build:site` on pushes to `main`, using the Pages base path and uploading `build`. To reproduce the project-path build locally:
+In an existing Svelte 5.57.1+ project, install the themes and their Bref-ui peer dependency:
 
 ```sh
-BASE_PATH=/bref-ui-themes bun run build:site
-BASE_PATH=/bref-ui-themes bun run preview # http://localhost:4173/bref-ui-themes/
+npm install bref-ui-themes bref-ui
 ```
 
-## Showcase and demo sites
-
-Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Theme, Button, Surface, Pill and Icon components, default palette/styles, documentation fonts and the Bref logo. Each card uses an actual browser screenshot and links to the working site. Every demo provides a Showcase link; navigation between themes reloads the document to avoid retaining global CSS.
-
-| Demo      | Implemented interactions                                                             | Site                                          | Theme demonstration                                         |
-| --------- | ------------------------------------------------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------- |
-| Relay     | SaaS workspace: projects, task status tabs, search, completion and task editing      | [/relay](http://localhost:5173/relay)         | [/themes/relay](http://localhost:5173/themes/relay)         |
-| Forma     | Ecommerce shop: category tabs, sorting, product dialogs, cart and simulated checkout | [/forma](http://localhost:5173/forma)         | [/themes/forma](http://localhost:5173/themes/forma)         |
-| Elsewhere | Agent runs: connected workflows, run history and interactive chat                    | [/elsewhere](http://localhost:5173/elsewhere) | [/themes/elsewhere](http://localhost:5173/themes/elsewhere) |
-
-![Relay rendered demo](static/previews/relay.jpg)
-![Forma rendered demo](static/previews/forma.jpg)
-
-Elsewhere is a minimal agent workspace with three-step workflows, a run backlog and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; select, drag or keyboard-move nodes to inspect their work. Conversations keep separate drafts and directions for each run, explain selected steps and revise completed results. Cancel/retry preserves conversation history; queued work progresses in the background. Mobile uses explicit Runs, Workflow and Chat views. Execution is deterministic and local, with no external AI services; reloading restores the sample. History is bounded to 12 runs and 40 messages per run. The catalog preview still shows the earlier audit demo.
-
-**WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
-
-## Library imports
-
-Install the published package and its Bref peer dependency:
-
-```sh
-bun add bref-ui-themes bref-ui
-```
-
-Consumers need Svelte `^5.57.1` and Bref `^2.2.0` (peer dependencies). Fonts used by the themes are package dependencies.
+Then use a theme and its components in a `.svelte` file:
 
 ```svelte
 <script lang="ts">
@@ -64,55 +33,107 @@ Consumers need Svelte `^5.57.1` and Bref `^2.2.0` (peer dependencies). Fonts use
 </Theme>
 ```
 
-The same API is available from each implemented theme:
+Render one theme at the application root. The initial themes use light mode and
+load document-wide palette tokens, reset styles and fonts. Use full-page navigation
+when switching between themes. Fonts are package dependencies.
+
+### Explore the gallery
+
+Use Bun 1.3.4 or newer and Node 24:
+
+```sh
+git clone https://github.com/feuersteiner/bref-ui-themes.git
+cd bref-ui-themes
+bun install
+bun run dev
+```
+
+Open the URL printed in the terminal. The gallery links to complete demo sites and
+component demonstrations that import the same library exports available on npm.
+
+## Available themes
+
+| Theme     | Demo                                                                       | Components                                                                            |
+| --------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Relay     | [SaaS workspace](https://feuersteiner.github.io/bref-ui-themes/relay)      | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/relay)     |
+| Forma     | [Ecommerce shop](https://feuersteiner.github.io/bref-ui-themes/forma)      | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/forma)     |
+| Elsewhere | [Agent workspace](https://feuersteiner.github.io/bref-ui-themes/elsewhere) | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/elsewhere) |
+
+Relay includes projects, status tabs, search, completion and task editing. Forma
+includes category filters, sorting, product dialogs, a cart and simulated checkout.
+Elsewhere includes workflow runs, a queue, run history and chat; its execution is
+local and deterministic, with no external AI service.
+
+![Relay rendered demo](static/previews/relay.jpg)
+![Forma rendered demo](static/previews/forma.jpg)
+
+VS Code, Liquid Glass and Minimalist Blocky remain planned. They have no package
+exports or demo routes.
+
+## Library imports
+
+Choose a theme entry to import its `Theme` and components:
 
 ```ts
-import { Theme, Button } from 'bref-ui-themes/forma';
+import { Theme, Button } from 'bref-ui-themes/relay';
+// Or: import { Theme, Button } from 'bref-ui-themes/forma';
 // Or: import { Theme, Button } from 'bref-ui-themes/elsewhere';
-// Namespace exports: import { Relay, Forma, Elsewhere } from 'bref-ui-themes';
 ```
 
-Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface`, `Tabs` and `TextInput`. `Theme` takes an optional `children` snippet. Controls retain Bref's props, native attributes and applicable bindings; their types remain imported from `bref-ui/types`.
+The package root also exports the `Relay`, `Forma` and `Elsewhere` namespaces.
+Each theme exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`,
+`PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface`,
+`Tabs` and `TextInput`.
 
-### Tabs
+`Theme` accepts an optional `children` snippet. Controls retain their Bref-ui props,
+native attributes and applicable bindings; shared types come from `bref-ui/types`.
+The theme entry points include reusable styling and controls. Complete site layouts,
+content and demo assets stay outside the published library.
 
-`Tabs` uses Bref 2.2.0's readonly item data, required icon names and bindable string value. The consumer renders the selected content:
+## Local package and checks
 
-```svelte
-<script lang="ts">
-	import { Theme, Tabs } from 'bref-ui-themes/relay';
-	import type { TabItemDataProps } from 'bref-ui/types';
-	let view = $state('overview');
-	const items = [
-		{ id: 'overview', label: 'Overview', icon: 'dashboard' },
-		{ id: 'activity', label: 'Activity', icon: 'history' },
-		{ id: 'reports', label: 'Reports', icon: 'monitoring', disabled: true }
-	] as const satisfies readonly TabItemDataProps[];
-</script>
-
-<Theme>
-	<Tabs {items} bind:value={view} label="Project views" />
-	<div role="tabpanel" aria-label={items.find((item) => item.id === view)?.label} tabindex="0">
-		{#if view === 'overview'}<p>8 tasks open, 3 completed.</p>
-		{:else}<p>The navigation review was completed today.</p>{/if}
-	</div>
-</Theme>
+```sh
+bun run check
+bun run lint
+bun run build
+npm pack --ignore-scripts
 ```
 
-Horizontal tabs accept `size="fit"` (default, scrolls on overflow) or `size="fill"`. Vertical tabs use `orientation="vertical"` without `size`. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes fit, fill, vertical, disabled and bound-content examples.
+`build` produces both the static showcase in `build` and the library in `dist`,
+including package validation. Use `bun run build:site` or `bun run package` to build
+each separately. Packing creates `bref-ui-themes-<version>.tgz` without publishing.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+The GitHub Pages workflow deploys the showcase on pushes to `main`. To reproduce
+its project-path build locally:
 
-## Source layout
+```sh
+BASE_PATH=/bref-ui-themes bun run build:site
+BASE_PATH=/bref-ui-themes bun run preview
+```
 
-- `src/lib/<theme>/index.ts`: public theme entry; each site's demo and theme demonstration consume it.
-- `src/lib/components`: Bref CLI-copied controls and their local dependencies, with `bref-ui/types` imports preserved.
-- `src/lib/shared`: common reusable theme styling.
-- `src/routes/(sites)`: complete Relay, Forma and Elsewhere sites and the latest shared demo shell.
-- `src/routes/(themes)`: demonstrations of implemented public theme exports.
-- `src/routes/catalog`: showcase content adapted from the reusable gallery.
-- `static/demos`: original photographic assets; `static/previews`: rendered catalog previews. Neither is included in the npm package.
+## Documentation and source
 
-The migration preserves the local checkbox motion/reduced-motion fix and animated dialog title/icon updates. Only demo-owned files were extracted from their source branches; the latest Relay shared shell was kept. See [verification.md](verification.md) for source revisions, validation and remaining limitations.
+Use the [Bref-ui documentation](https://feuersteiner.github.io/bref-ui/) for the base
+components and the theme demonstrations above for themed examples.
 
-Tabs was copied from the npm-installed Bref 2.2.0 source using its registry, dependency planner and preview/install pipeline. Existing Icon and Theme dependencies were retained. The preview added only `tabs/tabs.svelte` and `tabs/item.svelte`, with explicit approval for the shared barrel merge; no existing component source was overwritten. Tabs types remain public imports from `bref-ui/types`.
+- [Theme entries](src/lib): each `src/lib/<theme>/index.ts` exports `Theme` and controls.
+- [Component sources](src/lib/components): copied Bref-ui controls with shared types
+  imported from `bref-ui/types`.
+- [Shared styles](src/lib/shared): reusable theme styling.
+- [Demo sites](<src/routes/(sites)>): complete sites and their shared demo shell.
+- [Theme demonstrations](<src/routes/(themes)>): examples of each public theme entry.
+
+See [verification.md](verification.md) for validation notes and remaining limitations.
+
+## Community and contributing
+
+For questions and examples, join [Discord](https://discord.gg/JpgQRTUsVS) and use the
+`bref-ui` channel. Report theme bugs and suggest features through
+[GitHub Issues](https://github.com/feuersteiner/bref-ui-themes/issues).
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines. Base components
+and the component CLI are maintained in [bref-ui](https://github.com/feuersteiner/bref-ui).
+
+## License
+
+[MIT](LICENSE).
