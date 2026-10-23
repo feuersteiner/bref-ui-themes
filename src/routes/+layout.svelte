@@ -36,7 +36,9 @@
 <Theme>
 	{#if showcase}<ThemeModeToggle {mode} />{/if}
 	<div data-demo-root>
-		<SiteHeader bind:mode {contentId}><DemoNav /></SiteHeader>
+		<SiteHeader bind:mode {contentId}>
+			{#if !showcase}<DemoNav />{/if}
+		</SiteHeader>
 		<div data-navigation-content>{@render children()}</div>
 	</div>
 </Theme>

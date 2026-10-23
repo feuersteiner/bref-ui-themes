@@ -24,15 +24,14 @@
 <header data-bref-header data-mode={mode}>
 	<a data-skip href={`#${contentId}`}>Skip to content</a>
 	<div>
-		<a
-			data-logo
-			href="https://feuersteiner.github.io/bref-ui/"
-			aria-label="Bref documentation home"
-		>
-			<img src={asset('favicon.svg')} alt="" width="40" height="40" />
-			<strong>bref <span data-slash>/</span> ui</strong>
-		</a>
-		<p>Svelte components, simply.</p>
+		<div data-brand>
+			<a data-logo href={resolve('/')} aria-label="Bref themes showcase home">
+				<img src={asset('favicon.svg')} alt="" width="40" height="40" />
+				<strong>themes</strong>
+			</a>
+			<a data-attribution href="https://feuersteiner.github.io/bref-ui/">Part of Bref/ui</a>
+		</div>
+		<p>Svelte themes & demos.</p>
 		<nav aria-label="Showcase">
 			<a href={resolve('/#demos')}>Demos</a>
 			<a href={resolve('/#themes')}>Themes</a>
@@ -98,6 +97,21 @@
 	[data-header-actions] {
 		gap: 8px;
 	}
+	[data-brand] {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	[data-attribution] {
+		align-self: flex-start;
+		margin-inline-start: 52px;
+		color: var(--color-muted);
+		font-size: 11px;
+		line-height: 16px;
+	}
+	[data-attribution]:hover {
+		text-decoration: underline;
+	}
 	a {
 		color: inherit;
 		text-decoration: none;
@@ -121,9 +135,6 @@
 	strong {
 		font: 700 24px / 1.2 var(--font-display);
 		white-space: nowrap;
-	}
-	[data-slash] {
-		color: var(--color-primary);
 	}
 	p {
 		color: var(--color-muted);
@@ -158,7 +169,7 @@
 			grid-row: 2;
 			padding-bottom: 8px;
 		}
-		[data-logo],
+		[data-brand],
 		[data-header-actions] {
 			min-height: 64px;
 		}
@@ -166,6 +177,9 @@
 	@media (max-width: 400px) {
 		[data-logo] img {
 			display: none;
+		}
+		[data-attribution] {
+			margin-inline-start: 0;
 		}
 	}
 </style>
