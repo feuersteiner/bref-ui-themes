@@ -45,7 +45,7 @@
 
 <components.Theme>
 	<div data-theme-gallery>
-		<nav aria-label="Theme demonstrations" data-sveltekit-reload>
+		<nav aria-label="Theme demonstrations">
 			<a href={resolve('/')}>← Showcase</a>
 			<div>
 				{#each ['relay', 'forma', 'elsewhere'] as theme (theme)}<a
@@ -55,7 +55,7 @@
 					>{/each}
 			</div>
 		</nav>
-		<main>
+		<main id="theme-content" tabindex="-1">
 			<h1>{name}</h1>
 			<p data-muted>
 				Reusable theme and copied Bref components. The complete site demo uses this same source.
@@ -225,6 +225,9 @@
 		max-width: 1040px;
 		padding: 24px;
 		margin: auto;
+	}
+	main {
+		scroll-margin-block-start: 180px;
 	}
 	nav {
 		display: flex;

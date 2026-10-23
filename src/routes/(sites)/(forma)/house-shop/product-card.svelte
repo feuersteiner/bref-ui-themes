@@ -3,6 +3,7 @@
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { Button } from '#lib/forma/index.js';
+	import GridCartAction from './grid-cart-action.svelte';
 	import { money } from './products.js';
 	import type { Product } from './products.js';
 	let {
@@ -14,7 +15,7 @@
 		product: Product;
 		quantity?: number;
 		onSelect: (product: Product) => void;
-		onAdd: (product: Product, finish: string) => void;
+		onAdd: (product: Product, finish: string) => boolean;
 	} = $props();
 </script>
 
@@ -40,16 +41,18 @@
 			trailingIcon={{ name: 'arrow_forward' }}
 			onClick={() => onSelect(product)}
 		/>
-		<div data-product-cart>
-			{#if quantity}<span data-cart-count aria-label={`${quantity} in cart`}>{quantity}</span>{/if}
-			<Button
-				color="secondary"
-				icon={{ name: 'add_shopping_cart', label: `Add ${product.name} to cart` }}
-				variant="soft"
-				size="small"
-				rounded
-				onClick={() => onAdd(product, product.finishes[0])}
-			/>
-		</div>
+		<GridCartAction
+			name={product.name}
+			finish={product.finishes[0]}
+			{quantity}
+			onAdd={() => onAdd(product, product.finishes[0])}
+		/>
 	</div>
 </article>
+
+<style>
+	[data-product-actions] {
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+</style>

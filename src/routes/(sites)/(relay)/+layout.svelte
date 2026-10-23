@@ -8,6 +8,14 @@
 
 <style>
 	:global {
+		html:has([data-relay]) {
+			scrollbar-gutter: stable;
+		}
+		@supports not (scrollbar-gutter: stable) {
+			html:has([data-relay]):not(:has(dialog:modal)) {
+				overflow-y: scroll;
+			}
+		}
 		[data-relay] {
 			--font-text: 'Inter Variable', sans-serif;
 			--relay-rule: color-mix(in srgb, var(--color-foreground) 9%, transparent);

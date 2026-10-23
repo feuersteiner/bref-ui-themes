@@ -1,15 +1,16 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { Button, Icon, Tabs, TextInput } from '#lib/relay/index.js';
+	import { Button, Icon, TextInput } from '#lib/relay/index.js';
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import TaskBoard from './task-board.svelte';
+	import StatusTabs from './status-tabs.svelte';
 	import ProjectStage from './project-stage.svelte';
 	import WorkspaceNav from './workspace-nav.svelte';
 	import TaskEditor from './task-editor.svelte';
 	import ProjectEditor from './project-editor.svelte';
 	import { initialTasks, initialProjects } from './tasks.js';
-	import type { Task } from './tasks.js';
+	import type { Task, Project } from './tasks.js';
 	let tasks = $state(initialTasks.map((task) => ({ ...task })));
 	let project = $state('all');
 	let projects = $state(initialProjects.map((item) => ({ ...item })));
@@ -19,9 +20,9 @@
 	let search = $state('');
 	let status = $state('all');
 	const statuses = [
-		{ id: 'all', label: 'All tasks', icon: 'checklist' },
-		{ id: 'open', label: 'Open', icon: 'pending_actions' },
-		{ id: 'completed', label: 'Completed', icon: 'task_alt' }
+		{ id: 'all', label: 'All tasks' },
+		{ id: 'open', label: 'Open' },
+		{ id: 'completed', label: 'Completed' }
 	] as const;
 	let editorOpen = $state(false);
 	let draft = $state<Task>({
@@ -73,25 +74,24 @@
 	const toggle = (id: number) => {
 		tasks = tasks.map((task) => (task.id === id ? { ...task, done: !task.done } : task));
 	};
-	const createProject = (name: string) => {
+	const createProject = (draft: Omit<Project, 'id'>) => {
+		const name = draft.label.trim();
+		if (!name) return 'Choose a name for this project.';
 		if (name.toLowerCase() === 'all') return 'Choose a name for this project.';
 		if (projects.some((item) => item.label.toLowerCase() === name.toLowerCase()))
 			return 'A project with this name already exists.';
 		project = `project-${Date.now()}`;
-		projects = [
-			...projects,
-			{ id: project, label: name, icon: { name: 'folder' }, photo: 'studio' }
-		];
+		projects = [...projects, { ...draft, id: project, label: name }];
 		announcement = 'Project created.';
 		return '';
 	};
 </script>
 
 <svelte:head>
-	<title>Tasks | a Bref workspace demo</title>
+	<title>Todo — a Bref task workspace demo</title>
 	<meta
 		name="description"
-		content="A creative project workspace built with Bref. Filter, finish and edit the work in front of you."
+		content="Todo is a task workspace for projects and tasks, built with Bref. Filter, finish and edit the work in front of you."
 	/>
 </svelte:head>
 <div data-workspace>
@@ -143,11 +143,12 @@
 				</div>
 			</div>
 			<div data-task-tabs>
-				<Tabs items={statuses} bind:value={status} label="Task status" />
+				<StatusTabs items={statuses} bind:value={status} panelId="task-status-panel" />
 			</div>
 			<div
+				id="task-status-panel"
 				role="tabpanel"
-				aria-label={statuses.find((item) => item.id === status)?.label}
+				aria-labelledby={`task-status-panel-${status}`}
 				tabindex="0"
 			>
 				<TaskBoard {projects} tasks={ordered} onEdit={edit} onToggle={toggle} />

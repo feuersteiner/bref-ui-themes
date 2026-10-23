@@ -29,18 +29,18 @@ BASE_PATH=/bref-ui-themes bun run preview # http://localhost:4173/bref-ui-themes
 
 ## Showcase and demo sites
 
-Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Theme, Button, Surface, Pill and Icon components, default palette/styles, documentation fonts and the Bref logo. Each card uses an actual browser screenshot and links to the working site. Every demo provides a Showcase link; navigation between themes reloads the document to avoid retaining global CSS.
+Open the [showcase](http://localhost:5173/). The showcase uses base `bref-ui` Theme, Button, Surface, Pill and Icon components, default palette/styles, documentation fonts and the Bref logo. Each card uses an actual browser screenshot and links to the working site. Every demo provides a Showcase link; the shared header stays mounted during client navigation, while each route applies its own theme styles.
 
-| Demo      | Implemented interactions                                                             | Site                                          | Theme demonstration                                         |
-| --------- | ------------------------------------------------------------------------------------ | --------------------------------------------- | ----------------------------------------------------------- |
-| Relay     | SaaS workspace: projects, task status tabs, search, completion and task editing      | [/relay](http://localhost:5173/relay)         | [/themes/relay](http://localhost:5173/themes/relay)         |
-| Forma     | Ecommerce shop: category tabs, sorting, product dialogs, cart and simulated checkout | [/forma](http://localhost:5173/forma)         | [/themes/forma](http://localhost:5173/themes/forma)         |
-| Elsewhere | Agent runs: connected workflows, run history and interactive chat                    | [/elsewhere](http://localhost:5173/elsewhere) | [/themes/elsewhere](http://localhost:5173/themes/elsewhere) |
+| Demo       | Implemented interactions                                                             | Site                                            | Theme demonstration                                         |
+| ---------- | ------------------------------------------------------------------------------------ | ----------------------------------------------- | ----------------------------------------------------------- |
+| Todo       | Task workspace: projects, task status tabs, search, completion and task editing      | [/todo](http://localhost:5173/todo)             | [/themes/relay](http://localhost:5173/themes/relay)         |
+| House Shop | Furniture shop: category tabs, sorting, product dialogs, cart and simulated checkout | [/house-shop](http://localhost:5173/house-shop) | [/themes/forma](http://localhost:5173/themes/forma)         |
+| RunnerAI   | Agent runs: linear progress steps, run backlog, chat and a central report            | [/runner-ai](http://localhost:5173/runner-ai)   | [/themes/elsewhere](http://localhost:5173/themes/elsewhere) |
 
-![Relay rendered demo](static/previews/relay.jpg)
-![Forma rendered demo](static/previews/forma.jpg)
+![Todo rendered demo](static/previews/relay.jpg)
+![House Shop rendered demo](static/previews/forma.jpg)
 
-Elsewhere is a minimal agent workspace with three-step workflows, a run backlog and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; select, drag or keyboard-move nodes to inspect their work. Conversations keep separate drafts and directions for each run, explain selected steps and revise completed results. Cancel/retry preserves conversation history; queued work progresses in the background. Mobile uses explicit Runs, Workflow and Chat views. Execution is deterministic and local, with no external AI services; reloading restores the sample. History is bounded to 12 runs and 40 messages per run. The catalog preview still shows the earlier audit demo.
+RunnerAI is a local agent workspace with a run backlog, linear progress steps, a central report and chat on the right. Create and queue sample launch, landing-page or interview-summary runs; follow each step and review the completed report. Conversations keep separate drafts and directions for each run and can revise completed results. Execution is deterministic and local, with no external AI services; reloading restores the sample. The catalog labels its historical audit preview.
 
 **WIP:** VS Code, Liquid Glass and Minimalist Blocky are planned. They have no exports, demonstration routes or availability links.
 
@@ -101,14 +101,14 @@ Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `Pil
 
 Horizontal tabs accept `size="fit"` (default, scrolls on overflow) or `size="fill"`. Vertical tabs use `orientation="vertical"` without `size`. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes fit, fill, vertical, disabled and bound-content examples.
 
-These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme per document and use full-page navigation when changing themes. Site-specific layouts and content are separate from the library.
+These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme at a time and manage its lifecycle when changing routes. Site-specific layouts and content are separate from the library.
 
 ## Source layout
 
 - `src/lib/<theme>/index.ts`: public theme entry; each site's demo and theme demonstration consume it.
 - `src/lib/components`: Bref CLI-copied controls and their local dependencies, with `bref-ui/types` imports preserved.
 - `src/lib/shared`: common reusable theme styling.
-- `src/routes/(sites)`: complete Relay, Forma and Elsewhere sites and the latest shared demo shell.
+- `src/routes/(sites)`: complete Todo, House Shop and RunnerAI sites and the latest shared demo shell.
 - `src/routes/(themes)`: demonstrations of implemented public theme exports.
 - `src/routes/catalog`: showcase content adapted from the reusable gallery.
 - `static/demos`: original photographic assets; `static/previews`: rendered catalog previews. Neither is included in the npm package.
