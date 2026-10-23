@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { Icon } from '#lib/components/index.js';
+	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
+	import { Icon, Tabs } from 'bref-ui';
 	const demos = [
-		{ name: 'Todo', icon: 'checklist', href: resolve('/(sites)/(relay)/todo') },
-		{ name: 'House Shop', icon: 'storefront', href: resolve('/(sites)/(forma)/house-shop') },
-		{ name: 'RunnerAI', icon: 'smart_toy', href: resolve('/(sites)/(elsewhere)/runner-ai') }
+		{ label: 'Todo', icon: 'checklist', id: '/(sites)/(relay)/todo' },
+		{ label: 'House Shop', icon: 'storefront', id: '/(sites)/(forma)/house-shop' },
+		{ label: 'RunnerAI', icon: 'smart_toy', id: '/(sites)/(elsewhere)/runner-ai' }
 	] as const;
 </script>
 
@@ -19,14 +20,15 @@
 			<Icon name="arrow_back" />
 			<span>Showcase</span>
 		</a>
-		<div>
-			{#each demos as demo (demo.href)}
-				<a href={demo.href} aria-current={page.url.pathname === demo.href ? 'page' : undefined}>
-					<Icon name={demo.icon} />
-					{demo.name}
-				</a>
-			{/each}
-		</div>
+		<Tabs
+			items={demos}
+			value={demos.find((demo) => demo.id === page.route.id)?.id}
+			onChange={(id) => {
+				const demo = demos.find((demo) => demo.id === id);
+				if (demo) void goto(resolve(demo.id), { reset: false });
+			}}
+			label="Demo sites"
+		/>
 	</nav>
 </div>
 
@@ -46,12 +48,6 @@
 			500 12px / 1.5 'Inter Variable',
 			sans-serif;
 	}
-	nav > a,
-	nav div {
-		display: flex;
-		align-items: center;
-		gap: 20px;
-	}
 	a {
 		display: inline-flex;
 		align-items: center;
@@ -59,11 +55,7 @@
 		color: var(--color-muted);
 		text-decoration: none;
 		padding-block: 8px;
-	}
-	a[aria-current] {
-		color: var(--color-foreground);
-		text-decoration: underline;
-		text-underline-offset: 5px;
+		flex-shrink: 0;
 	}
 	a:focus-visible {
 		outline: 2px solid var(--color-primary);
@@ -72,9 +64,6 @@
 	@media (max-width: 600px) {
 		nav > a span {
 			display: none;
-		}
-		nav div {
-			gap: 14px;
 		}
 	}
 </style>
