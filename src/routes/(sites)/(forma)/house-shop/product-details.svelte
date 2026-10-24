@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
 	import { untrack } from 'svelte';
-	import { Dialog, Select } from '#lib/forma/index.js';
+	import { Dialog, Select } from 'bref-ui';
 	import AddToCart from './add-to-cart.svelte';
 	import { money } from './products.js';
 	import type { Product, CartItem } from './products.js';
@@ -56,3 +56,56 @@
 		</div>
 	</div>
 </Dialog>
+
+<style>
+	img {
+		display: block;
+		max-width: 100%;
+	}
+	label {
+		display: grid;
+		gap: 8px;
+	}
+	p {
+		line-height: 1.7;
+	}
+	[data-muted] {
+		color: var(--color-muted);
+	}
+	[data-form] {
+		display: grid;
+		gap: 20px;
+	}
+	img {
+		border-radius: var(--forma-image-radius);
+	}
+	[data-product-detail='table'] > img {
+		object-position: center bottom;
+	}
+	[data-product-detail='desk-lamp'] > img {
+		object-position: right center;
+	}
+	[data-product-detail] {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 28px;
+		align-items: start;
+	}
+	[data-product-detail] > img {
+		width: 100%;
+		height: 320px;
+		object-fit: cover;
+	}
+	[data-product-detail] p[data-muted] {
+		font-size: 11px;
+	}
+	@media (max-width: 600px) {
+		[data-product-detail] {
+			grid-template-columns: 1fr;
+		}
+
+		[data-product-detail] > img {
+			height: 240px;
+		}
+	}
+</style>

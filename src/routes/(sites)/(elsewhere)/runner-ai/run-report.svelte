@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Icon } from '#lib/elsewhere/index.js';
+	import { Button, Icon } from 'bref-ui';
 	import { samples } from './marketing-assessment.js';
 	import type { Run } from './run-state.svelte.js';
 	let {

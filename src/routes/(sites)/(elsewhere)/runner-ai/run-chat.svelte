@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick, untrack } from 'svelte';
-	import { Button } from '#lib/elsewhere/index.js';
+	import { Button, TextArea } from 'bref-ui';
 	import type { Run } from './run-state.svelte.js';
 	let {
 		run = $bindable(),
@@ -8,7 +8,7 @@
 		onSend
 	}: { run: Run; visible?: boolean; onSend: () => void } = $props();
 	let thread: HTMLDivElement;
-	let input: HTMLTextAreaElement;
+	let composer: HTMLFormElement;
 	let following = $state(true);
 	let unread = $state(false);
 	const inputId = $props.id();
@@ -35,6 +35,7 @@
 	});
 	$effect(() => {
 		const draft = run.draft;
+		const input = composer?.querySelector('textarea');
 		if (visible && input) {
 			input.style.height = draft ? 'auto' : '28px';
 			input.style.height = `${Math.min(input.scrollHeight, 132)}px`;
@@ -68,25 +69,25 @@
 		</div>
 	</div>
 	{#if unread}
-		<button type="button" data-new-messages onclick={bottom}>New messages ↓</button>
+		<div data-new-messages><Button label="New messages ↓" size="small" onClick={bottom} /></div>
 	{/if}
 	<form
+		bind:this={composer}
 		onsubmit={(event) => {
 			event.preventDefault();
 			submit();
 		}}
 	>
 		<label for={inputId} data-visually-hidden>Message this run</label>
-		<textarea
+		<TextArea
 			id={inputId}
-			bind:this={input}
 			bind:value={run.draft}
 			placeholder={run.status === 'completed'
 				? 'Ask a question or request a revision…'
 				: 'Message this run…'}
-			rows="1"
+			rows={1}
 			aria-describedby={`${inputId}-hint`}
-			maxlength="1000"
+			maxlength={1000}
 			onkeydown={(event) => {
 				if (
 					event.key === 'Enter' &&
@@ -97,7 +98,10 @@
 					event.preventDefault();
 					submit();
 				}
-			}}></textarea>
+			}}
+			wide
+			resizable={false}
+		/>
 		<div data-compose-footer>
 			<span id={`${inputId}-hint`}>Shift+Enter for newline</span>
 			<Button
@@ -173,34 +177,6 @@
 		border-radius: 12px;
 		background: var(--run-surface);
 	}
-	form:has(textarea:focus) {
-		border-color: var(--color-primary);
-	}
-	textarea {
-		display: block;
-		width: 100%;
-		box-sizing: border-box;
-		min-height: 28px;
-		padding: 0;
-		resize: none;
-		max-height: 132px;
-		border: 0;
-		outline: none;
-		color: var(--color-foreground);
-		background: transparent;
-		font: inherit;
-		font-size: 14px;
-		line-height: 1.7;
-	}
-	/* The composer border owns focus; outrank the group focus-visible outline. */
-	[data-chat] textarea:focus-visible {
-		outline: none;
-		outline-offset: 0;
-	}
-	textarea::placeholder {
-		color: var(--color-muted);
-		opacity: 1;
-	}
 	[data-compose-footer] {
 		display: flex;
 		justify-content: space-between;
@@ -218,19 +194,6 @@
 	[data-new-messages] {
 		align-self: center;
 		margin: -8px 0 12px;
-		padding: 7px 12px;
-		border: 1px solid var(--run-line);
-		border-radius: 20px;
-		background: var(--run-surface);
-		color: var(--color-foreground);
-		font: inherit;
-		font-size: 12px;
-		cursor: pointer;
-	}
-	@media (forced-colors: active) {
-		form:has(textarea:focus) {
-			border-color: Highlight;
-		}
 	}
 	@media (max-width: 1100px) {
 		[data-chat] {
@@ -243,9 +206,6 @@
 			height: calc(100dvh - 326px);
 			padding-bottom: max(18px, env(safe-area-inset-bottom));
 			border-left: 0;
-		}
-		textarea {
-			font-size: 16px;
 		}
 		[data-thread] {
 			height: 0;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon } from '#lib/elsewhere/index.js';
+	import { Icon, Button, Progress } from 'bref-ui';
 	import { samples } from './marketing-assessment.js';
 	import { nodeStatus, type Run } from './run-state.svelte.js';
 	let {
@@ -14,14 +14,7 @@
 	{#each run.nodes as node, index (node.name)}
 		{@const state = nodeStatus(run, index)}
 		<li data-state={state} aria-current={state === 'running' ? 'step' : undefined}>
-			<button
-				type="button"
-				data-node
-				aria-pressed={selectedIndex === index}
-				aria-controls="node-inspector"
-				aria-label={`${node.name}, ${labels[state]}, ${node.progress}%`}
-				onclick={() => onSelect(index)}
-			>
+			<div data-node data-selected={selectedIndex === index}>
 				<span data-top>
 					<span data-icon aria-hidden="true">
 						<span data-visible={state === 'queued' || state === 'running'}
@@ -40,10 +33,21 @@
 					{/each}
 				</span>
 				<span data-progress>
-					<progress value={node.progress} max="100" aria-label={`${node.name} progress`}
-					></progress><span>{node.progress}%</span>
+					<Progress value={node.progress / 100} label={`${node.name} progress`} size="small" /><span
+						>{node.progress}%</span
+					>
 				</span>
-			</button>
+				<Button
+					label="Inspect"
+					icon={{ name: 'info' }}
+					size="small"
+					variant="neutral"
+					aria-pressed={selectedIndex === index}
+					aria-controls="node-inspector"
+					aria-label={`Inspect ${node.name}, ${labels[state]}, ${node.progress}%`}
+					onClick={() => onSelect(index)}
+				/>
+			</div>
 		</li>
 	{/each}
 </ol>
@@ -82,10 +86,10 @@
 		--node-accent: var(--color-success);
 		--node-line: color-mix(in srgb, var(--color-success) 50%, var(--run-surface));
 	}
-	button {
+	[data-node] {
 		position: relative;
 		display: grid;
-		grid-template-rows: 30px 36px 48px 16px 16px;
+		grid-template-rows: 30px 36px 48px 16px 20px auto;
 		align-content: start;
 		gap: 7px;
 		width: 100%;
@@ -103,38 +107,16 @@
 			border-color 240ms ease,
 			box-shadow 240ms ease;
 	}
-	button[aria-pressed='true'] {
+	[data-node][data-selected='true'] {
 		border-color: var(--color-primary);
 		box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 8%, transparent);
 	}
-	button:hover {
+	[data-node]:hover {
 		border-color: var(--color-primary);
 	}
-	button:focus-visible {
+	[data-node]:focus-within {
 		outline: 2px solid var(--color-primary);
 		outline-offset: 5px;
-	}
-	button::before,
-	button::after {
-		content: '';
-		position: absolute;
-		top: calc(50% - 4px);
-		width: 8px;
-		height: 8px;
-		border: 1px solid var(--node-line);
-		border-radius: 50%;
-		background: var(--run-surface);
-		transition: border-color 240ms ease;
-	}
-	button::before {
-		left: -5px;
-	}
-	button::after {
-		right: -5px;
-	}
-	li:first-child button::before,
-	li:last-child button::after {
-		display: none;
 	}
 	[data-top] {
 		display: flex;
@@ -201,31 +183,6 @@
 		color: var(--color-muted);
 		font-variant-numeric: tabular-nums;
 	}
-	progress {
-		appearance: none;
-		display: block;
-		min-width: 0;
-		width: 100%;
-		height: 3px;
-		border: 0;
-		border-radius: 3px;
-		overflow: hidden;
-		background: var(--run-rule);
-		color: var(--node-accent);
-	}
-	progress::-webkit-progress-bar {
-		background: var(--run-rule);
-	}
-	progress::-webkit-progress-value {
-		background: var(--node-accent);
-		transition:
-			width 280ms linear,
-			background-color 240ms ease;
-	}
-	progress::-moz-progress-bar {
-		background: var(--node-accent);
-		transition: background-color 240ms ease;
-	}
 	@container (max-width: 540px) {
 		ol {
 			--workflow-gap: 36px;
@@ -233,7 +190,7 @@
 			max-width: 220px;
 			margin-block: 24px;
 		}
-		button {
+		[data-node] {
 			grid-template-rows: 30px 20px 32px 16px 16px;
 			min-height: 184px;
 		}
@@ -245,30 +202,13 @@
 			border-top: 0;
 			border-left: 1px solid var(--node-line);
 		}
-		button::before,
-		button::after {
-			left: calc(50% - 4px);
-			right: auto;
-		}
-		button::before {
-			top: -5px;
-		}
-		button::after {
-			top: auto;
-			bottom: -5px;
-		}
 	}
 	@media (prefers-reduced-motion: reduce) {
 		li::after,
-		button,
-		button::before,
-		button::after,
 		[data-icon],
 		[data-icon] > span,
 		[data-status],
-		[data-status] > span,
-		progress::-webkit-progress-value,
-		progress::-moz-progress-bar {
+		[data-status] > span {
 			transition: none;
 		}
 	}
@@ -277,21 +217,17 @@
 			--node-accent: CanvasText;
 			--node-line: CanvasText;
 		}
-		button {
+		[data-node] {
 			border-color: CanvasText;
 		}
-		button[aria-pressed='true'] {
+		[data-node][data-selected='true'] {
 			border-color: Highlight;
 			outline: 1px solid Highlight;
 			outline-offset: -3px;
 		}
-		button:focus-visible {
+		[data-node]:focus-within {
 			outline: 2px solid Highlight;
 			outline-offset: 5px;
-		}
-		progress {
-			color: Highlight;
-			background: Canvas;
 		}
 	}
 </style>

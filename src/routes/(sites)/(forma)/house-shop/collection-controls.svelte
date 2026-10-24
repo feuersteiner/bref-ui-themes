@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Tabs, Select, TextInput } from '#lib/forma/index.js';
+	import { Tabs, Select, TextInput } from 'bref-ui';
 	let {
 		category = $bindable('all'),
 		sort = $bindable('featured'),
@@ -42,3 +42,62 @@
 		</label>
 	</div>
 </div>
+
+<style>
+	label {
+		display: grid;
+		gap: 8px;
+	}
+	[data-visually-hidden] {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+	[data-collection-controls] {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 24px;
+		padding-block: 24px 32px;
+	}
+	[data-collection-tools] {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+	[data-collection-controls] label {
+		width: 196px;
+	}
+	@media (max-width: 900px) {
+		[data-collection-controls] {
+			align-items: start;
+			flex-direction: column;
+		}
+
+		[data-collection-tools] {
+			width: 100%;
+		}
+	}
+	@media (max-width: 600px) {
+		[data-collection-controls] {
+			align-items: start;
+			flex-direction: column;
+			gap: 20px;
+		}
+
+		[data-collection-tools] {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		[data-collection-tools] label {
+			width: 100%;
+		}
+	}
+</style>

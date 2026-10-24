@@ -90,7 +90,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		font: 400 24px / 1.2 var(--font-display);
+		font:
+			400 24px / 1.2 'Syne Variable',
+			sans-serif;
 	}
 	p {
 		color: var(--color-muted);

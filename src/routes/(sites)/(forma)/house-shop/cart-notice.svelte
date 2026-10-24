@@ -24,3 +24,29 @@
 		</p>
 	{/each}
 </div>
+
+<style>
+	p {
+		line-height: 1.7;
+	}
+	[data-notice-position] {
+		position: fixed;
+		bottom: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		z-index: 2;
+		width: max-content;
+		max-width: calc(100% - 32px);
+		display: grid;
+		pointer-events: none;
+	}
+	[data-store-status] {
+		grid-area: 1 / 1;
+		padding: 12px 18px;
+		border: 1px solid var(--forma-rule);
+		border-radius: 24px;
+		background: var(--color-background);
+		box-shadow: 0 4px 24px #0000000d;
+		font-size: 12px;
+	}
+</style>

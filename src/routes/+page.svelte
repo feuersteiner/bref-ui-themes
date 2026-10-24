@@ -10,7 +10,7 @@
 	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
-		content="Try working apps built with bref/ui and reuse their Svelte themes and components to build a custom design system."
+		content="Try working apps built with bref/ui and palette data. Full component themes are developed separately."
 	/>
 </svelte:head>
 
@@ -19,10 +19,7 @@
 		<div data-intro>
 			<p data-eyebrow>Made with Bref · Built with Svelte</p>
 			<h1>App demos and<br />design system foundations.</h1>
-			<p>
-				Try working apps built with bref/ui and reuse their themes and components to build a custom
-				design system.
-			</p>
+			<p>Try working apps built with bref/ui and route-specific palettes.</p>
 		</div>
 		<section id="demos" aria-labelledby="demos-heading">
 			<div data-section-heading>
@@ -34,26 +31,26 @@
 		<section id="themes" aria-labelledby="themes-heading">
 			<div data-section-heading>
 				<h2 id="themes-heading">Themes</h2>
-				<p>Reuse themes and components as a foundation for a custom design system.</p>
+				<p>Preview palettes on existing bref/ui components.</p>
 			</div>
 			<div data-available>
-				<p>Available now</p>
-				<nav aria-label="Implemented theme demonstrations">
+				<p>Palette examples</p>
+				<nav aria-label="Palette demonstrations">
 					<Button
 						href={resolve('/(themes)/themes/[theme]', { theme: 'relay' })}
-						label="Relay theme"
+						label="Relay palette"
 						trailingIcon={{ name: 'arrow_outward' }}
 						size="small"
 					/>
 					<Button
 						href={resolve('/(themes)/themes/[theme]', { theme: 'forma' })}
-						label="Forma theme"
+						label="Forma palette"
 						trailingIcon={{ name: 'arrow_outward' }}
 						size="small"
 					/>
 					<Button
 						href={resolve('/(themes)/themes/[theme]', { theme: 'elsewhere' })}
-						label="Elsewhere theme"
+						label="Elsewhere palette"
 						trailingIcon={{ name: 'arrow_outward' }}
 						size="small"
 					/>
@@ -84,7 +81,7 @@
 		<nav aria-label="Bref themes resources">
 			<h2>Themes</h2>
 			<a href="https://github.com/feuersteiner/bref-ui-themes">GitHub</a>
-			<a href="https://github.com/feuersteiner/bref-ui-themes#library-imports">Documentation</a>
+			<a href="https://github.com/feuersteiner/bref-ui-themes#site-palettes">Documentation</a>
 		</nav>
 		<nav aria-label="Community">
 			<h2>Community</h2>
@@ -95,15 +92,10 @@
 </div>
 
 <style>
-	:global(:root) {
-		--font-text: 'Inter Variable', 'Inter', sans-serif;
-		--font-display: 'Syne Variable', 'Syne', sans-serif;
-	}
-	:global(body) {
-		font: 400 16px / 24px var(--font-text);
-		font-synthesis: none;
-	}
 	[data-showcase] {
+		font:
+			400 16px/24px 'Inter Variable',
+			sans-serif;
 		--showcase-rule: color-mix(in srgb, var(--color-foreground) 10%, transparent);
 		width: min(1128px, calc(100% - 48px));
 		margin: auto;
@@ -134,7 +126,7 @@
 	h1,
 	h2,
 	h3 {
-		font-family: var(--font-display);
+		font-family: 'Syne Variable', sans-serif;
 	}
 	h1 {
 		font-size: clamp(36px, 5vw, 64px);
@@ -228,7 +220,9 @@
 		gap: 12px;
 	}
 	footer h2 {
-		font: 600 14px / 24px var(--font-text);
+		font:
+			600 14px / 24px 'Inter Variable',
+			sans-serif;
 		color: var(--color-foreground);
 		letter-spacing: normal;
 	}

@@ -1,3 +1,2 @@
-export * as Relay from './relay/index.js';
-export * as Forma from './forma/index.js';
-export * as Elsewhere from './elsewhere/index.js';
+// Site palettes are private route data; full CLI themes have separate package entries.
+export {};

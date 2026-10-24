@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { Button, Icon } from '#lib/forma/index.js';
-	import { surface } from '#lib/components/theme/surface.js';
+	import { Button, Icon, surface } from 'bref-ui';
 
 	let { count, onCart }: { count: number; onCart: () => void } = $props();
 	let header: HTMLElement;
@@ -68,10 +67,6 @@
 		justify-content: space-between;
 		gap: 24px;
 	}
-	header :global(button) {
-		flex-shrink: 0;
-		white-space: nowrap;
-	}
 	a {
 		color: inherit;
 		text-decoration: none;
@@ -80,7 +75,9 @@
 		display: inline-flex;
 		align-items: center;
 		gap: 8px;
-		font: 550 30px/1 var(--font-display);
+		font:
+			550 30px/1 'Bricolage Grotesque Variable',
+			sans-serif;
 		letter-spacing: -0.055em;
 		white-space: nowrap;
 	}
@@ -124,10 +121,6 @@
 			grid-column: 1;
 			grid-row: 2;
 		}
-		header :global(button) {
-			grid-column: 2;
-			grid-row: 1 / 3;
-		}
 	}
 	@media (max-width: 380px) {
 		header > div {
@@ -140,5 +133,12 @@
 		nav a {
 			font-size: 12px;
 		}
+	}
+	a {
+		color: inherit;
+	}
+	a:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 4px;
 	}
 </style>

@@ -2,7 +2,7 @@
 	import { asset } from '$app/paths';
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { Button } from '#lib/forma/index.js';
+	import { Button } from 'bref-ui';
 	import GridCartAction from './grid-cart-action.svelte';
 	import { money } from './products.js';
 	import type { Product } from './products.js';
@@ -54,5 +54,84 @@
 	[data-product-actions] {
 		gap: 12px;
 		flex-wrap: wrap;
+	}
+	h3 {
+		font-weight: 500;
+		line-height: 1.15;
+	}
+	img {
+		display: block;
+		max-width: 100%;
+	}
+	img {
+		border-radius: var(--forma-image-radius);
+	}
+	[data-product-image] {
+		border-radius: var(--forma-image-radius);
+	}
+	[data-product-image] {
+		display: block;
+		width: 100%;
+		padding: 0;
+		border: 0;
+		background: #f3f4f1;
+		overflow: hidden;
+	}
+	[data-product-image] img {
+		width: 100%;
+		height: 340px;
+		object-fit: cover;
+		transition: transform 350ms ease;
+	}
+	[data-product]:hover [data-product-image] img {
+		transform: scale(1.035);
+	}
+	[data-product]:focus-within [data-product-image] img {
+		transform: scale(1.035);
+	}
+	[data-product-actions] {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+	}
+	[data-product='lounge'] [data-product-image] img {
+		object-position: center 65%;
+	}
+	[data-product='table'] [data-product-image] img {
+		object-position: center bottom;
+	}
+	[data-product='desk-lamp'] [data-product-image] img {
+		object-position: right center;
+	}
+	[data-product-meta] {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 16px;
+		margin: 20px 0 12px;
+	}
+	h3 {
+		font:
+			450 20px/1.2 'Bricolage Grotesque Variable',
+			sans-serif;
+		letter-spacing: -0.02em;
+	}
+	[data-product-meta] > span {
+		font-size: 13px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		[data-product-image] img {
+			transition: none;
+		}
+	}
+	@media (max-width: 900px) {
+		[data-product-image] img {
+			height: 260px;
+		}
+	}
+	@media (max-width: 600px) {
+		[data-product-image] img {
+			height: 360px;
+		}
 	}
 </style>

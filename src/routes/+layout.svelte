@@ -4,11 +4,23 @@
 	import { Theme, ThemeModeToggle } from 'bref-ui';
 	import type { ThemeMode } from 'bref-ui/types';
 	import type { Snippet } from 'svelte';
+	import { palettes, type SitePalette } from './palettes.js';
 	import DemoNav from './(sites)/demo-nav.svelte';
 	import SiteHeader from './catalog/site-header.svelte';
 	import './catalog/navigation.css';
 	let { children }: { children: Snippet } = $props();
 	let mode = $state<ThemeMode>('light');
+	const activePalette = $derived(
+		page.route.id?.includes('(relay)')
+			? 'relay'
+			: page.route.id?.includes('(forma)')
+				? 'forma'
+				: page.route.id?.includes('(elsewhere)')
+					? 'elsewhere'
+					: page.params.theme && page.params.theme in palettes
+						? (page.params.theme as SitePalette)
+						: undefined
+	);
 	const showcase = $derived(page.route.id === '/');
 	const contentId = $derived(
 		showcase
@@ -33,8 +45,8 @@
 	});
 </script>
 
-<Theme>
-	{#if showcase}<ThemeModeToggle {mode} />{/if}
+<Theme palette={activePalette ? palettes[activePalette] : {}}>
+	<ThemeModeToggle mode={activePalette ? 'light' : mode} />
 	<div data-demo-root>
 		<SiteHeader bind:mode {contentId}>
 			{#if !showcase}<DemoNav />{/if}
@@ -42,3 +54,12 @@
 		<div data-navigation-content>{@render children()}</div>
 	</div>
 </Theme>
+
+<style>
+	[data-demo-root] {
+		font:
+			400 14px/1.6 'Inter Variable',
+			sans-serif;
+		font-synthesis: none;
+	}
+</style>

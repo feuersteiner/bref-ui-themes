@@ -2,8 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { Icon } from 'bref-ui';
-	import Tabs from '#lib/components/tabs/tabs.svelte';
+	import { Icon, Tabs } from 'bref-ui';
 	const demos = [
 		{ label: 'Todo', icon: 'checklist', id: '/(sites)/(relay)/todo' },
 		{ label: 'House Shop', icon: 'storefront', id: '/(sites)/(forma)/house-shop' },

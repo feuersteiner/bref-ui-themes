@@ -67,4 +67,17 @@
 		font-size: 14px;
 		line-height: 1.6;
 	}
+	h3 {
+		font-weight: 500;
+		line-height: 1.15;
+	}
+	p {
+		line-height: 1.7;
+	}
+	h3 {
+		font:
+			450 20px/1.2 'Bricolage Grotesque Variable',
+			sans-serif;
+		letter-spacing: -0.02em;
+	}
 </style>

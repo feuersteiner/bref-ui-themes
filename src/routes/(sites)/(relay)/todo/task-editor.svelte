@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button, Dialog, Select, TextInput } from '#lib/relay/index.js';
+	import { Button, Dialog, Select, TextInput } from 'bref-ui';
 	import type { Task, Project } from './tasks.js';
 	let {
 		open = $bindable(false),
@@ -72,3 +72,25 @@
 		</div>
 	</form>
 </Dialog>
+
+<style>
+	label {
+		display: grid;
+		gap: 8px;
+	}
+	[data-actions] {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	[data-form] {
+		display: grid;
+		gap: 20px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		* {
+			transition-duration: 0ms;
+		}
+	}
+</style>

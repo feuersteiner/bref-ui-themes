@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Icon } from '#lib/forma/index.js';
+	import { Button } from 'bref-ui';
 	let {
 		name,
 		finish,
@@ -31,71 +31,29 @@
 	};
 </script>
 
-<button
-	type="button"
-	data-grid-cart-action
-	data-success={success}
-	disabled={atLimit}
-	onclick={add}
-	aria-label={atLimit
-		? `${name}, ${finish}: limit of 99 in cart reached`
-		: `Add ${name}, ${finish} to cart${quantity ? `; ${quantity} in cart` : ''}`}
->
-	<Icon name="shopping_cart" size="small" />
-	<span>{atLimit ? 'In cart' : 'Add to cart'}</span>
-	{#if quantity}<span data-quantity aria-hidden="true">({quantity})</span>{/if}
-</button>
+<div data-grid-cart-action>
+	<Button
+		label={atLimit ? 'In cart' : success ? 'Added' : 'Add to cart'}
+		icon={{ name: 'shopping_cart' }}
+		size="small"
+		variant="neutral"
+		disabled={atLimit}
+		onClick={add}
+		aria-label={atLimit
+			? `${name}, ${finish}: limit of 99 in cart reached`
+			: `Add ${name}, ${finish} to cart${quantity ? `; ${quantity} in cart` : ''}`}
+	/>
+	{#if quantity}<span aria-hidden="true">({quantity})</span>{/if}
+</div>
 
 <style>
-	button {
-		display: inline-flex;
+	[data-grid-cart-action] {
+		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: 7px;
-		min-width: 44px;
-		min-height: 44px;
-		padding: 8px;
-		border: 0;
-		border-radius: 4px;
-		background: transparent;
-		color: var(--color-foreground);
-		font: 450 13px/1.4 var(--font-text);
-		white-space: nowrap;
-		cursor: pointer;
-		transition:
-			background 140ms ease,
-			color 140ms ease,
-			transform 100ms ease;
+		gap: 4px;
 	}
-	button[data-success='true'] {
-		color: var(--color-success);
-	}
-	[data-quantity] {
+	span {
+		font-size: 12px;
 		font-variant-numeric: tabular-nums;
-	}
-	button:focus-visible {
-		outline: 2px solid var(--color-primary);
-		outline-offset: 3px;
-	}
-	button:active:not(:disabled) {
-		background: color-mix(in srgb, var(--color-foreground) 9%, transparent);
-		transform: translateY(1px);
-	}
-	button:disabled {
-		color: var(--color-muted);
-		cursor: default;
-	}
-	@media (hover: hover) {
-		button:hover:not(:disabled) {
-			background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
-		}
-	}
-	@media (prefers-reduced-motion: reduce) {
-		button {
-			transition: none;
-		}
-		button:active:not(:disabled) {
-			transform: none;
-		}
 	}
 </style>

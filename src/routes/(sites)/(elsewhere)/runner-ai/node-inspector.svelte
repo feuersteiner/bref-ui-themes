@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { surface } from '#lib/components/theme/surface.js';
-	import { Icon, Spinner } from '#lib/elsewhere/index.js';
+	import { surface, Icon, Spinner, Progress } from 'bref-ui';
 	import { copyLabels, samples } from './marketing-assessment.js';
 	import { nodeStatus, type Run } from './run-state.svelte.js';
 	let { run, selectedIndex }: { run: Run; selectedIndex: number } = $props();
@@ -54,7 +53,9 @@
 		>
 		<span data-percentage>{node.progress}%</span>
 	</div>
-	<progress value={node.progress} max="100" aria-label={`${node.name} review progress`}></progress>
+	<div data-review-progress>
+		<Progress value={node.progress / 100} label={`${node.name} review progress`} size="small" />
+	</div>
 	<p data-step>Step {selectedIndex + 1}</p>
 	<h3 tabindex="-1">{node.name}</h3>
 	<section data-result>
@@ -101,7 +102,7 @@
 		overflow: auto;
 		scroll-padding: 12px;
 		padding: 22px 20px;
-		--surface-base: var(--run-surface);
+
 		border: 0;
 		border-radius: var(--run-region-radius, 20px);
 		scrollbar-width: thin;
@@ -146,28 +147,6 @@
 		margin-left: auto;
 		color: var(--color-muted);
 		font-variant-numeric: tabular-nums;
-	}
-	progress {
-		appearance: none;
-		display: block;
-		width: 100%;
-		height: 3px;
-		margin: 10px 0 28px;
-		border: 0;
-		border-radius: 3px;
-		overflow: hidden;
-		background: var(--run-rule);
-		color: var(--color-primary);
-	}
-	progress::-webkit-progress-bar {
-		background: var(--run-rule);
-	}
-	progress::-webkit-progress-value {
-		background: var(--color-primary);
-		transition: width 280ms linear;
-	}
-	progress::-moz-progress-bar {
-		background: var(--color-primary);
 	}
 	[data-step] {
 		margin: 0 0 5px;
@@ -215,9 +194,11 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		[data-status-icon] > span,
-		[data-status] > span,
-		progress::-webkit-progress-value {
+		[data-status] > span {
 			transition: none;
 		}
+	}
+	[data-review-progress] {
+		margin: 10px 0 28px;
 	}
 </style>

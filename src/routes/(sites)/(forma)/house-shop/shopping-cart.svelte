@@ -2,7 +2,7 @@
 	import { tick } from 'svelte';
 	import { fly, slide } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { Button, Dialog } from '#lib/forma/index.js';
+	import { Button, Dialog } from 'bref-ui';
 	import CartItemRow from './cart-item.svelte';
 	import CartEmpty from './cart-empty.svelte';
 	import { money } from './products.js';
@@ -210,5 +210,118 @@
 	}
 	[data-cart] > [data-cart-actions][data-empty] {
 		justify-content: center;
+	}
+	p {
+		line-height: 1.7;
+	}
+	[data-muted] {
+		color: var(--color-muted);
+	}
+	[data-visually-hidden] {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+	[data-cart] > p[data-muted] {
+		color: var(--color-foreground);
+	}
+	[data-empty] {
+		grid-column: 1 / -1;
+		padding-block: 48px;
+		color: var(--color-muted);
+	}
+	[data-cart] {
+		display: grid;
+		gap: 24px;
+	}
+	[data-cart-table] {
+		overflow-x: auto;
+	}
+	[data-cart-table]:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: 4px;
+	}
+	[data-cart-table] table {
+		width: 100%;
+		min-width: 640px;
+		border-collapse: separate;
+		border-spacing: 0 12px;
+	}
+	[data-cart-table] th {
+		padding: 16px 12px;
+		text-align: left;
+		vertical-align: middle;
+	}
+	[data-cart-table] td {
+		padding: 16px 12px;
+		text-align: left;
+		vertical-align: middle;
+	}
+	[data-cart-table] thead th {
+		font-size: 13px;
+		font-weight: 500;
+	}
+	[data-cart-table] thead th:first-child {
+		width: 100%;
+	}
+	[data-cart-table] th:nth-child(2) {
+		text-align: right;
+		white-space: nowrap;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+	[data-cart-table] th:nth-child(4) {
+		text-align: right;
+		white-space: nowrap;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+	[data-cart-item-subtotal] {
+		text-align: right;
+		white-space: nowrap;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+	[data-cart-table] th:nth-child(3) {
+		text-align: center;
+	}
+	[data-cart-table] tfoot th {
+		padding-block: 20px;
+		border-bottom: 0;
+	}
+	[data-cart-table] tfoot td {
+		padding-block: 20px;
+		border-bottom: 0;
+	}
+	[data-cart-table] tfoot th {
+		font-size: 14px;
+		font-weight: 500;
+	}
+	[data-cart-actions] {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+	}
+	[data-order-line] {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 16px;
+	}
+	[data-cart-actions] {
+		flex-wrap: wrap;
+	}
+	[data-cart-total] {
+		display: flex;
+		justify-content: space-between;
+		padding-top: 20px;
+		border-top: 1px solid var(--forma-rule);
 	}
 </style>

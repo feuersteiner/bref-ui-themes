@@ -34,39 +34,6 @@ html {
 	}
 }
 
-@media (forced-colors: none) {
-	html,
-	body * {
-		scrollbar-color: color-mix(in srgb, var(--color-foreground, CanvasText) 42%, transparent)
-			color-mix(in srgb, var(--color-foreground, CanvasText) 4%, transparent);
-	}
-
-	@supports selector(::-webkit-scrollbar) {
-		html,
-		body * {
-			scrollbar-color: auto;
-		}
-
-		html::-webkit-scrollbar-track,
-		body *::-webkit-scrollbar-track {
-			background: color-mix(in srgb, var(--color-foreground, CanvasText) 4%, transparent);
-		}
-
-		html::-webkit-scrollbar-thumb,
-		body *::-webkit-scrollbar-thumb {
-			border: 2px solid transparent;
-			border-radius: 999px;
-			background: color-mix(in srgb, var(--color-foreground, CanvasText) 42%, transparent);
-			background-clip: padding-box;
-		}
-
-		html::-webkit-scrollbar-thumb:hover,
-		body *::-webkit-scrollbar-thumb:hover {
-			background-color: color-mix(in srgb, var(--color-foreground, CanvasText) 60%, transparent);
-		}
-	}
-}
-
 @supports not (scrollbar-gutter: stable) {
 	html:not(:has(dialog:modal)) {
 		overflow-y: scroll;

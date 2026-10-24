@@ -54,23 +54,20 @@
 
 <style>
 	header {
-		/* Keep the Bref shell independent of each demo's document palette. */
-		--color-primary: light-dark(#1d4ed8, #92b4df);
-		--color-background: light-dark(#f1eee7, #18191c);
-		--color-foreground: light-dark(#151515, #eceef2);
-		--color-muted: light-dark(#696661, #acb0b8);
-		--font-text: 'Inter Variable', 'Inter', sans-serif;
-		--font-display: 'Syne Variable', 'Syne', sans-serif;
+		/* Plain shell content keeps its identity; library controls use the active palette. */
+
 		position: sticky;
 		top: 0;
 		z-index: 10;
-		background: var(--color-background);
+		background: light-dark(#f1eee7, #18191c);
 		box-shadow:
 			0 1px 3px light-dark(rgb(0 0 0 / 6%), rgb(0 0 0 / 20%)),
 			0 4px 14px light-dark(rgb(0 0 0 / 4%), rgb(0 0 0 / 14%));
-		color: var(--color-foreground);
+		color: light-dark(#151515, #eceef2);
 		color-scheme: light;
-		font: 400 16px / 24px var(--font-text);
+		font:
+			400 16px / 24px 'Inter Variable',
+			sans-serif;
 	}
 	header[data-mode='dark'] {
 		color-scheme: dark;
@@ -79,7 +76,7 @@
 		color-scheme: light dark;
 	}
 	header > div {
-		background: var(--color-background);
+		background: light-dark(#f1eee7, #18191c);
 		width: min(1128px, calc(100% - 48px));
 		min-height: 72px;
 		margin-inline: auto;
@@ -87,7 +84,7 @@
 		grid-template-columns: 240px 1fr auto auto;
 		gap: 24px;
 		align-items: center;
-		border-bottom: 1px solid color-mix(in srgb, var(--color-foreground) 10%, transparent);
+		border-bottom: 1px solid color-mix(in srgb, light-dark(#151515, #eceef2) 10%, transparent);
 	}
 	[data-logo],
 	[data-header-actions],
@@ -110,12 +107,12 @@
 		display: flex;
 		align-items: baseline;
 		gap: 4px;
-		color: var(--color-muted);
+		color: light-dark(#696661, #acb0b8);
 		font-size: 11px;
 		line-height: 16px;
 	}
 	[data-attribution] strong {
-		color: var(--color-foreground);
+		color: light-dark(#151515, #eceef2);
 		font-size: 14px;
 	}
 	[data-attribution]:hover {
@@ -126,7 +123,7 @@
 		text-decoration: none;
 	}
 	a:focus-visible {
-		outline: 2px solid var(--color-primary);
+		outline: 2px solid light-dark(#1d4ed8, #92b4df);
 		outline-offset: 4px;
 	}
 	[data-skip] {
@@ -135,21 +132,23 @@
 		left: 8px;
 		z-index: 1;
 		padding: 12px;
-		background: var(--color-background);
+		background: light-dark(#f1eee7, #18191c);
 		transform: translateY(-160%);
 	}
 	[data-skip]:focus {
 		transform: none;
 	}
 	strong {
-		font: 700 24px / 1.2 var(--font-display);
+		font:
+			700 24px / 1.2 'Syne Variable',
+			sans-serif;
 		white-space: nowrap;
 	}
 	strong [data-slash] {
-		color: var(--color-primary);
+		color: light-dark(#1d4ed8, #92b4df);
 	}
 	p {
-		color: var(--color-muted);
+		color: light-dark(#696661, #acb0b8);
 	}
 	nav {
 		gap: 4px;
@@ -160,7 +159,7 @@
 		border-radius: 8px;
 	}
 	nav a:hover {
-		background: color-mix(in srgb, var(--color-foreground) 5%, transparent);
+		background: color-mix(in srgb, light-dark(#151515, #eceef2) 5%, transparent);
 	}
 	@media (max-width: 1000px) {
 		header > div {

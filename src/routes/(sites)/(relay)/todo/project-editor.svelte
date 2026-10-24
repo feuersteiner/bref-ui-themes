@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { asset } from '$app/paths';
-	import { Button, Dialog, Icon, TextInput } from '#lib/relay/index.js';
+	import { Button, Dialog, Icon, TextInput } from 'bref-ui';
 	import { projectPhotos, type Project } from './tasks.js';
 	let {
 		open = $bindable(false),
@@ -158,5 +158,31 @@
 		align-items: center;
 		gap: 6px;
 		padding: 8px;
+	}
+	img {
+		display: block;
+		max-width: 100%;
+	}
+	label {
+		display: grid;
+		gap: 8px;
+	}
+	p {
+		line-height: 1.7;
+	}
+	[data-actions] {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex-wrap: wrap;
+	}
+	[data-form] {
+		display: grid;
+		gap: 20px;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		* {
+			transition-duration: 0ms;
+		}
 	}
 </style>

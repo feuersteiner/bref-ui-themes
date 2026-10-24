@@ -3,8 +3,7 @@
 	import { MediaQuery } from 'svelte/reactivity';
 	import { fly } from 'svelte/transition';
 	import { prefersReducedMotion } from 'svelte/motion';
-	import { surface } from '#lib/components/theme/surface.js';
-	import { Button, Spinner, Tabs } from '#lib/elsewhere/index.js';
+	import { surface, Button, Spinner, Tabs } from 'bref-ui';
 	import type { TabItemDataProps } from 'bref-ui/types';
 	import { createRuns } from './run-state.svelte.js';
 	import RunOutput from './run-output.svelte';
@@ -96,7 +95,7 @@
 	async function showWorkflow() {
 		run.inspectorOpen = false;
 		await tick();
-		workspaceElement.querySelector<HTMLElement>('[data-node][aria-pressed="true"]')?.focus();
+		workspaceElement.querySelector<HTMLElement>('[data-node] [aria-pressed="true"]')?.focus();
 	}
 
 	async function openInput() {
@@ -154,38 +153,33 @@
 				</svg>
 				<h1>Runner<span>AI</span></h1>
 			</a>
-			<button
-				type="button"
+			<Button
+				label="New assessment"
+				icon={{ name: 'add' }}
 				data-new-run-trigger
-				onclick={newAssessment}
+				onClick={newAssessment}
 				disabled={!workspace.canCreate}
-			>
-				<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
-					<path d="M10 4v12M4 10h12" />
-				</svg>
-				New assessment
-			</button>
+				size="small"
+			/>
 			<h2 data-history-heading>Assessments</h2>
 			<nav aria-label="Run history">
 				<ul>
 					{#each navigationRuns as item (item.id)}
 						{@const isActive = item.status === 'running' || item.status === 'queued'}
 						<li>
-							<button
-								type="button"
+							<Button
+								label={item.title}
+								size="small"
+								variant={run.id === item.id ? 'soft' : 'neutral'}
 								aria-current={run.id === item.id ? 'true' : undefined}
 								aria-label={`${item.title}, ${labels[item.status]}`}
-								onclick={() => selectRun(item.id)}
-							>
-								<span data-run-title>{item.title}</span>
-								{#if isActive}
-									<span data-run-status aria-hidden="true"
-										>{#if item.status === 'running'}<Spinner size="small" />{:else}{labels[
-												item.status
-											]}{/if}</span
-									>
-								{/if}
-							</button>
+								onClick={() => selectRun(item.id)}
+							/>
+							{#if isActive}<span data-run-status aria-hidden="true"
+									>{#if item.status === 'running'}<Spinner size="small" />{:else}{labels[
+											item.status
+										]}{/if}</span
+								>{/if}
 						</li>
 					{/each}
 				</ul>
@@ -305,10 +299,6 @@
 </main>
 
 <style>
-	/* This viewport workspace owns its height; remove only its inherited demo minimum. */
-	:global([data-elsewhere]):has(> main) {
-		min-height: 0;
-	}
 	main {
 		--run-region-radius: 20px;
 		--run-inner-radius: 16px;
@@ -322,28 +312,6 @@
 		margin: auto;
 		background: var(--color-background);
 	}
-	@media (forced-colors: none) {
-		main :global(*) {
-			scrollbar-color: color-mix(in srgb, var(--color-muted) 32%, transparent) transparent;
-			scrollbar-width: thin;
-		}
-		main :global(*::-webkit-scrollbar) {
-			width: 6px;
-			height: 6px;
-		}
-		main :global(*::-webkit-scrollbar-track) {
-			background: transparent;
-		}
-		main :global(*::-webkit-scrollbar-thumb) {
-			border: 1px solid transparent;
-			border-radius: 999px;
-			background: color-mix(in srgb, var(--color-muted) 32%, transparent);
-			background-clip: padding-box;
-		}
-		main :global(*::-webkit-scrollbar-thumb:hover) {
-			background-color: color-mix(in srgb, var(--color-muted) 55%, transparent);
-		}
-	}
 	[data-sidebar] {
 		overflow: auto;
 		overscroll-behavior: contain;
@@ -354,7 +322,7 @@
 		flex-direction: column;
 		min-height: 0;
 		padding: 22px 12px 18px;
-		--surface-base: var(--run-surface);
+
 		border: 0;
 		border-radius: var(--run-region-radius);
 	}
@@ -387,31 +355,6 @@
 		font-weight: 400;
 		color: var(--color-primary);
 	}
-	[data-new-run-trigger] {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		min-height: 40px;
-		padding: 8px 10px;
-		border: 0;
-		border-radius: 10px;
-		background: transparent;
-		color: var(--color-foreground);
-		font: inherit;
-		text-align: left;
-		cursor: pointer;
-	}
-	[data-new-run-trigger] svg {
-		width: 18px;
-		height: 18px;
-		stroke: currentColor;
-		stroke-width: 1.4;
-		stroke-linecap: round;
-	}
-	[data-new-run-trigger]:disabled {
-		opacity: 0.45;
-		cursor: not-allowed;
-	}
 	[data-history-heading] {
 		margin: 24px 10px 8px;
 		color: var(--color-muted);
@@ -433,38 +376,6 @@
 		padding: 0;
 		margin: 0;
 	}
-	[data-sidebar] nav button {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		width: 100%;
-		min-height: 40px;
-		border: 0;
-		padding: 9px 10px;
-		border-radius: 10px;
-		text-align: left;
-		background: transparent;
-		color: var(--color-foreground);
-		font: inherit;
-		cursor: pointer;
-	}
-	[data-new-run-trigger]:enabled:hover,
-	[data-sidebar] nav button:hover {
-		background: color-mix(in srgb, var(--color-foreground) 4%, transparent);
-	}
-	[data-sidebar] nav button[aria-current='true'] {
-		background: color-mix(in srgb, var(--color-foreground) 7%, transparent);
-	}
-	[data-sidebar] button:focus-visible {
-		outline: 2px solid var(--color-muted);
-		outline-offset: -2px;
-	}
-	[data-run-title] {
-		min-width: 0;
-		overflow-wrap: anywhere;
-		font-size: 13px;
-		line-height: 1.5;
-	}
 	[data-run-status] {
 		margin-left: auto;
 		color: var(--color-muted);
@@ -478,7 +389,6 @@
 		padding-top: 8px;
 	}
 	[data-main] {
-		--surface-base: color-mix(in srgb, var(--run-surface) 50%, var(--color-background));
 		padding: 12px;
 		gap: 8px;
 		border: 0;
@@ -492,7 +402,7 @@
 		flex-shrink: 0;
 		min-height: 82px;
 		padding: 16px 20px;
-		--surface-base: var(--run-surface);
+
 		border: 0;
 		border-radius: var(--run-inner-radius);
 		display: flex;
@@ -541,17 +451,6 @@
 		flex-shrink: 0;
 		min-width: 0;
 		padding: 2px 4px;
-	}
-	/* Remove only the Elsewhere demo framing; native Tabs still owns its controls and indicator. */
-	[data-lifecycle-tabs] :global([role='tablist']) {
-		border: 0;
-		padding: 0;
-		border-radius: 0;
-		background: transparent;
-	}
-	[data-lifecycle-tabs] :global([role='tab']) {
-		border-radius: 999px;
-		background: transparent;
 	}
 	[data-lifecycle-panel] {
 		border-radius: var(--run-inner-radius);
@@ -677,12 +576,6 @@
 		[data-history-trigger] {
 			flex-shrink: 0;
 		}
-		[data-run-header] > :global(button) {
-			margin-left: auto;
-		}
-		[data-run-header] :global(button) {
-			flex-shrink: 0;
-		}
 		[data-history-trigger],
 		[data-inspector-back] {
 			display: block;
@@ -690,7 +583,6 @@
 		[data-lifecycle-tabs] {
 			padding: 2px 4px;
 		}
-
 		[data-assessment-view] {
 			padding: 24px 18px;
 		}
@@ -720,5 +612,18 @@
 		[data-simulation] {
 			margin-top: 28px;
 		}
+	}
+	[data-sidebar] li {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+	[data-visually-hidden] {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
 	}
 </style>

@@ -28,18 +28,6 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
-		},
-		"./relay": {
-			"types": "./dist/relay/index.d.ts",
-			"svelte": "./dist/relay/index.js"
-		},
-		"./forma": {
-			"types": "./dist/forma/index.d.ts",
-			"svelte": "./dist/forma/index.js"
-		},
-		"./elsewhere": {
-			"types": "./dist/elsewhere/index.d.ts",
-			"svelte": "./dist/elsewhere/index.js"
 		}
 	},
 	"peerDependencies": {

@@ -2,8 +2,7 @@
 	import { asset } from '$app/paths';
 	import { prefersReducedMotion } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
-	import { Button } from '#lib/forma/index.js';
-	import { surface } from '#lib/components/theme/surface.js';
+	import { Button, surface } from 'bref-ui';
 	import { money } from './products.js';
 	import type { CartItem } from './products.js';
 	let {
@@ -89,5 +88,85 @@
 	[data-cart-cell] {
 		max-height: calc(var(--cart-cell-height, 100vh) * var(--cart-row-progress, 1));
 		overflow: var(--cart-cell-overflow, visible);
+	}
+	h3 {
+		font-weight: 500;
+		line-height: 1.15;
+	}
+	img {
+		display: block;
+		max-width: 100%;
+	}
+	p {
+		line-height: 1.7;
+	}
+	[data-muted] {
+		color: var(--color-muted);
+	}
+	img {
+		border-radius: var(--forma-image-radius);
+	}
+	h3 {
+		font:
+			450 20px/1.2 'Bricolage Grotesque Variable',
+			sans-serif;
+		letter-spacing: -0.02em;
+	}
+	[data-cart-item] {
+		background: transparent;
+		border: 0;
+	}
+	[data-cart-item] td {
+		background: color-mix(in srgb, var(--color-foreground) 5%, var(--color-background));
+	}
+	[data-cart-item] td:first-child {
+		border-radius: 8px 0 0 8px;
+	}
+	[data-cart-item] td:last-child {
+		border-radius: 0 8px 8px 0;
+	}
+	[data-cart-item-price] {
+		text-align: right;
+		white-space: nowrap;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+	[data-cart-item-subtotal] {
+		text-align: right;
+		white-space: nowrap;
+		font-size: 14px;
+		font-variant-numeric: tabular-nums;
+	}
+	[data-cart-product] {
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		min-width: 224px;
+	}
+	[data-cart-product] > img {
+		width: 64px;
+		height: 80px;
+		flex-shrink: 0;
+		object-fit: cover;
+	}
+	[data-cart-item] h3 {
+		font-size: 16px;
+	}
+	[data-cart-item] p {
+		font-size: 12px;
+		margin-block: 4px 0;
+	}
+	[data-quantity-stepper] {
+		display: inline-flex;
+		align-items: center;
+		padding: 2px;
+		border: 1px solid var(--forma-rule);
+		border-radius: 999px;
+	}
+	[data-quantity-stepper] > span {
+		min-width: 32px;
+		text-align: center;
+		font-size: 13px;
+		font-variant-numeric: tabular-nums;
 	}
 </style>
