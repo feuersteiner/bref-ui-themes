@@ -123,8 +123,6 @@ components and the theme demonstrations above for themed examples.
 - [Demo sites](<src/routes/(sites)>): complete sites and their shared demo shell.
 - [Theme demonstrations](<src/routes/(themes)>): examples of each public theme entry.
 
-See [verification.md](verification.md) for validation notes and remaining limitations.
-
 ## Community and contributing
 
 For questions and examples, join [Discord](https://discord.gg/JpgQRTUsVS) and use the
