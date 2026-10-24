@@ -11,11 +11,11 @@
 	let { children }: { children: Snippet } = $props();
 	let mode = $state<ThemeMode>('light');
 	const activePalette = $derived(
-		page.route.id?.includes('(relay)')
+		page.route.id?.includes('(todo)')
 			? 'relay'
-			: page.route.id?.includes('(forma)')
+			: page.route.id?.includes('(house-shop)')
 				? 'forma'
-				: page.route.id?.includes('(elsewhere)')
+				: page.route.id?.includes('(runner-ai)')
 					? 'elsewhere'
 					: page.params.theme && page.params.theme in palettes
 						? (page.params.theme as SitePalette)

@@ -5,21 +5,21 @@
 		{
 			name: 'Todo',
 			icon: 'checklist',
-			href: resolve('/(sites)/(relay)/todo'),
+			href: resolve('/(sites)/(todo)/todo'),
 			preview: 'relay',
 			description: 'Organize projects, edit tasks and track completed work.'
 		},
 		{
 			name: 'House Shop',
 			icon: 'storefront',
-			href: resolve('/(sites)/(forma)/house-shop'),
+			href: resolve('/(sites)/(house-shop)/house-shop'),
 			preview: 'forma',
 			description: 'Browse furniture and manage a shopping cart.'
 		},
 		{
 			name: 'RunnerAI',
 			icon: 'smart_toy',
-			href: resolve('/(sites)/(elsewhere)/runner-ai'),
+			href: resolve('/(sites)/(runner-ai)/runner-ai'),
 			preview: 'elsewhere',
 			description: 'Assess marketing copy, follow each check and apply suggested edits.'
 		}

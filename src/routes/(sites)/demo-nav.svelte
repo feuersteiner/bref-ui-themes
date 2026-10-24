@@ -4,9 +4,9 @@
 	import { resolve } from '$app/paths';
 	import { Icon, Tabs } from 'bref-ui';
 	const demos = [
-		{ label: 'Todo', icon: 'checklist', id: '/(sites)/(relay)/todo' },
-		{ label: 'House Shop', icon: 'storefront', id: '/(sites)/(forma)/house-shop' },
-		{ label: 'RunnerAI', icon: 'smart_toy', id: '/(sites)/(elsewhere)/runner-ai' }
+		{ label: 'Todo', icon: 'checklist', id: '/(sites)/(todo)/todo' },
+		{ label: 'House Shop', icon: 'storefront', id: '/(sites)/(house-shop)/house-shop' },
+		{ label: 'RunnerAI', icon: 'smart_toy', id: '/(sites)/(runner-ai)/runner-ai' }
 	] as const;
 </script>
 
