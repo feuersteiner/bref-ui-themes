@@ -1,6 +1,6 @@
 # bref-ui-themes
 
-Reusable Svelte 5 themes for [bref-ui](https://github.com/feuersteiner/bref-ui), with interactive demos and native CSS. Version 0.1.0 is [published on npm](https://www.npmjs.com/package/bref-ui-themes) and built on SvelteKit 3 and Bref 2.2.0.
+Reusable Svelte 5 themes for [bref-ui](https://github.com/feuersteiner/bref-ui), with interactive demos and native CSS. Version 0.1.0 is [published on npm](https://www.npmjs.com/package/bref-ui-themes). Current source uses SvelteKit 3 and Bref 2.2.3.
 
 [Explore the showcase](https://feuersteiner.github.io/bref-ui-themes/) · [Bref documentation](https://feuersteiner.github.io/bref-ui/) · [Join Discord](https://discord.gg/JpgQRTUsVS)
 
@@ -52,7 +52,7 @@ Install the published package and its Bref peer dependency:
 bun add bref-ui-themes bref-ui
 ```
 
-Consumers need Svelte `^5.57.1` and Bref `^2.2.0` (peer dependencies). Fonts used by the themes are package dependencies.
+Consumers need Svelte `^5.57.1` and Bref `^2.2.3` (peer dependencies). Fonts used by the themes are package dependencies.
 
 ```svelte
 <script lang="ts">
@@ -76,7 +76,7 @@ Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `Pil
 
 ### Tabs
 
-`Tabs` uses Bref 2.2.0's readonly item data, required icon names and bindable string value. The consumer renders the selected content:
+`Tabs` uses Bref 2.2.3's readonly item data, required icon names and bindable string value. The consumer renders the selected content:
 
 ```svelte
 <script lang="ts">
@@ -99,7 +99,7 @@ Each entry exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`, `Pil
 </Theme>
 ```
 
-Horizontal tabs accept `size="fit"` (default, scrolls on overflow) or `size="fill"`. Vertical tabs use `orientation="vertical"` without `size`. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes fit, fill, vertical, disabled and bound-content examples.
+Tabs accept `size="small"`, `size="medium"` (default) or `size="large"` in both orientations. Horizontal tabs accept `width="fit"` (default, scrolls on overflow) or `width="fill"`. Vertical tabs use `orientation="vertical"` without `width`. The shared demo navigation uses small Tabs and preserves SvelteKit routing. Optional `onChange`, `filled`, `transitionIn` and `transitionOut` retain the published API. Default indicator motion respects reduced motion; custom transitions should do the same. Arrow keys, Home and End move selection and skip disabled items. At small widths, horizontal tabs show the selected label, and vertical tabs show icons; accessible names remain available. Each theme demonstration includes all three sizes, fit, fill, vertical, disabled and bound-content examples.
 
 These initial themes provide the demo palettes, fonts, common CSS and component styling. They use light mode and document-global Bref tokens/reset styles; mount one theme at a time and manage its lifecycle when changing routes. Site-specific layouts and content are separate from the library.
 
@@ -115,4 +115,4 @@ These initial themes provide the demo palettes, fonts, common CSS and component 
 
 The migration preserves the local checkbox motion/reduced-motion fix and animated dialog title/icon updates. Only demo-owned files were extracted from their source branches; the latest Relay shared shell was kept. See [verification.md](verification.md) for source revisions, validation and remaining limitations.
 
-Tabs was copied from the npm-installed Bref 2.2.0 source using its registry, dependency planner and preview/install pipeline. Existing Icon and Theme dependencies were retained. The preview added only `tabs/tabs.svelte` and `tabs/item.svelte`, with explicit approval for the shared barrel merge; no existing component source was overwritten. Tabs types remain public imports from `bref-ui/types`.
+Tabs is synchronized with the npm-installed Bref 2.2.3 source, retaining the existing Icon, Theme and surface helper dependencies. Tabs types remain public imports from `bref-ui/types`.

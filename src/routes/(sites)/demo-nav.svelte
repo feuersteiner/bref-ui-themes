@@ -2,7 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
-	import { Icon, Tabs } from 'bref-ui';
+	import { Icon } from 'bref-ui';
+	import Tabs from '#lib/components/tabs/tabs.svelte';
 	const demos = [
 		{ label: 'Todo', icon: 'checklist', id: '/(sites)/(relay)/todo' },
 		{ label: 'House Shop', icon: 'storefront', id: '/(sites)/(forma)/house-shop' },
@@ -27,6 +28,7 @@
 				const demo = demos.find((demo) => demo.id === id);
 				if (demo) void goto(resolve(demo.id), { reset: false });
 			}}
+			size="small"
 			label="Demo sites"
 		/>
 	</nav>

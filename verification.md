@@ -1,5 +1,18 @@
 # Verification
 
+## RunnerAI workspace and Bref 2.2.3 — 2026-10-24
+
+- RunnerAI now assesses sample marketing copy. Setup, Run and Results separate configuration, the connected div-based workflow and actionable assessment results. Results stays disabled until completion; retry clears results. Node selection opens a floating inspector. Applying or undoing suggested edits updates the local draft.
+- Rounded, padded surfaces separate history, the main area, its header and the inspector. Running history items use a spinner; Retry and Cancel use filled primary buttons, with a filled Cancel icon. Chat source remains available but is not rendered in the workspace.
+- History, Setup, workflow, inspector and Results have explicit scroll ownership. The workspace follows the measured shared-header height. Header controls and tabs remain reachable at narrow and short viewport sizes. The duplicate View results button is removed.
+- Svelte `in:fly` transitions cover the workspace surfaces and changing views. Reduced-motion guards zero both duration and offset; progress updates do not remount the surfaces or shared header.
+- Published Bref 2.2.3 is installed and locked; peer/development requirements and copied Tabs match that version. Demo navigation uses small Tabs. Gallery examples cover small/medium/large sizing and the updated `width` contract. Dependency-worker checks include tarball inspection, clean Svelte/SvelteKit consumers and the Pages base-path build.
+- The shared header reads bref/themes with Bref/ui attribution. Homepage copy explains the working demos and reusable design-system foundations.
+
+Final integration checks: `npm run check` reports zero errors/warnings; `npm run lint`, `bun run build` (including packaging/publint) and `git diff --check` pass. Actual Codex browser inspection on the existing port 3000 covered Setup/Run/Results, run states, node selection, edit actions, keyboard reachability, 12-item history and 1440/1280px desktop, short viewports and 390/320px mobile layouts without document overflow or console errors. Captures remain outside Git. No server lifecycle operations were performed.
+
+Limits: local sample simulation; historical catalog previews; runtime preference emulation, other browsers/devices, screen readers and human visual approval remain unverified. Fresh PR image attachment remains unavailable through the current tooling. Earlier verification sections describe previous iterations, including superseded chat and central-report layouts.
+
 ## PR #50 hardening — 2026-10-22
 
 Feedback-to-result checklist, verified against the combined PR source:

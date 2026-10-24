@@ -27,9 +27,11 @@
 		<div data-brand>
 			<a data-logo href={resolve('/')} aria-label="Bref themes showcase home">
 				<img src={asset('favicon.svg')} alt="" width="40" height="40" />
-				<strong>themes</strong>
+				<strong>bref<span data-slash>/</span>themes</strong>
 			</a>
-			<a data-attribution href="https://feuersteiner.github.io/bref-ui/">Part of Bref/ui</a>
+			<a data-attribution href="https://feuersteiner.github.io/bref-ui/">
+				Part of <strong>bref<span data-slash>/</span>ui</strong>
+			</a>
 		</div>
 		<p>Svelte themes & demos.</p>
 		<nav aria-label="Showcase">
@@ -105,9 +107,16 @@
 	[data-attribution] {
 		align-self: flex-start;
 		margin-inline-start: 52px;
+		display: flex;
+		align-items: baseline;
+		gap: 4px;
 		color: var(--color-muted);
 		font-size: 11px;
 		line-height: 16px;
+	}
+	[data-attribution] strong {
+		color: var(--color-foreground);
+		font-size: 14px;
 	}
 	[data-attribution]:hover {
 		text-decoration: underline;
@@ -135,6 +144,9 @@
 	strong {
 		font: 700 24px / 1.2 var(--font-display);
 		white-space: nowrap;
+	}
+	strong [data-slash] {
+		color: var(--color-primary);
 	}
 	p {
 		color: var(--color-muted);
@@ -180,6 +192,11 @@
 		}
 		[data-attribution] {
 			margin-inline-start: 0;
+		}
+	}
+	@media (max-width: 360px) {
+		[data-logo] strong {
+			font-size: 20px;
 		}
 	}
 </style>

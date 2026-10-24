@@ -67,8 +67,13 @@
 				<h2 id="tabs">Tabs</h2>
 				<p data-muted>Use arrow keys, Home and End to switch views. Analytics is disabled.</p>
 				<div data-tab-example>
-					<h3>Horizontal · fit</h3>
-					<components.Tabs items={projectTabs} bind:value={projectTab} label="Project views" />
+					<h3>Horizontal · fit · small</h3>
+					<components.Tabs
+						items={projectTabs}
+						size="small"
+						bind:value={projectTab}
+						label="Project views"
+					/>
 					<div
 						data-tab-panel
 						role="tabpanel"
@@ -96,7 +101,7 @@
 						items={stageTabs}
 						bind:value={stageTab}
 						label="Project stages"
-						size="fill"
+						width="fill"
 						filled
 						transitionIn={indicatorFade}
 						transitionOut={indicatorFade}
@@ -116,13 +121,14 @@
 					</div>
 				</div>
 				<div data-tab-example>
-					<h3>Vertical</h3>
+					<h3>Vertical · large</h3>
 					<div data-vertical-tabs>
 						<components.Tabs
 							items={settingsTabs}
 							bind:value={settingsTab}
 							label="Project settings"
 							orientation="vertical"
+							size="large"
 						/>
 						<div
 							data-tab-panel

@@ -10,7 +10,7 @@
 	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
-		content="Explore Bref demos and reusable Svelte themes: Todo for projects and tasks, House Shop for furniture and RunnerAI for agent runs and reports. More themes are on the way."
+		content="Try working apps built with bref/ui and reuse their Svelte themes and components to build a custom design system."
 	/>
 </svelte:head>
 
@@ -18,23 +18,23 @@
 	<main id="showcase-content" tabindex="-1">
 		<div data-intro>
 			<p data-eyebrow>Made with Bref · Built with Svelte</p>
-			<h1>A few ways to<br />make it yours.</h1>
+			<h1>App demos and<br />design system foundations.</h1>
 			<p>
-				Complete demo sites, reusable themes, and room for what comes next. Explore the details. Try
-				the interactions.
+				Try working apps built with bref/ui and reuse their themes and components to build a custom
+				design system.
 			</p>
 		</div>
 		<section id="demos" aria-labelledby="demos-heading">
 			<div data-section-heading>
 				<h2 id="demos-heading">Demos</h2>
-				<p>Three complete sites. Ready to explore.</p>
+				<p>Working apps built with bref/ui.</p>
 			</div>
 			<Demos />
 		</section>
 		<section id="themes" aria-labelledby="themes-heading">
 			<div data-section-heading>
 				<h2 id="themes-heading">Themes</h2>
-				<p>Reusable foundations, with more on the way.</p>
+				<p>Reuse themes and components as a foundation for a custom design system.</p>
 			</div>
 			<div data-available>
 				<p>Available now</p>
@@ -60,7 +60,7 @@
 				</nav>
 			</div>
 			<div data-wip-themes>
-				{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
+				{#each [{ name: 'VS Code', description: 'An editor-inspired theme.' }, { name: 'Liquid Glass', description: 'A theme with translucent surfaces.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
 					<article>
 						<Surface variant="soft" radius="medium" spacing="large" height="fill">
 							<div data-theme-heading>

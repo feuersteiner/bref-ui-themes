@@ -7,22 +7,21 @@
 			icon: 'checklist',
 			href: resolve('/(sites)/(relay)/todo'),
 			preview: 'relay',
-			description: 'A SaaS workspace for projects and tasks. Organize, edit and complete work.'
+			description: 'Organize projects, edit tasks and track completed work.'
 		},
 		{
 			name: 'House Shop',
 			icon: 'storefront',
 			href: resolve('/(sites)/(forma)/house-shop'),
 			preview: 'forma',
-			description: 'An ecommerce furniture shop. Browse the catalog and manage your cart.'
+			description: 'Browse furniture and manage a shopping cart.'
 		},
 		{
 			name: 'RunnerAI',
 			icon: 'smart_toy',
 			href: resolve('/(sites)/(elsewhere)/runner-ai'),
 			preview: 'elsewhere',
-			description:
-				'An agent workspace with linear progress steps. Queue runs, chat and review the central report.'
+			description: 'Assess marketing copy, follow each check and apply suggested edits.'
 		}
 	] as const;
 </script>

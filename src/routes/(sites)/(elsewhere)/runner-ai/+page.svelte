@@ -1,59 +1,132 @@
 <script lang="ts">
-	import { onMount, tick, untrack } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { MediaQuery } from 'svelte/reactivity';
-	import { Button, Dialog, Icon } from '#lib/elsewhere/index.js';
-	import { createRuns, workflows } from './run-state.svelte.js';
+	import { fly } from 'svelte/transition';
+	import { prefersReducedMotion } from 'svelte/motion';
+	import { surface } from '#lib/components/theme/surface.js';
+	import { Button, Spinner, Tabs } from '#lib/elsewhere/index.js';
+	import type { TabItemDataProps } from 'bref-ui/types';
+	import { createRuns } from './run-state.svelte.js';
 	import RunOutput from './run-output.svelte';
-	import RunChat from './run-chat.svelte';
+	import NodeInspector from './node-inspector.svelte';
+	import RunReport from './run-report.svelte';
+	import RunInput from './run-input.svelte';
 
+	const regionSurface = surface({ color: 'background', variant: 'filled', shadow: 'small' });
 	const workspace = createRuns();
 	const desktop = new MediaQuery('(min-width: 761px)', true);
 	let run = $derived(workspace.selected);
-	let newRunOpen = $state(false);
-	let workflow = $state(0);
-	let prompt = $state<string>(workflows[0].prompt);
-	let mobileView = $state('workflow');
+	let historyOpen = $state(false);
+	let navigationHeight = $state(129);
+	const motion = $derived({
+		y: prefersReducedMotion.current ? 0 : 6,
+		duration: prefersReducedMotion.current ? 0 : 180
+	});
+	const tabs = $derived([
+		{ id: 'input', label: 'Setup', icon: 'tune' },
+		{ id: 'run', label: 'Run', icon: 'account_tree' },
+		{
+			id: 'assessment',
+			label: 'Results',
+			icon: 'fact_check',
+			disabled: run.status !== 'completed'
+		}
+	] satisfies readonly TabItemDataProps[]);
+	const panelLabel = $derived(tabs.find((tab) => tab.id === run.view)?.label ?? 'Run');
 	let workspaceElement: HTMLElement;
 	const active = $derived(run.status === 'running' || run.status === 'queued');
+	const navigationRuns = $derived(
+		workspace.runs.toSorted(
+			(a, b) =>
+				Number(b.status === 'running' || b.status === 'queued') -
+				Number(a.status === 'running' || a.status === 'queued')
+		)
+	);
 	const labels = {
+		draft: 'Draft',
 		queued: 'Queued',
 		running: 'Running',
 		completed: 'Completed',
 		cancelled: 'Cancelled'
 	};
 
-	$effect(() => {
-		if (run.status !== 'completed') return;
-		untrack(() => {
-			const restoreFocus =
-				!desktop.current &&
-				workspaceElement?.querySelector(
-					mobileView === 'chat' ? '[data-chat-view] :focus' : '[data-sidebar] :focus'
-				);
-			mobileView = 'workflow';
-			if (restoreFocus)
-				tick().then(() => workspaceElement.querySelector<HTMLElement>('[data-report] h3')?.focus());
-		});
-	});
+	async function selectNode(index: number, focusInspector = false) {
+		if (index < 0 || !run.nodes[index]) return;
+		run.selectedNode = index;
+		run.view = 'run';
+		run.inspectorOpen = true;
+		if (!desktop.current || focusInspector) {
+			await tick();
+			workspaceElement.querySelector<HTMLElement>('[data-inspector] h3')?.focus();
+		}
+	}
+
+	async function selectRun(id: number) {
+		workspace.select(id);
+		historyOpen = false;
+		if (!desktop.current) {
+			await tick();
+			workspaceElement.querySelector<HTMLElement>('[data-lifecycle-panel]')?.focus();
+		}
+	}
+
+	async function newAssessment() {
+		if (!workspace.createDraft()) return;
+		historyOpen = false;
+		await tick();
+		workspaceElement.querySelector<HTMLElement>('[data-lifecycle-panel]')?.focus();
+	}
+
+	async function startAssessment() {
+		if (!workspace.startRun(run)) return;
+		await tick();
+		workspaceElement
+			.querySelector<HTMLElement>('[data-lifecycle-panel]')
+			?.focus({ preventScroll: true });
+	}
+
+	async function showHistory() {
+		historyOpen = !historyOpen;
+		if (historyOpen) {
+			await tick();
+			workspaceElement.querySelector<HTMLElement>('[data-sidebar] [aria-current="true"]')?.focus();
+		}
+	}
+
+	async function showWorkflow() {
+		run.inspectorOpen = false;
+		await tick();
+		workspaceElement.querySelector<HTMLElement>('[data-node][aria-pressed="true"]')?.focus();
+	}
+
+	async function openInput() {
+		run.view = 'input';
+		await tick();
+		workspaceElement
+			.querySelector<HTMLElement>('[data-lifecycle-panel]')
+			?.focus({ preventScroll: true });
+	}
 
 	onMount(() => {
 		workspace.start();
-		return () => workspace.stop();
+		// Follow the mounted showcase header's actual height, including wrapping and zoom.
+		const navigation = document.querySelector('[data-bref-header]');
+		const observer = new ResizeObserver(() => {
+			navigationHeight = navigation?.getBoundingClientRect().height ?? 129;
+		});
+		if (navigation) observer.observe(navigation);
+		return () => {
+			observer.disconnect();
+			workspace.stop();
+		};
 	});
-
-	function createRun() {
-		if (workspace.create(workflow, prompt)) {
-			newRunOpen = false;
-			mobileView = 'workflow';
-		}
-	}
 </script>
 
 <svelte:head>
-	<title>RunnerAI — Agent workspace</title>
+	<title>RunnerAI — Copy & marketing assessment</title>
 	<meta
 		name="description"
-		content="A simulated agent workspace with step-by-step progress, reports and conversation."
+		content="Assess sample marketing copy for audience clarity, value proposition and a useful call to action."
 	/>
 </svelte:head>
 
@@ -61,251 +134,376 @@
 	id="demo-content"
 	tabindex="-1"
 	data-run-workspace
-	data-view={mobileView}
+	style:--navigation-height={`${navigationHeight}px`}
+	data-history-open={historyOpen}
 	bind:this={workspaceElement}
 >
-	<aside aria-label="Agent runs" data-sidebar>
-		<a href="#demo-content" data-brand
-			><span><Icon name="smart_toy" /></span>
-			<h1>RunnerAI</h1></a
+	{#if desktop.current || historyOpen}
+		<!-- svelte-ignore a11y_no_noninteractive_tabindex (Scrollable history needs keyboard access.) -->
+		<aside
+			tabindex="0"
+			class={regionSurface}
+			id="assessment-history"
+			aria-label="Agent runs"
+			data-sidebar
+			in:fly={motion}
 		>
-		<Button
-			label="New run"
-			icon={{ name: 'add' }}
-			size="small"
-			color="primary"
-			variant="soft"
-			wide
-			onClick={() => (newRunOpen = true)}
-			disabled={!workspace.canCreate}
-		/>
-		<div data-history-heading>
-			<h2>Runs</h2>
-			<span>{workspace.runs.length}</span>
-		</div>
-		<nav aria-label="Run history">
-			{#each workspace.runs as item (item.id)}
-				<button
-					type="button"
-					aria-current={run.id === item.id ? 'true' : undefined}
-					onclick={async () => {
-						workspace.select(item.id);
-						mobileView = 'workflow';
-						if (!desktop.current) {
-							await tick();
-							workspaceElement.querySelector<HTMLElement>('[data-output]')?.focus();
-						}
-					}}
-				>
-					<span data-run-title>{item.title}</span>
-					<span data-run-status data-status={item.status}
-						><i></i>{labels[item.status]}<span data-run-id>#{String(item.id).padStart(2, '0')}</span
-						></span
-					>
-				</button>
-			{/each}
-		</nav>
-		<p data-simulation>Simulated workspace</p>
-	</aside>
+			<a href="#demo-content" data-brand>
+				<svg viewBox="0 0 28 28" fill="none" aria-hidden="true">
+					<path d="M8 21V7h7a4.5 4.5 0 0 1 0 9H8m7 0 5 5" />
+				</svg>
+				<h1>Runner<span>AI</span></h1>
+			</a>
+			<button
+				type="button"
+				data-new-run-trigger
+				onclick={newAssessment}
+				disabled={!workspace.canCreate}
+			>
+				<svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+					<path d="M10 4v12M4 10h12" />
+				</svg>
+				New assessment
+			</button>
+			<h2 data-history-heading>Assessments</h2>
+			<nav aria-label="Run history">
+				<ul>
+					{#each navigationRuns as item (item.id)}
+						{@const isActive = item.status === 'running' || item.status === 'queued'}
+						<li>
+							<button
+								type="button"
+								aria-current={run.id === item.id ? 'true' : undefined}
+								aria-label={`${item.title}, ${labels[item.status]}`}
+								onclick={() => selectRun(item.id)}
+							>
+								<span data-run-title>{item.title}</span>
+								{#if isActive}
+									<span data-run-status aria-hidden="true"
+										>{#if item.status === 'running'}<Spinner size="small" />{:else}{labels[
+												item.status
+											]}{/if}</span
+									>
+								{/if}
+							</button>
+						</li>
+					{/each}
+				</ul>
+			</nav>
+			<p data-simulation>Local sample assessments</p>
+		</aside>
+	{/if}
 
-	<div data-main>
-		<header data-run-header>
-			<div>
-				<p data-run-kicker>
-					Run {String(run.id).padStart(2, '0')} <span> / </span>
-					{labels[run.status]}
-				</p>
-				<h2>{run.title}</h2>
+	<!-- The main shell fades; child surfaces own the offset to avoid compounded fly movement. -->
+	<div class={regionSurface} data-main in:fly={{ ...motion, y: 0 }}>
+		<header class={regionSurface} data-run-header in:fly={motion}>
+			<div data-header-title>
+				<div data-history-trigger>
+					<Button
+						icon={{ name: 'menu' }}
+						aria-label="Show assessment history"
+						aria-expanded={historyOpen}
+						aria-controls="assessment-history"
+						size="small"
+						onClick={showHistory}
+					/>
+				</div>
+				<div>
+					<p data-run-kicker>
+						Run {String(run.id).padStart(2, '0')} <span> / </span>
+						{labels[run.status]}
+					</p>
+					<h2>{run.title}</h2>
+				</div>
 			</div>
-			<Button
-				label={active ? 'Cancel run' : 'Retry run'}
-				icon={{ name: active ? 'stop' : 'replay' }}
-				size="small"
-				onClick={() => (active ? workspace.cancel(run) : workspace.retry(run))}
-			/>
+			{#if run.status !== 'draft'}<Button
+					label={active ? 'Cancel run' : 'Retry run'}
+					icon={{ name: active ? 'stop' : 'replay', filled: active }}
+					size="small"
+					variant="filled"
+					color="primary"
+					onClick={() => (active ? workspace.cancel(run) : workspace.retry(run))}
+				/>{/if}
 		</header>
-		<nav data-mobile-nav aria-label="Workspace views">
-			{#each [['runs', 'Runs'], ['workflow', 'Run'], ['chat', 'Chat']] as [value, label] (value)}
-				<button
-					type="button"
-					aria-pressed={mobileView === value}
-					onclick={() => (mobileView = value)}>{label}</button
-				>
-			{/each}
-		</nav>
-		<div data-work-area>
-			<div data-workflow-view>
-				{#key run.id}<RunOutput {run} />{/key}
-			</div>
-			<div data-chat-view>
-				{#key run.id}<RunChat
-						bind:run
-						visible={desktop.current || mobileView === 'chat'}
-						onSend={() => workspace.send(run)}
-					/>{/key}
-			</div>
+		<div data-lifecycle-tabs in:fly={motion}>
+			<Tabs
+				items={tabs}
+				bind:value={run.view}
+				label="Assessment lifecycle"
+				size="small"
+				filled={false}
+			/>
+		</div>
+		<div role="tabpanel" aria-label={panelLabel} tabindex="0" data-lifecycle-panel>
+			{#key run.id}
+				{#if run.view === 'input'}
+					<RunInput
+						{run}
+						onConfigure={(config) => workspace.configure(run, config)}
+						onStart={startAssessment}
+					/>
+				{:else if run.view === 'assessment' && run.status === 'completed'}
+					<!-- svelte-ignore a11y_no_noninteractive_tabindex (Scrollable results need keyboard access.) -->
+					<div
+						role="region"
+						aria-label="Assessment results"
+						tabindex="0"
+						data-assessment-view
+						in:fly={motion}
+					>
+						<RunReport
+							{run}
+							onApply={(index) => workspace.applyEdit(run, index)}
+							onInspect={(index) =>
+								selectNode(
+									run.nodes.findIndex((node) => node.insightIndex === index),
+									true
+								)}
+						/>
+					</div>
+				{:else if run.status === 'draft'}
+					<div data-run-empty in:fly={motion}>
+						<h3>Run not started</h3>
+						<p>Choose the copy and review scope in Setup.</p>
+						<Button label="Open setup" icon={{ name: 'tune' }} size="small" onClick={openInput} />
+					</div>
+				{:else}
+					<div data-work-area data-inspector-open={run.inspectorOpen}>
+						{#if desktop.current || !run.inspectorOpen}
+							<div data-workflow-view>
+								<RunOutput {run} selectedIndex={run.selectedNode} onSelect={selectNode} />
+							</div>
+						{/if}
+						{#if desktop.current || run.inspectorOpen}
+							<div data-inspector-view>
+								<div data-inspector-back>
+									<Button
+										label="Back to workflow"
+										icon={{ name: 'arrow_back' }}
+										size="small"
+										onClick={showWorkflow}
+									/>
+								</div>
+								{#key run.selectedNode}<NodeInspector
+										{run}
+										selectedIndex={run.selectedNode}
+									/>{/key}
+							</div>
+						{/if}
+					</div>
+				{/if}
+			{/key}
 		</div>
 	</div>
 	<p role="status" data-visually-hidden>
-		Run {run.id}: {labels[run.status]}. {run.step} of {run.nodes.length} steps completed.
+		Run {run.id}: {labels[run.status]}.
+		{run.status === 'draft'
+			? 'Configure the assessment in Setup.'
+			: `${run.step} of ${run.nodes.length} steps completed.`}
+		{run.status === 'completed' ? 'Results are ready in the Results tab.' : ''}
 	</p>
 </main>
 
-<Dialog bind:open={newRunOpen} header={{ title: 'New run' }} size="small">
-	<form
-		data-new-run
-		onsubmit={(event) => {
-			event.preventDefault();
-			createRun();
-		}}
-	>
-		<label
-			>Workflow<select bind:value={workflow} onchange={() => (prompt = workflows[workflow].prompt)}
-				>{#each workflows as item, index (item.name)}<option value={index}>{item.name}</option
-					>{/each}</select
-			></label
-		>
-		<label
-			>What should the agent work on?<textarea
-				bind:value={prompt}
-				rows="4"
-				maxlength="1000"
-				required></textarea></label
-		>
-		<Button
-			type="submit"
-			label="Create run"
-			trailingIcon={{ name: 'arrow_forward' }}
-			variant="filled"
-			color="primary"
-			disabled={!prompt.trim() || !workspace.canCreate}
-		/>
-	</form>
-</Dialog>
-
 <style>
+	/* This viewport workspace owns its height; remove only its inherited demo minimum. */
+	:global([data-elsewhere]):has(> main) {
+		min-height: 0;
+	}
 	main {
+		--run-region-radius: 20px;
+		--run-inner-radius: 16px;
 		display: grid;
-		grid-template-columns: 210px minmax(0, 1fr);
-		min-height: calc(100dvh - 130px);
-		max-width: 1600px;
+		grid-template-columns: 224px minmax(0, 1fr);
+		gap: 16px;
+		padding: 16px;
+		height: calc(100dvh - var(--navigation-height));
+		min-height: 0;
+		max-width: 1680px;
 		margin: auto;
+		background: var(--color-background);
+	}
+	@media (forced-colors: none) {
+		main :global(*) {
+			scrollbar-color: color-mix(in srgb, var(--color-muted) 32%, transparent) transparent;
+			scrollbar-width: thin;
+		}
+		main :global(*::-webkit-scrollbar) {
+			width: 6px;
+			height: 6px;
+		}
+		main :global(*::-webkit-scrollbar-track) {
+			background: transparent;
+		}
+		main :global(*::-webkit-scrollbar-thumb) {
+			border: 1px solid transparent;
+			border-radius: 999px;
+			background: color-mix(in srgb, var(--color-muted) 32%, transparent);
+			background-clip: padding-box;
+		}
+		main :global(*::-webkit-scrollbar-thumb:hover) {
+			background-color: color-mix(in srgb, var(--color-muted) 55%, transparent);
+		}
 	}
 	[data-sidebar] {
+		overflow: auto;
+		overscroll-behavior: contain;
+		scroll-padding: 8px;
+		scrollbar-width: thin;
+		min-width: 0;
 		display: flex;
 		flex-direction: column;
-		padding: 30px 18px 20px;
-		border-right: 1px solid var(--run-rule);
+		min-height: 0;
+		padding: 22px 12px 18px;
+		--surface-base: var(--run-surface);
+		border: 0;
+		border-radius: var(--run-region-radius);
 	}
 	[data-brand] {
 		display: flex;
 		align-items: center;
-		gap: 9px;
-		margin: 0 8px 32px;
+		gap: 10px;
+		width: fit-content;
+		margin: 0 8px 24px;
 		text-decoration: none;
 	}
-	[data-brand] > span {
-		display: grid;
-		place-items: center;
+	[data-brand] svg {
 		width: 30px;
 		height: 30px;
-		color: var(--color-primary);
-		font-size: 27px;
+		border-radius: 8px;
+		background: var(--color-primary);
+		stroke: white;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
 	}
 	h1 {
 		margin: 0;
 		font:
-			650 21px/1.2 'Syne Variable',
+			600 21px/1.2 'Inter Variable',
 			sans-serif;
-		letter-spacing: -0.8px;
+		letter-spacing: -0.9px;
 	}
-	[data-history-heading] {
+	h1 span {
+		font-weight: 400;
+		color: var(--color-primary);
+	}
+	[data-new-run-trigger] {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		margin: 32px 10px 12px;
-		color: var(--color-muted);
-		font-size: 11px;
+		gap: 10px;
+		min-height: 40px;
+		padding: 8px 10px;
+		border: 0;
+		border-radius: 10px;
+		background: transparent;
+		color: var(--color-foreground);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
 	}
-	[data-history-heading] h2 {
-		margin: 0;
+	[data-new-run-trigger] svg {
+		width: 18px;
+		height: 18px;
+		stroke: currentColor;
+		stroke-width: 1.4;
+		stroke-linecap: round;
+	}
+	[data-new-run-trigger]:disabled {
+		opacity: 0.45;
+		cursor: not-allowed;
+	}
+	[data-history-heading] {
+		margin: 24px 10px 8px;
+		color: var(--color-muted);
 		font-size: 12px;
-		font-weight: 400;
+		font-weight: 500;
+	}
+	[data-sidebar] > * {
+		flex-shrink: 0;
 	}
 	[data-sidebar] nav {
+		flex: 1 0 auto;
+		padding: 4px;
+		margin-inline: -4px;
+	}
+	[data-sidebar] ul {
 		display: grid;
-		gap: 5px;
-		max-height: 520px;
-		overflow: auto;
+		gap: 2px;
+		list-style: none;
+		padding: 0;
+		margin: 0;
 	}
 	[data-sidebar] nav button {
-		display: block;
+		display: flex;
+		align-items: center;
+		gap: 10px;
 		width: 100%;
+		min-height: 40px;
 		border: 0;
-		padding: 12px 10px;
-		border-radius: 9px;
+		padding: 9px 10px;
+		border-radius: 10px;
 		text-align: left;
 		background: transparent;
 		color: var(--color-foreground);
+		font: inherit;
+		cursor: pointer;
+	}
+	[data-new-run-trigger]:enabled:hover,
+	[data-sidebar] nav button:hover {
+		background: color-mix(in srgb, var(--color-foreground) 4%, transparent);
 	}
 	[data-sidebar] nav button[aria-current='true'] {
-		background: var(--run-tint);
+		background: color-mix(in srgb, var(--color-foreground) 7%, transparent);
 	}
-	[data-sidebar] nav button:hover {
-		background: var(--run-tint);
+	[data-sidebar] button:focus-visible {
+		outline: 2px solid var(--color-muted);
+		outline-offset: -2px;
 	}
 	[data-run-title] {
-		display: block;
+		min-width: 0;
+		overflow-wrap: anywhere;
 		font-size: 13px;
 		line-height: 1.5;
 	}
 	[data-run-status] {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		margin-top: 7px;
-		font-size: 11px;
-		color: var(--color-muted);
-	}
-	i {
-		width: 5px;
-		height: 5px;
-		background: var(--run-line);
-		border-radius: 50%;
-	}
-	[data-status='running'] i {
-		background: var(--color-primary);
-	}
-	[data-status='completed'] i {
-		background: var(--color-success);
-	}
-	[data-run-id] {
 		margin-left: auto;
-		opacity: 0.8;
-		font-variant-numeric: tabular-nums;
+		color: var(--color-muted);
+		font-size: 11px;
+		white-space: nowrap;
 	}
 	[data-simulation] {
 		color: var(--color-muted);
-		font-size: 11px;
-		margin: auto 10px 0;
-		padding-top: 40px;
+		font-size: 12px;
+		margin: 16px 10px 0;
+		padding-top: 8px;
 	}
 	[data-main] {
+		--surface-base: color-mix(in srgb, var(--run-surface) 50%, var(--color-background));
+		padding: 12px;
+		gap: 8px;
+		border: 0;
+		border-radius: var(--run-region-radius);
+		display: flex;
+		flex-direction: column;
 		min-width: 0;
+		min-height: 0;
 	}
 	[data-run-header] {
-		min-height: 100px;
-		padding: 22px 28px;
+		flex-shrink: 0;
+		min-height: 82px;
+		padding: 16px 20px;
+		--surface-base: var(--run-surface);
+		border: 0;
+		border-radius: var(--run-inner-radius);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 		gap: 16px;
-		border-bottom: 1px solid var(--run-rule);
 	}
 	[data-run-kicker] {
-		margin: 0 0 7px;
+		margin: 0 0 5px;
 		color: var(--color-muted);
-		font-size: 11px;
+		font-size: 12px;
 	}
 	[data-run-kicker] span {
 		padding-inline: 7px;
@@ -313,70 +511,129 @@
 	}
 	[data-run-header] h2 {
 		margin: 0;
-		font-size: clamp(18px, 1.8vw, 24px);
-		font-weight: 450;
+		font-size: clamp(18px, 1.8vw, 23px);
+		font-weight: 550;
+		line-height: 1.35;
 		letter-spacing: -0.6px;
 	}
 	[data-work-area] {
 		display: grid;
-		grid-template-columns: minmax(340px, 1fr) 350px;
+		flex: 1;
+		grid-template-columns: minmax(0, 1fr) 280px;
 		grid-template-rows: minmax(0, 1fr);
-		min-height: max(500px, calc(100dvh - 218px));
+		min-height: 0;
+		gap: 12px;
+		background: transparent;
 	}
 	[data-workflow-view],
-	[data-chat-view] {
+	[data-inspector-view] {
 		display: grid;
 		min-height: 0;
 		min-width: 0;
 	}
-	[data-mobile-nav] {
+	[data-inspector-view] {
+		grid-column: 2;
+		grid-row: 1 / -1;
+		margin: 0;
+		background: transparent;
+	}
+	[data-lifecycle-tabs] {
+		flex-shrink: 0;
+		min-width: 0;
+		padding: 2px 4px;
+	}
+	/* Remove only the Elsewhere demo framing; native Tabs still owns its controls and indicator. */
+	[data-lifecycle-tabs] :global([role='tablist']) {
+		border: 0;
+		padding: 0;
+		border-radius: 0;
+		background: transparent;
+	}
+	[data-lifecycle-tabs] :global([role='tab']) {
+		border-radius: 999px;
+		background: transparent;
+	}
+	[data-lifecycle-panel] {
+		border-radius: var(--run-inner-radius);
+		display: grid;
+		grid-template-rows: minmax(0, 1fr);
+		flex: 1;
+		min-width: 0;
+		min-height: 0;
+	}
+	[data-lifecycle-panel]:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: -4px;
+	}
+	[data-assessment-view]:focus-visible {
+		outline: 2px solid var(--color-primary);
+		outline-offset: -4px;
+	}
+	[data-assessment-view] {
+		min-width: 0;
+		min-height: 0;
+		overflow: auto;
+		overscroll-behavior: contain;
+		scroll-padding: 8px;
+		padding: 28px;
+		background: var(--run-surface);
+		scrollbar-width: thin;
+	}
+	[data-workflow-view] {
+		border-radius: var(--run-inner-radius);
+		grid-template-rows: minmax(0, 1fr);
+	}
+	[data-run-empty] {
+		min-height: 0;
+		overflow: auto;
+		padding: 64px 32px;
+		max-width: 600px;
+	}
+	[data-run-empty] h3 {
+		margin: 0 0 14px;
+		font-size: 24px;
+		font-weight: 550;
+	}
+	[data-run-empty] p {
+		color: var(--color-muted);
+		font-size: 13px;
+		line-height: 1.8;
+		margin-bottom: 24px;
+	}
+	[data-history-trigger],
+	[data-inspector-back] {
 		display: none;
 	}
-	[data-new-run] {
-		display: grid;
-		gap: 22px;
+	[data-header-title] {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		min-width: 0;
 	}
-	[data-new-run] label {
-		font-size: 13px;
-	}
-	[data-new-run] select,
-	[data-new-run] textarea {
-		width: 100%;
-		color: var(--color-foreground);
-		background: var(--run-surface, white);
-		border: 1px solid var(--run-line, #d1ccdf);
-		border-radius: 8px;
-		padding: 12px;
-		font: inherit;
-		line-height: 1.6;
-	}
-	[data-new-run] textarea {
-		resize: vertical;
-	}
-	@media (max-width: 1100px) {
+	@media (max-width: 1150px) {
 		main {
-			grid-template-columns: 180px minmax(0, 1fr);
+			grid-template-columns: 200px minmax(0, 1fr);
 		}
 		[data-sidebar] {
 			padding-inline: 12px;
 		}
 		[data-work-area] {
-			grid-template-columns: minmax(310px, 1fr) 310px;
+			grid-template-columns: minmax(0, 1fr) 260px;
 		}
 	}
 	@media (max-width: 900px) and (min-width: 761px) {
 		main {
-			grid-template-columns: 155px minmax(0, 1fr);
+			grid-template-columns: 180px minmax(0, 1fr);
 		}
 		[data-work-area] {
-			grid-template-columns: minmax(285px, 1fr) 285px;
+			grid-template-columns: minmax(0, 1fr) 250px;
 		}
 		[data-brand] {
-			gap: 5px;
-			margin-inline: 0;
+			gap: 7px;
+			margin-inline: 2px;
 		}
 		h1 {
-			font-size: 18px;
+			font-size: 19px;
 		}
 		[data-run-header] {
 			padding-inline: 20px;
@@ -384,61 +641,84 @@
 	}
 	@media (max-width: 760px) {
 		main {
+			--run-region-radius: 18px;
+			--run-inner-radius: 14px;
+			padding: 10px;
+			gap: 10px;
 			display: flex;
 			flex-direction: column;
-			min-height: calc(100dvh - 160px);
 		}
 		[data-sidebar] {
 			display: none;
 			order: 2;
-			border-right: 0;
-			padding: 24px;
+			padding: 20px 14px;
 		}
 		[data-run-header] {
-			padding: 24px 18px 20px;
-			min-height: 100px;
+			flex-wrap: wrap;
+			padding: 14px;
+			gap: 10px;
+			min-height: 82px;
 		}
 		[data-run-header] h2 {
-			font-size: 20px;
+			font-size: 18px;
+			overflow-wrap: anywhere;
+		}
+		[data-main] {
+			flex: 1;
+			padding: 8px;
+		}
+		[data-header-title] {
+			flex: 1 1 180px;
+			gap: 8px;
+		}
+		[data-header-title] > div {
+			min-width: 0;
+		}
+		[data-history-trigger] {
+			flex-shrink: 0;
+		}
+		[data-run-header] > :global(button) {
+			margin-left: auto;
 		}
 		[data-run-header] :global(button) {
 			flex-shrink: 0;
 		}
-		[data-mobile-nav] {
-			display: flex;
-			gap: 12px;
-			border-bottom: 1px solid var(--run-rule);
-			padding-inline: 18px;
+		[data-history-trigger],
+		[data-inspector-back] {
+			display: block;
 		}
-		[data-mobile-nav] button {
-			flex: 1;
-			min-height: 44px;
-			background: transparent;
-			color: var(--color-muted);
-			border: 0;
-			border-bottom: 2px solid transparent;
-			font-size: 13px;
+		[data-lifecycle-tabs] {
+			padding: 2px 4px;
 		}
-		[data-mobile-nav] button[aria-pressed='true'] {
-			color: var(--color-primary);
-			border-bottom-color: var(--color-primary);
+
+		[data-assessment-view] {
+			padding: 24px 18px;
 		}
 		[data-work-area] {
-			display: block;
-			height: auto;
-			min-height: 0;
+			grid-template-columns: minmax(0, 1fr);
 		}
-		[data-view='workflow'] [data-chat-view],
-		[data-view='chat'] [data-workflow-view],
-		[data-view='runs'] [data-work-area] {
+		[data-inspector-view] {
+			grid-column: 1;
+			grid-template-rows: auto minmax(0, 1fr);
+			margin: 0;
+		}
+		[data-inspector-back] {
+			margin-bottom: 8px;
+		}
+		[data-history-open='true'] [data-lifecycle-panel],
+		[data-history-open='true'] [data-lifecycle-tabs] {
 			display: none;
 		}
-		[data-view='runs'] [data-sidebar] {
+		[data-history-open='true'] [data-main] {
+			flex: none;
+		}
+		[data-history-open='true'] [data-sidebar] {
 			display: flex;
-			min-height: 480px;
+			flex: 1;
+			min-height: 0;
 		}
 		[data-simulation] {
-			padding-top: 28px;
+			margin-top: 28px;
 		}
 	}
 </style>
