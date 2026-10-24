@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
+	import { asset, resolve } from '$app/paths';
 	import { Button, Pill, Surface } from 'bref-ui';
 	import '@fontsource-variable/inter';
 	import '@fontsource-variable/syne';
@@ -56,8 +56,26 @@
 					/>
 				</nav>
 			</div>
+			<div data-available>
+				<p>Full component themes</p>
+				<Button
+					href={resolve('/(themes)/themes/vscode')}
+					label="VS Code theme"
+					trailingIcon={{ name: 'arrow_outward' }}
+					size="small"
+				/>
+				<a data-vscode-preview href={resolve('/(themes)/themes/vscode')}>
+					<img
+						src={asset('previews/vscode.jpg')}
+						alt="VS Code component reference"
+						width="1440"
+						height="960"
+						loading="lazy"
+					/>
+				</a>
+			</div>
 			<div data-wip-themes>
-				{#each [{ name: 'VS Code', description: 'An editor-inspired theme.' }, { name: 'Liquid Glass', description: 'A theme with translucent surfaces.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
+				{#each [{ name: 'Liquid Glass', description: 'A theme with translucent surfaces.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
 					<article>
 						<Surface variant="soft" radius="medium" spacing="large" height="fill">
 							<div data-theme-heading>
@@ -92,6 +110,15 @@
 </div>
 
 <style>
+	[data-vscode-preview] {
+		display: block;
+		max-width: 720px;
+	}
+	[data-vscode-preview] img {
+		width: 100%;
+		height: auto;
+	}
+
 	[data-showcase] {
 		font:
 			400 16px/24px 'Inter Variable',

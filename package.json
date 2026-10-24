@@ -28,6 +28,10 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./vscode": {
+			"types": "./dist/vscode/index.d.ts",
+			"svelte": "./dist/vscode/index.js"
 		}
 	},
 	"peerDependencies": {

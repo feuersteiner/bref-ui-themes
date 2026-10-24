@@ -47,10 +47,40 @@ The former `bref-ui-themes/relay`, `/forma` and `/elsewhere` entries, and the ro
 `Relay`, `Forma` and `Elsewhere` namespaces, have been removed. Import controls and
 `Theme` from `bref-ui` instead, and pass palette data to `Theme`.
 
-This integration stage has an empty package root. Full themes (Glassy, VS Code,
-New Paris and Crystal Code) are developed in separate PRs. Those full themes own
-CLI-installed component implementations with scoped CSS; the site demos do not.
-No full-theme package exports are available on this branch yet.
+The package exports the full VS Code component theme from `bref-ui-themes/vscode`
+and the `VSCode` namespace from its root. Glassy, New Paris and Crystal Code remain
+in separate PRs. Full themes own CLI-installed components with scoped CSS; the site
+demos do not.
+
+## VS Code theme
+
+[Open the component reference](https://feuersteiner.github.io/bref-ui-themes/themes/vscode).
+The fixed dark palette, compact controls and opaque workbench overlays are scoped
+to the theme wrapper and its owned components.
+
+```svelte
+<script lang="ts">
+	import { Theme, Button, TextInput } from 'bref-ui-themes/vscode';
+</script>
+
+<Theme>
+	<TextInput aria-label="Setting name" placeholder="editor.fontSize" />
+	<Button label="Apply" variant="filled" color="primary" />
+</Theme>
+```
+
+Install with `npm install bref-ui-themes bref-ui` in a Svelte 5.57.1+ project.
+The entry exports `Theme`, `ThemeModeToggle`, `Button`, `Checkbox`, `Combobox`,
+`Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`,
+`Select`, `Spinner`, `Surface`, `Switch`, `Tabs`, `TextArea`, `TextInput` and
+`TreeView`. Native props, bindings, snippets and keyboard behavior follow Bref UI;
+shared types come from `bref-ui/types`. The CLI has no ThemeModeToggle registry
+entry, so its native source is copied explicitly. Theme accepts an optional
+`children` snippet and retains its fixed dark scheme.
+
+The persistent site header uses canonical Bref controls and the active document
+palette; it stays outside VS Code's scoped wrapper. The native palette isolation
+limit described above still applies to palette-only demos.
 
 ## Development and checks
 
@@ -80,7 +110,7 @@ BASE_PATH=/bref-ui-themes bun run preview
 - [Site demos](<src/routes/(sites)>): application content and local layout.
 - [Palette previews](<src/routes/(themes)>): canonical Bref controls with each palette.
 - [Persistent shell](src/routes/+layout.svelte): one Theme, route palettes and mounted header.
-- [Package root](src/lib/index.ts): reserved for full-theme exports.
+- [Package root](src/lib/index.ts): full-theme namespace exports.
 
 ## Contributing
 
