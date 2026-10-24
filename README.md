@@ -34,8 +34,7 @@ Then use a theme and its components in a `.svelte` file:
 ```
 
 Render one theme at the application root. The initial themes use light mode and
-load document-wide palette tokens, reset styles and fonts. Use full-page navigation
-when switching between themes. Fonts are package dependencies.
+load document-wide palette tokens, reset styles and fonts. Mount one active theme at a time and clean up its global styles when switching. The showcase keeps its shared header mounted during client navigation. Fonts are package dependencies.
 
 ### Explore the gallery
 
@@ -53,16 +52,15 @@ component demonstrations that import the same library exports available on npm.
 
 ## Available themes
 
-| Theme     | Demo                                                                       | Components                                                                            |
-| --------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Relay     | [SaaS workspace](https://feuersteiner.github.io/bref-ui-themes/relay)      | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/relay)     |
-| Forma     | [Ecommerce shop](https://feuersteiner.github.io/bref-ui-themes/forma)      | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/forma)     |
-| Elsewhere | [Agent workspace](https://feuersteiner.github.io/bref-ui-themes/elsewhere) | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/elsewhere) |
+| Theme     | Demo                                                                   | Components                                                                            |
+| --------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Relay     | [Todo](https://feuersteiner.github.io/bref-ui-themes/todo)             | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/relay)     |
+| Forma     | [House Shop](https://feuersteiner.github.io/bref-ui-themes/house-shop) | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/forma)     |
+| Elsewhere | [RunnerAI](https://feuersteiner.github.io/bref-ui-themes/runner-ai)    | [Theme demonstration](https://feuersteiner.github.io/bref-ui-themes/themes/elsewhere) |
 
-Relay includes projects, status tabs, search, completion and task editing. Forma
+Todo includes projects, status tabs, search, completion and task editing. House Shop
 includes category filters, sorting, product dialogs, a cart and simulated checkout.
-Elsewhere includes workflow runs, a queue, run history and chat; its execution is
-local and deterministic, with no external AI service.
+RunnerAI assesses sample marketing copy through Setup, Run and Results, with connected workflow nodes, a node inspector and suggested edits that update a local draft. Execution is local and deterministic, with no external AI service.
 
 ![Relay rendered demo](static/previews/relay.jpg)
 ![Forma rendered demo](static/previews/forma.jpg)
@@ -84,6 +82,8 @@ The package root also exports the `Relay`, `Forma` and `Elsewhere` namespaces.
 Each theme exports `Theme`, `Button`, `Checkbox`, `Dialog`, `Icon`, `Pill`,
 `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`, `Select`, `Spinner`, `Surface`,
 `Tabs` and `TextInput`.
+
+Current source requires Bref-ui `^2.2.3`. Tabs accepts `size="small" | "medium" | "large"` and horizontal `width="fit" | "fill"`; demo navigation uses small Tabs.
 
 `Theme` accepts an optional `children` snippet. Controls retain their Bref-ui props,
 native attributes and applicable bindings; shared types come from `bref-ui/types`.

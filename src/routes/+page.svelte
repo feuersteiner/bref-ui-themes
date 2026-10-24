@@ -1,139 +1,98 @@
 <script lang="ts">
-	import { asset, resolve } from '$app/paths';
-	import { Button, Pill, Surface, Theme, ThemeModeToggle } from 'bref-ui';
-	import type { IconName, ThemeMode } from 'bref-ui/types';
+	import { resolve } from '$app/paths';
+	import { Button, Pill, Surface } from 'bref-ui';
 	import '@fontsource-variable/inter';
 	import '@fontsource-variable/syne';
 	import Demos from './catalog/demos.svelte';
-	import GithubStars from './catalog/github-stars.svelte';
-
-	let mode = $state<ThemeMode>('light');
-	const modes: ThemeMode[] = ['auto', 'light', 'dark'];
-	const labels: Record<ThemeMode, string> = { auto: 'System', light: 'Light', dark: 'Dark' };
-	const icons: Record<ThemeMode, IconName> = {
-		auto: 'brightness_auto',
-		light: 'light_mode',
-		dark: 'dark_mode'
-	};
-	const cycleTheme = () => {
-		mode = modes[(modes.indexOf(mode) + 1) % modes.length];
-	};
 </script>
 
 <svelte:head>
 	<title>bref-ui/themes · Svelte themes & demos</title>
 	<meta
 		name="description"
-		content="Explore complete Bref demo sites and reusable Svelte themes. Tasks, House Shop and Site Reviewer are ready to try; more themes are on the way."
+		content="Try working apps built with bref/ui and reuse their Svelte themes and components to build a custom design system."
 	/>
 </svelte:head>
 
-<Theme>
-	<ThemeModeToggle {mode} />
-	<div data-showcase>
-		<a data-skip href="#showcase-content">Skip to content</a>
-		<header>
-			<a data-brand href={resolve('/')} aria-label="bref-ui/themes home">
-				<img src={asset('favicon.svg')} alt="" width="40" height="40" />
-				<strong>bref-ui<span data-slash>/</span>themes</strong>
-			</a>
-			<nav aria-label="Showcase">
-				<Button href="#demos" label="Demos" size="small" /><Button
-					href="#themes"
-					label="Themes"
-					size="small"
-				/>
-			</nav>
-			<span data-actions>
-				<GithubStars {mode} />
-				<Button
-					variant="neutral"
-					rounded
-					size="small"
-					icon={{ name: icons[mode], label: labels[mode] }}
-					onClick={cycleTheme}
-				/>
-			</span>
-		</header>
-		<main id="showcase-content" tabindex="-1">
-			<div data-intro>
-				<p data-eyebrow>Made with Bref · Built with Svelte</p>
-				<h1>A few ways to<br />make it yours.</h1>
-				<p>
-					Complete demo sites, reusable themes, and room for what comes next. Explore the details.
-					Try the interactions.
-				</p>
+<div data-showcase>
+	<main id="showcase-content" tabindex="-1">
+		<div data-intro>
+			<p data-eyebrow>Made with Bref · Built with Svelte</p>
+			<h1>App demos and<br />design system foundations.</h1>
+			<p>
+				Try working apps built with bref/ui and reuse their themes and components to build a custom
+				design system.
+			</p>
+		</div>
+		<section id="demos" aria-labelledby="demos-heading">
+			<div data-section-heading>
+				<h2 id="demos-heading">Demos</h2>
+				<p>Working apps built with bref/ui.</p>
 			</div>
-			<section id="demos" aria-labelledby="demos-heading">
-				<div data-section-heading>
-					<h2 id="demos-heading">Demos</h2>
-					<p>Three complete sites. Ready to explore.</p>
-				</div>
-				<Demos />
-			</section>
-			<section id="themes" aria-labelledby="themes-heading">
-				<div data-section-heading>
-					<h2 id="themes-heading">Themes</h2>
-					<p>Reusable foundations, with more on the way.</p>
-				</div>
-				<div data-available>
-					<p>Available now</p>
-					<nav aria-label="Implemented theme demonstrations" data-sveltekit-reload>
-						<Button
-							href={resolve('/(themes)/themes/[theme]', { theme: 'relay' })}
-							label="Relay theme"
-							trailingIcon={{ name: 'arrow_outward' }}
-							size="small"
-						/>
-						<Button
-							href={resolve('/(themes)/themes/[theme]', { theme: 'forma' })}
-							label="Forma theme"
-							trailingIcon={{ name: 'arrow_outward' }}
-							size="small"
-						/>
-						<Button
-							href={resolve('/(themes)/themes/[theme]', { theme: 'elsewhere' })}
-							label="Elsewhere theme"
-							trailingIcon={{ name: 'arrow_outward' }}
-							size="small"
-						/>
-					</nav>
-				</div>
-				<div data-wip-themes>
-					{#each [{ name: 'VS Code', description: 'An editor-inspired theme for focused work.' }, { name: 'Liquid Glass', description: 'A study in translucent surfaces and soft depth.' }, { name: 'Minimalist Blocky', description: 'Bold geometry, clear structure, fewer distractions.' }] as theme (theme.name)}
-						<article>
-							<Surface variant="soft" radius="medium" spacing="large" height="fill">
-								<div data-theme-heading>
-									<h3>{theme.name}</h3>
-									<Pill label="WIP" size="x-small" color="muted" variant="soft" />
-								</div>
-								<p>{theme.description}</p>
-								<small>Planned · demonstration coming later</small>
-							</Surface>
-						</article>
-					{/each}
-				</div>
-			</section>
-		</main>
-		<footer>
-			<nav aria-label="Bref UI resources">
-				<h2>Bref UI</h2>
-				<a href="https://github.com/feuersteiner/bref-ui">GitHub</a>
-				<a href="https://feuersteiner.github.io/bref-ui/">Documentation</a>
-			</nav>
-			<nav aria-label="Bref themes resources">
-				<h2>Themes</h2>
-				<a href="https://github.com/feuersteiner/bref-ui-themes">GitHub</a>
-				<a href="https://github.com/feuersteiner/bref-ui-themes#library-imports">Documentation</a>
-			</nav>
-			<nav aria-label="Community">
-				<h2>Community</h2>
-				<a href="https://discord.gg/JpgQRTUsVS">Discord</a>
-				<a href="https://x.com/feuersteinnnnn">Twitter / X</a>
-			</nav>
-		</footer>
-	</div>
-</Theme>
+			<Demos />
+		</section>
+		<section id="themes" aria-labelledby="themes-heading">
+			<div data-section-heading>
+				<h2 id="themes-heading">Themes</h2>
+				<p>Reuse themes and components as a foundation for a custom design system.</p>
+			</div>
+			<div data-available>
+				<p>Available now</p>
+				<nav aria-label="Implemented theme demonstrations">
+					<Button
+						href={resolve('/(themes)/themes/[theme]', { theme: 'relay' })}
+						label="Relay theme"
+						trailingIcon={{ name: 'arrow_outward' }}
+						size="small"
+					/>
+					<Button
+						href={resolve('/(themes)/themes/[theme]', { theme: 'forma' })}
+						label="Forma theme"
+						trailingIcon={{ name: 'arrow_outward' }}
+						size="small"
+					/>
+					<Button
+						href={resolve('/(themes)/themes/[theme]', { theme: 'elsewhere' })}
+						label="Elsewhere theme"
+						trailingIcon={{ name: 'arrow_outward' }}
+						size="small"
+					/>
+				</nav>
+			</div>
+			<div data-wip-themes>
+				{#each [{ name: 'VS Code', description: 'An editor-inspired theme.' }, { name: 'Liquid Glass', description: 'A theme with translucent surfaces.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
+					<article>
+						<Surface variant="soft" radius="medium" spacing="large" height="fill">
+							<div data-theme-heading>
+								<h3>{theme.name}</h3>
+								<Pill label="WIP" size="x-small" color="muted" variant="soft" />
+							</div>
+							<p>{theme.description}</p>
+							<small>Planned · demonstration coming later</small>
+						</Surface>
+					</article>
+				{/each}
+			</div>
+		</section>
+	</main>
+	<footer>
+		<nav aria-label="Bref UI resources">
+			<h2>Bref UI</h2>
+			<a href="https://github.com/feuersteiner/bref-ui">GitHub</a>
+			<a href="https://feuersteiner.github.io/bref-ui/">Documentation</a>
+		</nav>
+		<nav aria-label="Bref themes resources">
+			<h2>Themes</h2>
+			<a href="https://github.com/feuersteiner/bref-ui-themes">GitHub</a>
+			<a href="https://github.com/feuersteiner/bref-ui-themes#library-imports">Documentation</a>
+		</nav>
+		<nav aria-label="Community">
+			<h2>Community</h2>
+			<a href="https://discord.gg/JpgQRTUsVS">Discord</a>
+			<a href="https://x.com/feuersteinnnnn">Twitter / X</a>
+		</nav>
+	</footer>
+</div>
 
 <style>
 	:global(:root) {
@@ -149,25 +108,6 @@
 		width: min(1128px, calc(100% - 48px));
 		margin: auto;
 	}
-	header {
-		display: grid;
-		grid-template-columns: auto 1fr auto;
-		align-items: center;
-		gap: 12px;
-		min-height: 72px;
-		padding-block: 12px;
-		border-bottom: 1px solid var(--showcase-rule);
-	}
-	header nav {
-		justify-content: flex-end;
-		margin-right: 12px;
-	}
-	[data-actions] {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 8px;
-	}
 	a {
 		color: inherit;
 		text-decoration: none;
@@ -176,22 +116,13 @@
 		outline: 2px solid var(--color-primary);
 		outline-offset: 4px;
 	}
-	[data-brand] {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-	}
-	strong {
-		font: 700 24px / 1.2 var(--font-display);
-		white-space: nowrap;
-	}
-	[data-slash] {
-		color: var(--color-primary);
-	}
 	nav {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 8px;
+	}
+	main {
+		scroll-margin-block-start: 180px;
 	}
 	[data-intro] {
 		padding-block: 48px;
@@ -222,7 +153,7 @@
 		margin-bottom: 48px;
 		padding-top: 24px;
 		border-top: 1px solid color-mix(in srgb, var(--color-foreground) 6%, transparent);
-		scroll-margin-top: 24px;
+		scroll-margin-top: 180px;
 	}
 	[data-section-heading] {
 		display: flex;
@@ -305,29 +236,7 @@
 		color: var(--color-primary);
 		text-decoration: underline;
 	}
-	[data-skip] {
-		position: fixed;
-		top: 8px;
-		left: 8px;
-		padding: 12px;
-		background: var(--color-background);
-		z-index: 10;
-		transform: translateY(-160%);
-	}
-	[data-skip]:focus {
-		transform: none;
-	}
 	@media (max-width: 780px) {
-		header {
-			grid-template-columns: minmax(0, 1fr) auto;
-		}
-		[data-brand] {
-			grid-column: 1 / -1;
-		}
-		header nav {
-			justify-content: flex-start;
-			margin-right: 0;
-		}
 		[data-intro] {
 			padding-block: 24px;
 		}
@@ -341,13 +250,6 @@
 		}
 	}
 	@media (max-width: 400px) {
-		[data-brand] img {
-			width: 32px;
-			height: 32px;
-		}
-		strong {
-			font-size: 20px;
-		}
 		footer {
 			grid-template-columns: 1fr;
 		}

@@ -1,6 +1,12 @@
 import type { SelectOptionDataProps } from 'bref-ui/types';
+export const projectPhotos = {
+	studio: { label: 'Studio', src: 'demos/relay-studio.jpg' },
+	website: { label: 'Architecture', src: 'demos/relay-website.jpg' },
+	mobile: { label: 'Glass', src: 'demos/relay-mobile.jpg' },
+	room: { label: 'Lounge', src: 'demos/forma-room.jpg' }
+} as const;
 export interface Project extends SelectOptionDataProps {
-	photo: 'studio' | 'website' | 'mobile';
+	photo: keyof typeof projectPhotos;
 }
 export const initialProjects: Project[] = [
 	{ id: 'website', label: 'Website launch', icon: { name: 'language' }, photo: 'website' },

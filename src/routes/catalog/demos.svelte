@@ -3,38 +3,48 @@
 	import { Icon, Surface } from 'bref-ui';
 	const demos = [
 		{
-			name: 'Tasks',
-			href: resolve('/(sites)/(relay)/relay'),
+			name: 'Todo',
+			icon: 'checklist',
+			href: resolve('/(sites)/(relay)/todo'),
 			preview: 'relay',
-			description: 'A project workspace. Complete, organize and edit tasks.'
+			description: 'Organize projects, edit tasks and track completed work.'
 		},
 		{
 			name: 'House Shop',
-			href: resolve('/(sites)/(forma)/forma'),
+			icon: 'storefront',
+			href: resolve('/(sites)/(forma)/house-shop'),
 			preview: 'forma',
-			description: 'A furniture shop. Browse the catalog and manage your cart.'
+			description: 'Browse furniture and manage a shopping cart.'
 		},
 		{
-			name: 'Site Reviewer',
-			href: resolve('/(sites)/(elsewhere)/elsewhere'),
+			name: 'RunnerAI',
+			icon: 'smart_toy',
+			href: resolve('/(sites)/(elsewhere)/runner-ai'),
 			preview: 'elsewhere',
-			description: 'An agent workspace. Run a sample website audit and review its findings.'
+			description: 'Assess marketing copy, follow each check and apply suggested edits.'
 		}
 	] as const;
 </script>
 
 <div data-live-demos>
 	{#each demos as demo (demo.preview)}
-		<a href={demo.href} data-sveltekit-reload>
+		<a href={demo.href}>
 			<Surface variant="soft" radius="medium" spacing="medium" hover="medium" height="fill">
-				<img
-					src={asset(`previews/${demo.preview}.jpg`)}
-					alt={`${demo.name} demo as rendered in a browser`}
-					width="1440"
-					height="960"
-					loading="lazy"
-				/>
-				<h3>{demo.name}<Icon name="arrow_outward" /></h3>
+				<figure>
+					<img
+						src={asset(`previews/${demo.preview}.jpg`)}
+						alt={demo.preview === 'elsewhere'
+							? 'Earlier Elsewhere audit demo'
+							: `${demo.name} demo as rendered in a browser`}
+						width="1440"
+						height="960"
+						loading="lazy"
+					/>
+					{#if demo.preview === 'elsewhere'}<figcaption>Earlier audit demo</figcaption>{/if}
+				</figure>
+				<h3>
+					<span data-brand><Icon name={demo.icon} />{demo.name}</span><Icon name="arrow_outward" />
+				</h3>
 				<p>{demo.description}</p>
 				<span data-link>Explore demo</span>
 			</Surface>
@@ -59,6 +69,14 @@
 		outline-offset: 4px;
 		border-radius: 1.5rem;
 	}
+	figure {
+		margin: 0;
+	}
+	figcaption {
+		margin-top: 8px;
+		color: var(--color-muted);
+		font-size: 12px;
+	}
 	img {
 		display: block;
 		width: 100%;
@@ -78,6 +96,11 @@
 		color: var(--color-muted);
 		font-size: 14px;
 		line-height: 1.6;
+	}
+	[data-brand] {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
 	}
 	[data-link] {
 		font-size: 13px;

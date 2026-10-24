@@ -3,6 +3,7 @@
 	import { Icon, Progress, Surface } from '#lib/relay/index.js';
 	import { Tween, prefersReducedMotion } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
+	import { projectPhotos, type Project } from './tasks.js';
 	let {
 		project,
 		photo,
@@ -11,7 +12,7 @@
 		total
 	}: {
 		project: string;
-		photo: 'studio' | 'website' | 'mobile';
+		photo: Project['photo'];
 		projectName: string;
 		completed: number;
 		total: number;
@@ -23,7 +24,7 @@
 </script>
 
 <header data-project-stage data-project={project}>
-	<img src={asset(`demos/relay-${photo}.jpg`)} alt="" width="1600" height="900" />
+	<img src={asset(projectPhotos[photo].src)} alt="" width="1600" height="900" />
 	<div data-project-caption>
 		<h1>{projectName}</h1>
 		<Surface
