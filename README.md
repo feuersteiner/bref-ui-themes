@@ -47,10 +47,35 @@ The former `bref-ui-themes/relay`, `/forma` and `/elsewhere` entries, and the ro
 `Relay`, `Forma` and `Elsewhere` namespaces, have been removed. Import controls and
 `Theme` from `bref-ui` instead, and pass palette data to `Theme`.
 
-This integration stage has an empty package root. Full themes (Glassy, VS Code,
-New Paris and Crystal Code) are developed in separate PRs. Those full themes own
-CLI-installed component implementations with scoped CSS; the site demos do not.
-No full-theme package exports are available on this branch yet.
+Glassy is exported as the root `Glassy` namespace and through `bref-ui-themes/glassy`.
+It owns 19 CLI-installed component entries plus the native ThemeModeToggle source,
+with scoped styles and the native Bref component APIs. The site demos remain
+palette-only. VS Code, New Paris and Crystal Code are developed in separate PRs.
+
+## Glassy
+
+[Try the Glassy gallery](https://feuersteiner.github.io/bref-ui-themes/themes/glassy).
+Translucent surfaces, 32px frost and selected-pill treatments are implemented in
+[src/lib/glassy](src/lib/glassy), with a fixed light palette scoped to its wrapper.
+The gallery imports those same package sources and covers all 20 exports.
+
+```svelte
+<script lang="ts">
+	import { Theme, Button } from 'bref-ui-themes/glassy';
+</script>
+
+<Theme>
+	<Button label="Create a layer" variant="filled" color="primary" />
+</Theme>
+```
+
+Exports: Theme, Icon, Button, Checkbox, TextInput, Surface, Popover, Combobox,
+Dialog, Pill, PillGroup, PillChoiceGroup, Progress, Select, Spinner, Switch, Tabs,
+TextArea, TreeView and ThemeModeToggle. Native attributes, bindings, snippets and
+keyboard behavior follow `bref-ui@2.2.3`. The CLI does not include ThemeModeToggle;
+that export retains the canonical native source. ThemeModeToggle controls document
+metadata; the Glassy wrapper keeps its fixed light scheme. Font assets are imported
+by the theme; component paint and palette tokens stay scoped to the wrapper.
 
 ## Development and checks
 
@@ -80,7 +105,8 @@ BASE_PATH=/bref-ui-themes bun run preview
 - [Site demos](<src/routes/(sites)>): application content and local layout.
 - [Palette previews](<src/routes/(themes)>): canonical Bref controls with each palette.
 - [Persistent shell](src/routes/+layout.svelte): one Theme, route palettes and mounted header.
-- [Package root](src/lib/index.ts): reserved for full-theme exports.
+- [Glassy gallery](<src/routes/(themes)/themes/glassy>): full CLI theme components and interactions.
+- [Package root](src/lib/index.ts): full-theme exports.
 
 ## Contributing
 

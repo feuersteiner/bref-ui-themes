@@ -56,8 +56,19 @@
 					/>
 				</nav>
 			</div>
+			<div data-available>
+				<p>Full component themes</p>
+				<nav aria-label="Full component themes">
+					<Button
+						href={resolve('/(themes)/themes/glassy')}
+						label="Glassy · Liquid Glass"
+						trailingIcon={{ name: 'arrow_outward' }}
+						size="small"
+					/>
+				</nav>
+			</div>
 			<div data-wip-themes>
-				{#each [{ name: 'VS Code', description: 'An editor-inspired theme.' }, { name: 'Liquid Glass', description: 'A theme with translucent surfaces.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
+				{#each [{ name: 'VS Code', description: 'An editor-inspired theme.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
 					<article>
 						<Surface variant="soft" radius="medium" spacing="large" height="fill">
 							<div data-theme-heading>
