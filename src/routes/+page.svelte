@@ -31,7 +31,7 @@
 		<section id="themes" aria-labelledby="themes-heading">
 			<div data-section-heading>
 				<h2 id="themes-heading">Themes</h2>
-				<p>Preview palettes on existing bref/ui components.</p>
+				<p>Explore palettes and full component themes.</p>
 			</div>
 			<div data-available>
 				<p>Palette examples</p>
@@ -56,6 +56,16 @@
 					/>
 				</nav>
 			</div>
+			<article data-full-theme>
+				<h3>New Paris</h3>
+				<p>Twenty theme-owned components in black and ivory.</p>
+				<Button
+					href={resolve('/(themes)/themes/new-paris')}
+					label="Explore New Paris"
+					trailingIcon={{ name: 'arrow_outward' }}
+					size="small"
+				/>
+			</article>
 			<div data-wip-themes>
 				{#each [{ name: 'VS Code', description: 'An editor-inspired theme.' }, { name: 'Liquid Glass', description: 'A theme with translucent surfaces.' }, { name: 'Minimalist Blocky', description: 'A theme with bold geometric shapes.' }] as theme (theme.name)}
 					<article>
@@ -178,6 +188,12 @@
 		font-size: 13px;
 		color: var(--color-primary);
 		font-weight: 600;
+	}
+	[data-full-theme] {
+		display: grid;
+		gap: 16px;
+		justify-items: start;
+		margin-block: 24px;
 	}
 	[data-wip-themes] {
 		display: grid;

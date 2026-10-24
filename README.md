@@ -47,10 +47,40 @@ The former `bref-ui-themes/relay`, `/forma` and `/elsewhere` entries, and the ro
 `Relay`, `Forma` and `Elsewhere` namespaces, have been removed. Import controls and
 `Theme` from `bref-ui` instead, and pass palette data to `Theme`.
 
-This integration stage has an empty package root. Full themes (Glassy, VS Code,
-New Paris and Crystal Code) are developed in separate PRs. Those full themes own
-CLI-installed component implementations with scoped CSS; the site demos do not.
-No full-theme package exports are available on this branch yet.
+New Paris is available through `bref-ui-themes/new-paris` and the root `NewParis`
+namespace. Full themes own CLI-installed component implementations with scoped
+CSS; the site demos do not. Glassy, VS Code and Crystal Code remain in separate PRs.
+
+## New Paris
+
+[Open the New Paris showcase](https://feuersteiner.github.io/bref-ui-themes/themes/new-paris).
+The theme retains its black/ivory palette, square controls, serif headings and
+opaque paper overlays. Its showcase imports the same implementation as consumers.
+Campaign photography and editorial layout belong to the showcase.
+
+![New Paris preview](static/previews/new-paris.jpg)
+
+```svelte
+<script lang="ts">
+	import { Theme, Button } from 'bref-ui-themes/new-paris';
+</script>
+
+<Theme>
+	<Button label="Bonjour" variant="filled" color="primary" />
+</Theme>
+```
+
+The entry exports `Theme`, `ThemeModeToggle`, `Button`, `Checkbox`, `Combobox`,
+`Dialog`, `Icon`, `Pill`, `PillChoiceGroup`, `PillGroup`, `Popover`, `Progress`,
+`Select`, `Spinner`, `Surface`, `Switch`, `Tabs`, `TextArea`, `TextInput` and `TreeView`.
+The inherited CLI implementation preserves Bref props, bindings and keyboard
+behavior. The registry has no ThemeModeToggle entry; its native source is retained
+explicitly. New Paris uses fixed light mode and scoped tokens/paint; the separate
+site palettes still use Bref's document-wide public palette API.
+
+Native accessibility, reduced-motion and forced-colors styles are retained.
+The approved paper/border colors have a low-contrast boundary (about 1.46:1);
+contrast improvement remains a design decision. No human visual approval is claimed.
 
 ## Development and checks
 
@@ -80,7 +110,8 @@ BASE_PATH=/bref-ui-themes bun run preview
 - [Site demos](<src/routes/(sites)>): application content and local layout.
 - [Palette previews](<src/routes/(themes)>): canonical Bref controls with each palette.
 - [Persistent shell](src/routes/+layout.svelte): one Theme, route palettes and mounted header.
-- [Package root](src/lib/index.ts): reserved for full-theme exports.
+- [New Paris sources](src/lib/new-paris): full theme, native controls and scoped styles.
+- [Package root](src/lib/index.ts): full-theme namespaces.
 
 ## Contributing
 

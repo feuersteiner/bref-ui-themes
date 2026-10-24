@@ -28,6 +28,10 @@
 		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
+		},
+		"./new-paris": {
+			"types": "./dist/new-paris/index.d.ts",
+			"svelte": "./dist/new-paris/index.js"
 		}
 	},
 	"peerDependencies": {
