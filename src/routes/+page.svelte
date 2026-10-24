@@ -64,6 +64,12 @@
 					trailingIcon={{ name: 'arrow_outward' }}
 					size="small"
 				/>
+				<Button
+					href={resolve('/(themes)/themes/crystal-code')}
+					label="Crystal Code theme"
+					trailingIcon={{ name: 'arrow_outward' }}
+					size="small"
+				/>
 				<a data-vscode-preview href={resolve('/(themes)/themes/vscode')}>
 					<img
 						src={asset('previews/vscode.jpg')}

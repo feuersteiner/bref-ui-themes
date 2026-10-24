@@ -47,10 +47,10 @@ The former `bref-ui-themes/relay`, `/forma` and `/elsewhere` entries, and the ro
 `Relay`, `Forma` and `Elsewhere` namespaces, have been removed. Import controls and
 `Theme` from `bref-ui` instead, and pass palette data to `Theme`.
 
-The package exports the full VS Code component theme from `bref-ui-themes/vscode`
-and the `VSCode` namespace from its root. Glassy, New Paris and Crystal Code remain
-in separate PRs. Full themes own CLI-installed components with scoped CSS; the site
-demos do not.
+The package exports the full VS Code and Crystal Code component themes from
+`bref-ui-themes/vscode` and `bref-ui-themes/crystal-code`, with `VSCode` and
+`CrystalCode` namespaces at its root. Glassy and New Paris remain in separate PRs.
+Full themes own CLI-installed components with scoped CSS; the site demos do not.
 
 ## VS Code theme
 
@@ -81,6 +81,32 @@ entry, so its native source is copied explicitly. Theme accepts an optional
 The persistent site header uses canonical Bref controls and the active document
 palette; it stays outside VS Code's scoped wrapper. The native palette isolation
 limit described above still applies to palette-only demos.
+
+## Crystal Code theme
+
+[Open the workbench and component reference](https://feuersteiner.github.io/bref-ui-themes/themes/crystal-code).
+Crystal Code provides separate light and dark palettes, compact controls, frosted
+overlays and 100ms appearance and overlay motion. Its 20 exports match the VS Code
+entry listed above, using its own CLI-installed components and scoped CSS.
+
+```svelte
+<script lang="ts">
+	import { Theme, Button, TextInput } from 'bref-ui-themes/crystal-code';
+</script>
+
+<div data-theme="dark">
+	<Theme>
+		<TextInput aria-label="Preview name" placeholder="Default" />
+		<Button label="Apply" variant="filled" color="primary" />
+	</Theme>
+</div>
+```
+
+Theme accepts an optional `children` snippet. An explicit `data-theme="light"` or
+`data-theme="dark"` ancestor controls its scheme; otherwise it follows document
+metadata and system preference. The workbench uses a local ancestor for its mode
+switch, preserving the persistent header's palette. The exported ThemeModeToggle
+sets document color-scheme metadata, following the native Bref contract.
 
 ## Development and checks
 
